@@ -1,4 +1,4 @@
-from httpkit.builders.request_header import RequestHeaderBuilder
+from saint_elmo_backend.httpkit.builders.request_header import RequestHeaderBuilder
 
 
 def test_empty_build() -> None:
