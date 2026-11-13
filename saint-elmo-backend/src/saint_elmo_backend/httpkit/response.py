@@ -9,7 +9,7 @@ class ResponseWrapper(ABC):
     def ok(self) -> bool:
         pass
 
-    # NOTE(sw): to make sure that all status codes are suppported, this function will return an int instead of an enum
+    # NOTE(sw): to make sure that all status codes are supported, this function will return an int instead of an enum
     @abstractmethod
     def status_code(self) -> int:
         pass
