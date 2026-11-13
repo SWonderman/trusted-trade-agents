@@ -5,13 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from saint_elmo_backend.core.logger import setup_logger
 
+from saint_elmo_backend.db.engine import dispose_engine
+
 from saint_elmo_backend.api.middleware import RequestContextMiddleware
 from saint_elmo_backend.api.error_handlers import register_error_handlers
 from saint_elmo_backend.api.v1.router import router as api_v1_router
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    yield
+    try:
+        yield
+    finally:
+        await dispose_engine()
 
 
 def create_app() -> FastAPI:
