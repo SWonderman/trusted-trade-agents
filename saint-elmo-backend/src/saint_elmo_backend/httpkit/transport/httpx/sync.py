@@ -3,16 +3,16 @@ from typing import Self
 
 import httpx
 
-from httpkit.dataclasses import Request
-from httpkit.response import ResponseWrapper
-from httpkit.exceptions import (
+from saint_elmo_backend.httpkit.dataclasses import Request
+from saint_elmo_backend.httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.exceptions import (
     HttpkitTransportError,
     HttpkitTimeoutError,
     HttpkitConnectionError,
 )
 
-from httpkit.transport.httpx.response import HttpxResponse
-from httpkit.transport.httpx.config import HttpxClientConfig
+from saint_elmo_backend.httpkit.transport.httpx.response import HttpxResponse
+from saint_elmo_backend.httpkit.transport.httpx.config import HttpxClientConfig
 
 
 class HttpxSyncTransport:

@@ -8,13 +8,13 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel, JsonValue, ValidationError
 
-from httpkit.dataclasses import Request, Response
-from httpkit.exceptions import (
+from saint_elmo_backend.httpkit.dataclasses import Request, Response
+from saint_elmo_backend.httpkit.exceptions import (
     HttpkitStatusError,
     HttpkitValidationError,
 )
-from httpkit.response import ResponseWrapper
-from httpkit.transport.base import AsyncTransport, SyncTransport
+from saint_elmo_backend.httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.transport.base import AsyncTransport, SyncTransport
 
 
 class _HttpkitBaseClient(ABC):

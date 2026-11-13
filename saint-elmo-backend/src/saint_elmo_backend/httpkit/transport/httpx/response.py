@@ -4,7 +4,7 @@ from pydantic import JsonValue
 
 import httpx
 
-from httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.response import ResponseWrapper
 
 
 class HttpxResponse(ResponseWrapper):

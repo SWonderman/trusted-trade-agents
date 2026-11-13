@@ -5,10 +5,10 @@ from collections.abc import Mapping
 
 from pydantic import BaseModel, JsonValue
 
-from httpkit.dataclasses import Request
-from httpkit.response import ResponseWrapper
-from httpkit.client import HttpkitBaseAsyncClient, HttpkitBaseSyncClient
-from httpkit.transport.base import AsyncTransport, SyncTransport
+from saint_elmo_backend.httpkit.dataclasses import Request
+from saint_elmo_backend.httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.client import HttpkitBaseAsyncClient, HttpkitBaseSyncClient
+from saint_elmo_backend.httpkit.transport.base import AsyncTransport, SyncTransport
 
 
 class Product(BaseModel):

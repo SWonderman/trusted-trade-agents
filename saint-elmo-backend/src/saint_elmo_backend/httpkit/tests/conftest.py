@@ -4,8 +4,8 @@ import pytest
 
 from collections.abc import Mapping
 
-from httpkit.response import ResponseWrapper
-from httpkit.tests.fakes import (
+from saint_elmo_backend.httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.tests.fakes import (
     FakeAsyncClient,
     FakeAsyncTransport,
     FakeClient,

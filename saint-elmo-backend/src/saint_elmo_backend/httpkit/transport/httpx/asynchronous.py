@@ -3,16 +3,16 @@ from types import TracebackType
 
 import httpx
 
-from httpkit.dataclasses import Request
-from httpkit.exceptions import (
+from saint_elmo_backend.httpkit.dataclasses import Request
+from saint_elmo_backend.httpkit.exceptions import (
     HttpkitConnectionError,
     HttpkitTimeoutError,
     HttpkitTransportError,
 )
-from httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.response import ResponseWrapper
 
-from httpkit.transport.httpx.config import HttpxClientConfig
-from httpkit.transport.httpx.response import HttpxResponse
+from saint_elmo_backend.httpkit.transport.httpx.config import HttpxClientConfig
+from saint_elmo_backend.httpkit.transport.httpx.response import HttpxResponse
 
 
 class HttpxAsyncTransport:

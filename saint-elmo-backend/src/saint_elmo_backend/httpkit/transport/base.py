@@ -1,8 +1,8 @@
 from types import TracebackType
 from typing import Protocol, Self
 
-from httpkit.dataclasses import Request
-from httpkit.response import ResponseWrapper
+from saint_elmo_backend.httpkit.dataclasses import Request
+from saint_elmo_backend.httpkit.response import ResponseWrapper
 
 
 class SyncTransport(Protocol):

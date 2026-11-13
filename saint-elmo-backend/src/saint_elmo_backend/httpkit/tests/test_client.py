@@ -2,15 +2,15 @@ import pytest
 
 from http import HTTPMethod
 
-from httpkit.exceptions import (
+from saint_elmo_backend.httpkit.exceptions import (
     HttpkitConnectionError,
     HttpkitStatusError,
     HttpkitTimeoutError,
     HttpkitTransportError,
     HttpkitValidationError,
 )
-from httpkit.tests.conftest import MakeClient
-from httpkit.tests.fakes import FakeResponse, Product
+from saint_elmo_backend.httpkit.tests.conftest import MakeClient
+from saint_elmo_backend.httpkit.tests.fakes import FakeResponse, Product
 
 
 # Header merging
