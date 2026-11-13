@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 
 from saint_elmo_backend.core.schema import CamelBaseModel
 
-from saint_elmo_backend.api.exceptions import ErrorCode, SomethingWentWrong, HeidrunHTTPException
+from saint_elmo_backend.api.exceptions import ErrorCode, SomethingWentWrong, SaintElmoHTTPException
 
 
 class ErrorFieldDetail(CamelBaseModel):
@@ -46,8 +46,8 @@ def _prepare_envelope(
     return envelope.model_dump(mode="json", by_alias=True, exclude_none=True)
 
 
-async def _handle_haidrun_error(
-    request: Request, exc: HeidrunHTTPException
+async def _handle_saint_elmo_error(
+    request: Request, exc: SaintElmoHTTPException
 ) -> Response:
     return JSONResponse(
         status_code=exc.status_code,
@@ -64,7 +64,7 @@ async def _handle_unexpected_error(request: Request, exc: Exception) -> Response
     logger.exception(
         "Unhandled error on %s %s", request.method, request.url.path, exc_info=exc
     )
-    return await _handle_haidrun_error(request, SomethingWentWrong())
+    return await _handle_saint_elmo_error(request, SomethingWentWrong())
 
 
 async def _handle_starlette_error(
@@ -100,7 +100,7 @@ async def _handle_validation_error(
 
 
 def register_error_handlers(app: FastAPI) -> None:
-    app.add_exception_handler(HeidrunHTTPException, _handle_haidrun_error)
+    app.add_exception_handler(SaintElmoHTTPException, _handle_saint_elmo_error)
     app.add_exception_handler(StarletteHTTPException, _handle_starlette_error)
     app.add_exception_handler(RequestValidationError, _handle_validation_error)
     app.add_exception_handler(Exception, _handle_unexpected_error)

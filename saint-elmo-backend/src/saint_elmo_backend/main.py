@@ -22,7 +22,7 @@ async def lifespan(_app: FastAPI):
 def create_app() -> FastAPI:
     setup_logger()
 
-    app = FastAPI(lifespan=lifespan, title="Heidrun API")
+    app = FastAPI(lifespan=lifespan, title="Saint Elmo API")
 
     # TODO(sw): this should probably be read from env
     origins = [

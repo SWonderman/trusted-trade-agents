@@ -35,7 +35,7 @@ _INTERCEPTED_LOGGERS = (
     "sqlalchemy.engine",
     "asyncpg",
     "alembic",
-    "heidrun",
+    "saint_elmo_backend",
 )
 
 _DEV_FORMAT = (

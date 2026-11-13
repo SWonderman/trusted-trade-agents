@@ -87,7 +87,7 @@ class ErrorCode(StrEnum):
     DUPLICATE_LOCATION = "DUPLICATE_LOCATION"
 
 
-class HeidrunHTTPException(HTTPException):
+class SaintElmoHTTPException(HTTPException):
     def __init__(
         self,
         status_code: int,
@@ -104,7 +104,7 @@ class HeidrunHTTPException(HTTPException):
         )
 
 
-class SomethingWentWrong(HeidrunHTTPException):
+class SomethingWentWrong(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "Something went wrong", headers: Headers | None = None
     ):
@@ -116,7 +116,7 @@ class SomethingWentWrong(HeidrunHTTPException):
         )
 
 
-class InvalidCredentials(HeidrunHTTPException):
+class InvalidCredentials(SaintElmoHTTPException):
     def __init__(
         self,
         detail: str = "Could not validate credentials",
@@ -133,7 +133,7 @@ class InvalidCredentials(HeidrunHTTPException):
         )
 
 
-class PermissionDenied(HeidrunHTTPException):
+class PermissionDenied(SaintElmoHTTPException):
     def __init__(self, detail: str = "Insufficient permissions"):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -142,7 +142,7 @@ class PermissionDenied(HeidrunHTTPException):
         )
 
 
-class NoOrganization(HeidrunHTTPException):
+class NoOrganization(SaintElmoHTTPException):
     def __init__(self, detail: str = "User is not a member of any organization"):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -151,7 +151,7 @@ class NoOrganization(HeidrunHTTPException):
         )
 
 
-class MembershipNotFound(HeidrunHTTPException):
+class MembershipNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Membership not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -160,7 +160,7 @@ class MembershipNotFound(HeidrunHTTPException):
         )
 
 
-class OrganizationInactive(HeidrunHTTPException):
+class OrganizationInactive(SaintElmoHTTPException):
     def __init__(self, detail: str = "Organization is not active"):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -169,7 +169,7 @@ class OrganizationInactive(HeidrunHTTPException):
         )
 
 
-class EmailAlreadyRegistered(HeidrunHTTPException):
+class EmailAlreadyRegistered(SaintElmoHTTPException):
     def __init__(self, detail: str = "Email is already registered"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -178,7 +178,7 @@ class EmailAlreadyRegistered(HeidrunHTTPException):
         )
 
 
-class EmailAlreadyMember(HeidrunHTTPException):
+class EmailAlreadyMember(SaintElmoHTTPException):
     def __init__(self, detail: str = "Email is already a member of the organization"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -187,7 +187,7 @@ class EmailAlreadyMember(HeidrunHTTPException):
         )
 
 
-class EmailNotVerified(HeidrunHTTPException):
+class EmailNotVerified(SaintElmoHTTPException):
     def __init__(
         self,
         detail: str = "Confirm your email address to perform this action",
@@ -199,7 +199,7 @@ class EmailNotVerified(HeidrunHTTPException):
         )
 
 
-class EmailAlreadyVerified(HeidrunHTTPException):
+class EmailAlreadyVerified(SaintElmoHTTPException):
     def __init__(self, detail: str = "This email address is already confirmed"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -208,7 +208,7 @@ class EmailAlreadyVerified(HeidrunHTTPException):
         )
 
 
-class EmailVerificationNotFound(HeidrunHTTPException):
+class EmailVerificationNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Email verification not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -217,7 +217,7 @@ class EmailVerificationNotFound(HeidrunHTTPException):
         )
 
 
-class EmailVerificationInvalid(HeidrunHTTPException):
+class EmailVerificationInvalid(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "This confirmation link has expired. Request a new one."
     ):
@@ -228,7 +228,7 @@ class EmailVerificationInvalid(HeidrunHTTPException):
         )
 
 
-class InvitationNotFound(HeidrunHTTPException):
+class InvitationNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Invitation not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -237,7 +237,7 @@ class InvitationNotFound(HeidrunHTTPException):
         )
 
 
-class InvitationInvalid(HeidrunHTTPException):
+class InvitationInvalid(SaintElmoHTTPException):
     def __init__(self, detail: str = "Invitation has expired or was already accepted"):
         super().__init__(
             status_code=status.HTTP_410_GONE,
@@ -246,7 +246,7 @@ class InvitationInvalid(HeidrunHTTPException):
         )
 
 
-class IncompleteRegistration(HeidrunHTTPException):
+class IncompleteRegistration(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "First name, last name, and password are required"
     ):
@@ -257,7 +257,7 @@ class IncompleteRegistration(HeidrunHTTPException):
         )
 
 
-class InvitationRequiresAuthentication(HeidrunHTTPException):
+class InvitationRequiresAuthentication(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "Log in as the invited email to accept this invitation"
     ):
@@ -268,7 +268,7 @@ class InvitationRequiresAuthentication(HeidrunHTTPException):
         )
 
 
-class InvitationAccountMismatch(HeidrunHTTPException):
+class InvitationAccountMismatch(SaintElmoHTTPException):
     def __init__(self, detail: str = "This invitation was sent to a different account"):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -277,7 +277,7 @@ class InvitationAccountMismatch(HeidrunHTTPException):
         )
 
 
-class OwnerRoleForbidden(HeidrunHTTPException):
+class OwnerRoleForbidden(SaintElmoHTTPException):
     def __init__(
         self,
         detail: str = "The organization owner's role cannot be changed or assigned",
@@ -289,7 +289,7 @@ class OwnerRoleForbidden(HeidrunHTTPException):
         )
 
 
-class OrganizationNotFound(HeidrunHTTPException):
+class OrganizationNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Organization not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -298,7 +298,7 @@ class OrganizationNotFound(HeidrunHTTPException):
         )
 
 
-class OrganizationLimitReached(HeidrunHTTPException):
+class OrganizationLimitReached(SaintElmoHTTPException):
     def __init__(
         self,
         detail: str = "You have reached the maximum number of organizations you can own",
@@ -310,7 +310,7 @@ class OrganizationLimitReached(HeidrunHTTPException):
         )
 
 
-class NotOrganizationOwner(HeidrunHTTPException):
+class NotOrganizationOwner(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "Only the organization owner can perform this action"
     ):
@@ -321,7 +321,7 @@ class NotOrganizationOwner(HeidrunHTTPException):
         )
 
 
-class StorefrontNotFound(HeidrunHTTPException):
+class StorefrontNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Storefront not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -330,7 +330,7 @@ class StorefrontNotFound(HeidrunHTTPException):
         )
 
 
-class StorefrontNotSyncable(HeidrunHTTPException):
+class StorefrontNotSyncable(SaintElmoHTTPException):
     def __init__(self, detail: str = "Storefront is disabled"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -339,7 +339,7 @@ class StorefrontNotSyncable(HeidrunHTTPException):
         )
 
 
-class MarketplaceMisconfigured(HeidrunHTTPException):
+class MarketplaceMisconfigured(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "Storefront marketplace connection is misconfigured"
     ):
@@ -350,7 +350,7 @@ class MarketplaceMisconfigured(HeidrunHTTPException):
         )
 
 
-class MarketplaceAccountNotFound(HeidrunHTTPException):
+class MarketplaceAccountNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Marketplace account not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -359,7 +359,7 @@ class MarketplaceAccountNotFound(HeidrunHTTPException):
         )
 
 
-class IntegrationNotFound(HeidrunHTTPException):
+class IntegrationNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Marketplace integration not found"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -368,7 +368,7 @@ class IntegrationNotFound(HeidrunHTTPException):
         )
 
 
-class DuplicateMarketplaceAccount(HeidrunHTTPException):
+class DuplicateMarketplaceAccount(SaintElmoHTTPException):
     def __init__(
         self,
         detail: str = "A marketplace account with this name already exists for this integration",
@@ -380,7 +380,7 @@ class DuplicateMarketplaceAccount(HeidrunHTTPException):
         )
 
 
-class CountryNotFound(HeidrunHTTPException):
+class CountryNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Unknown country iso code"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -389,7 +389,7 @@ class CountryNotFound(HeidrunHTTPException):
         )
 
 
-class OrganizationProfileNotFound(HeidrunHTTPException):
+class OrganizationProfileNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Organization profile not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -398,7 +398,7 @@ class OrganizationProfileNotFound(HeidrunHTTPException):
         )
 
 
-class DocumentTemplateNotFound(HeidrunHTTPException):
+class DocumentTemplateNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Document template not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -407,7 +407,7 @@ class DocumentTemplateNotFound(HeidrunHTTPException):
         )
 
 
-class DuplicateStorefront(HeidrunHTTPException):
+class DuplicateStorefront(SaintElmoHTTPException):
     def __init__(
         self,
         detail: str = "A storefront with this name already exists for this account",
@@ -419,7 +419,7 @@ class DuplicateStorefront(HeidrunHTTPException):
         )
 
 
-class EventNotFound(HeidrunHTTPException):
+class EventNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Event not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -428,7 +428,7 @@ class EventNotFound(HeidrunHTTPException):
         )
 
 
-class OrderNotFound(HeidrunHTTPException):
+class OrderNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Order not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -437,7 +437,7 @@ class OrderNotFound(HeidrunHTTPException):
         )
 
 
-class OrderAlreadyFulfilled(HeidrunHTTPException):
+class OrderAlreadyFulfilled(SaintElmoHTTPException):
     def __init__(self, detail: str = "Order is already fulfilled"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -446,7 +446,7 @@ class OrderAlreadyFulfilled(HeidrunHTTPException):
         )
 
 
-class ShippingAddressMissing(HeidrunHTTPException):
+class ShippingAddressMissing(SaintElmoHTTPException):
     def __init__(self, detail: str = "Order has no shipping address"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -455,7 +455,7 @@ class ShippingAddressMissing(HeidrunHTTPException):
         )
 
 
-class PdfGenerationFailure(HeidrunHTTPException):
+class PdfGenerationFailure(SaintElmoHTTPException):
     def __init__(self, detail: str = "Could not generate a PDF"):
         super().__init__(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -464,7 +464,7 @@ class PdfGenerationFailure(HeidrunHTTPException):
         )
 
 
-class CarrierRejected(HeidrunHTTPException):
+class CarrierRejected(SaintElmoHTTPException):
     def __init__(self, detail: str = "Carrier rejected the shipment"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -473,7 +473,7 @@ class CarrierRejected(HeidrunHTTPException):
         )
 
 
-class CarrierUnavailable(HeidrunHTTPException):
+class CarrierUnavailable(SaintElmoHTTPException):
     def __init__(self, detail: str = "Carrier is temporarily unavailable"):
         super().__init__(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -482,7 +482,7 @@ class CarrierUnavailable(HeidrunHTTPException):
         )
 
 
-class NoDefaultCarrier(HeidrunHTTPException):
+class NoDefaultCarrier(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "No default carrier configured for this storefront"
     ):
@@ -493,7 +493,7 @@ class NoDefaultCarrier(HeidrunHTTPException):
         )
 
 
-class NoOriginLocation(HeidrunHTTPException):
+class NoOriginLocation(SaintElmoHTTPException):
     def __init__(self, detail: str = "No active location with an address to ship from"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -502,7 +502,7 @@ class NoOriginLocation(HeidrunHTTPException):
         )
 
 
-class CarrierServiceNotFound(HeidrunHTTPException):
+class CarrierServiceNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Carrier service not found"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -511,7 +511,7 @@ class CarrierServiceNotFound(HeidrunHTTPException):
         )
 
 
-class CarrierAssignmentNotFound(HeidrunHTTPException):
+class CarrierAssignmentNotFound(SaintElmoHTTPException):
     def __init__(
         self, detail: str = "Carrier assignment not found for this storefront"
     ):
@@ -522,7 +522,7 @@ class CarrierAssignmentNotFound(HeidrunHTTPException):
         )
 
 
-class BrandNotFound(HeidrunHTTPException):
+class BrandNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Brand not found"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -531,7 +531,7 @@ class BrandNotFound(HeidrunHTTPException):
         )
 
 
-class CategoryNotFound(HeidrunHTTPException):
+class CategoryNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Category not found"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -540,7 +540,7 @@ class CategoryNotFound(HeidrunHTTPException):
         )
 
 
-class ProductNotFound(HeidrunHTTPException):
+class ProductNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Product not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -549,7 +549,7 @@ class ProductNotFound(HeidrunHTTPException):
         )
 
 
-class VariantNotFound(HeidrunHTTPException):
+class VariantNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Variant not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -558,7 +558,7 @@ class VariantNotFound(HeidrunHTTPException):
         )
 
 
-class IdentifierNotFound(HeidrunHTTPException):
+class IdentifierNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Identifier not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -567,7 +567,7 @@ class IdentifierNotFound(HeidrunHTTPException):
         )
 
 
-class DuplicateBrand(HeidrunHTTPException):
+class DuplicateBrand(SaintElmoHTTPException):
     def __init__(self, detail: str = "A brand with this name already exists"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -576,7 +576,7 @@ class DuplicateBrand(HeidrunHTTPException):
         )
 
 
-class DuplicateCategory(HeidrunHTTPException):
+class DuplicateCategory(SaintElmoHTTPException):
     def __init__(self, detail: str = "A category with this name already exists"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -585,7 +585,7 @@ class DuplicateCategory(HeidrunHTTPException):
         )
 
 
-class DuplicateSku(HeidrunHTTPException):
+class DuplicateSku(SaintElmoHTTPException):
     def __init__(self, detail: str = "A variant with this SKU already exists"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -594,7 +594,7 @@ class DuplicateSku(HeidrunHTTPException):
         )
 
 
-class DuplicateIdentifier(HeidrunHTTPException):
+class DuplicateIdentifier(SaintElmoHTTPException):
     def __init__(self, detail: str = "This identifier already exists"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -603,7 +603,7 @@ class DuplicateIdentifier(HeidrunHTTPException):
         )
 
 
-class LocationNotFound(HeidrunHTTPException):
+class LocationNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Location not found"):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -612,7 +612,7 @@ class LocationNotFound(HeidrunHTTPException):
         )
 
 
-class DuplicateLocation(HeidrunHTTPException):
+class DuplicateLocation(SaintElmoHTTPException):
     def __init__(self, detail: str = "A location with this code already exists"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -621,22 +621,22 @@ class DuplicateLocation(HeidrunHTTPException):
         )
 
 
-class HeidrunErrorResponse(CamelBaseModel):
+class SaintElmoErrorResponse(CamelBaseModel):
     detail: str
     error_code: ErrorCode
 
 
 def to_response_error(
-    *exceptions: type[HeidrunHTTPException],
+    *exceptions: type[SaintElmoHTTPException],
 ) -> dict[int, dict[str, Any]]:
     result: dict[int, dict[str, Any]] = {}
 
     for exc in exceptions:
-        instance: HeidrunHTTPException = exc()  # type: ignore[call-arg]
+        instance: SaintElmoHTTPException = exc()  # type: ignore[call-arg]
 
         SpecificError = create_model(
             f"{exc.__name__}Response",
-            __base__=HeidrunErrorResponse,
+            __base__=SaintElmoErrorResponse,
             error_code=(ErrorCode, Field(instance.error_code, frozen=True)),
             detail=(str, Field(instance.detail, examples=[instance.detail])),
         )
