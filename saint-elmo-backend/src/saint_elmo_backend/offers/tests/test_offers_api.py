@@ -8,6 +8,7 @@ from httpx import AsyncClient
 from saint_elmo_backend.accounts.models import Organization
 from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.agents.tests.factories import bearer, issue_token, make_agent
+from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.valio_aimo.testing import (
     BLOCKED_PRODUCT,
     EILA_10L,
@@ -310,3 +311,17 @@ async def test_stock_is_what_is_available_by_deliver_by_not_on_the_earliest_date
     assert item["availability"]["availableAmount"] == 60.0
     assert item["quantity"]["coveredByAvailability"] is True
     assert item["reasonCodes"] == []
+
+
+async def test_the_demo_flag_ignores_a_passed_closing_time(scripted_products, client, monkeypatch):
+    # The live mock answers a frozen snapshot whose closing times have all passed
+    monkeypatch.setattr(get_settings(), "offers_ignore_closing_time", True)
+
+    body = await _offers(client, {"productCode": EILA_10L}, deliver_by="2024-01-10")
+
+    item = _item(body, EILA_10L)
+    assert item["availability"]["closingTime"] == "2024-01-08T15:00:00+02:00"
+    assert item["availability"]["meetsDeadline"] is True
+    assert item["reasonCodes"] == []
+    # A passed closing time would otherwise make every quote expire on creation
+    assert item["provenance"]["validUntil"] == item["price"]["validTo"]

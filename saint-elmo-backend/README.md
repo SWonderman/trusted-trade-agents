@@ -87,6 +87,11 @@ schedule lines or a product missing from the availability answer become
 - **Cache** (`offers/cache.py`, in process): per customer number, product and date. A
   price is reused within its `validFrom`/`validTo`; availability for
   `OFFERS_AVAILABILITY_CACHE_SECONDS` (default `60`). Failed lookups are never cached.
+- **Demo flag** `OFFERS_IGNORE_CLOSING_TIME` (default `false`): the live mock ignores
+  `requestedDate` and answers a frozen snapshot whose closing times have passed, while its
+  `timeNow` is real, so every live offer would carry `CLOSING_TIME_PASSED` (a REJECT in the
+  policy). With `true`, a passed closing time is still reported but neither fails
+  `meetsDeadline` nor limits `validUntil`. Never enable it against a real system.
 - The API still failing after the client's retries, or not being configured, answers
   503 `VALIO_AIMO_UNAVAILABLE`. A buyer organisation without a customer number answers
   409 `CUSTOMER_NUMBER_MISSING`.

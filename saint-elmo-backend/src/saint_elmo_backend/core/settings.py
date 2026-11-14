@@ -54,6 +54,9 @@ class Settings(BaseSettings):
 
     # Offers: how long a fetched availability is reused (prices follow their own validity)
     offers_availability_cache_seconds: int = 60
+    # Demo only: the live mock's closing times are a frozen snapshot that has passed, which
+    # would mark every offer CLOSING_TIME_PASSED. True treats a passed one as not binding.
+    offers_ignore_closing_time: bool = False
 
 
 @lru_cache

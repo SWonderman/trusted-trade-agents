@@ -15,6 +15,7 @@ from saint_elmo_backend.api.exceptions import (
     to_response_error,
 )
 from saint_elmo_backend.api.v1.auth import Principal, authenticate
+from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.offers import services
 from saint_elmo_backend.offers.exceptions import CustomerNumberMissingError, UnknownProductsError
 from saint_elmo_backend.offers.schemas import OffersRequest, OffersResponse
@@ -52,6 +53,7 @@ async def get_offers(
             requested=[item.to_requested_product() for item in data.items],
             language=data.language,
             now=datetime.now(UTC),
+            ignore_closing_time=get_settings().offers_ignore_closing_time,
         )
     except UnknownProductsError as exc:
         raise UnknownProducts.for_codes(exc.codes) from exc

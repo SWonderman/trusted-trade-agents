@@ -59,10 +59,15 @@ async def get_offers(
     requested: Sequence[RequestedProduct],
     language: Language,
     now: datetime,
+    ignore_closing_time: bool = False,
 ) -> Offers:
     """
     Raises `UnknownProductsError` listing every unknown code, `CustomerNumberMissingError`,
     and lets the client's `ValioAimoError` through when the API stays unavailable.
+
+    `ignore_closing_time` is a demo setting for the live mock, whose closing times are a
+    frozen snapshot that has passed: a passed closing time then neither misses the
+    deadline nor limits `validUntil`. It is still reported.
     """
     codes = list(dict.fromkeys(product_request.product_code for product_request in requested))
     products = {p.code: p for p in await catalog_crud.get_products_by_codes(session, codes)}
@@ -89,6 +94,7 @@ async def get_offers(
                 deliver_by=deliver_by,
                 language=language,
                 now=now,
+                ignore_closing_time=ignore_closing_time,
             )
             for product_request in requested
         ],
@@ -146,6 +152,7 @@ def _offer_line(
     deliver_by: date,
     language: Language,
     now: datetime,
+    ignore_closing_time: bool,
 ) -> OfferLine:
     reasons: list[OfferReasonCode] = []
 
@@ -156,7 +163,11 @@ def _offer_line(
     availability = None
     if availability_entry is not None:
         availability, availability_reasons = _offer_availability(
-            availability_entry[0].value, product, deliver_by=deliver_by, now=now
+            availability_entry[0].value,
+            product,
+            deliver_by=deliver_by,
+            now=now,
+            ignore_closing_time=ignore_closing_time,
         )
         reasons += availability_reasons
     else:
@@ -177,7 +188,9 @@ def _offer_line(
         availability=availability,
         quantity=quantity,
         reason_codes=tuple(dict.fromkeys(reasons)),
-        provenance=_provenance(price_entry, availability_entry, price, availability, now),
+        provenance=_provenance(
+            price_entry, availability_entry, price, availability, now, ignore_closing_time
+        ),
     )
 
 
@@ -205,11 +218,12 @@ def _offer_availability(
     *,
     deliver_by: date,
     now: datetime,
+    ignore_closing_time: bool,
 ) -> tuple[OfferAvailability, list[OfferReasonCode]]:
     reasons: list[OfferReasonCode] = []
     logistic_model = _logistic_model(availability.logistic_model)
     closing_time = parse_timestamp(availability.closing_time)
-    closing_passed = closing_time is not None and closing_time <= now
+    closing_passed = not ignore_closing_time and closing_time is not None and closing_time <= now
 
     lines = sorted(
         availability.schedule_lines,
@@ -319,13 +333,14 @@ def _provenance(
     price: OfferPrice | None,
     availability: OfferAvailability | None,
     now: datetime,
+    ignore_closing_time: bool,
 ) -> OfferProvenance:
     entries = [e for e in (price_entry, availability_entry) if e is not None]
     deadlines = [
         d
         for d in (
             price.valid_to if price else None,
-            availability.closing_time if availability else None,
+            _closing_deadline(availability, now, ignore_closing_time),
         )
         if d is not None
     ]
@@ -335,6 +350,16 @@ def _provenance(
         valid_until=min(deadlines, default=None),
         cached=any(cached for _, cached in entries),
     )
+
+
+def _closing_deadline(
+    availability: OfferAvailability | None, now: datetime, ignore_closing_time: bool
+) -> datetime | None:
+    if availability is None or availability.closing_time is None:
+        return None
+    if ignore_closing_time and availability.closing_time <= now:
+        return None
+    return availability.closing_time
 
 
 def _logistic_model(value: str | None) -> LogisticModel | None:
