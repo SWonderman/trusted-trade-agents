@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     # would mark every offer CLOSING_TIME_PASSED. True treats a passed one as not binding.
     offers_ignore_closing_time: bool = False
 
+    # Quotes: the longest a quote stays valid; price validity and closing time can cut it shorter
+    quote_ttl_minutes: int = 15
+
 
 @lru_cache
 def get_settings() -> Settings:

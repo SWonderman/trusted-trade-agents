@@ -269,6 +269,14 @@ async def get_product_by_code(session: AsyncSession, code: str) -> Product | Non
     return await session.scalar(stmt)
 
 
+# What offers need of a product: names, units and packaging levels
+_OFFER_LOADS = (
+    selectinload(Product.translations),
+    selectinload(Product.units),
+    selectinload(Product.packaging_levels),
+)
+
+
 async def get_products_by_codes(session: AsyncSession, codes: Collection[str]) -> list[Product]:
     """
     The products with these codes, with what offers need loaded: names, units and
@@ -276,13 +284,29 @@ async def get_products_by_codes(session: AsyncSession, codes: Collection[str]) -
     """
     if not codes:
         return []
+    stmt = select(Product).where(Product.code.in_(codes)).options(*_OFFER_LOADS)
+    return list((await session.scalars(stmt)).all())
+
+
+async def get_products_with_facts(session: AsyncSession, codes: Collection[str]) -> list[Product]:
+    """
+    Like `get_products_by_codes`, plus what the policy judges and quotes list: category,
+    vendor, claims, labels, diets, allergens and deposits.
+    """
+    if not codes:
+        return []
     stmt = (
         select(Product)
         .where(Product.code.in_(codes))
         .options(
-            selectinload(Product.translations),
-            selectinload(Product.units),
-            selectinload(Product.packaging_levels),
+            *_OFFER_LOADS,
+            selectinload(Product.claims),
+            selectinload(Product.labels),
+            selectinload(Product.diets),
+            selectinload(Product.allergens),
+            selectinload(Product.deposits),
+            joinedload(Product.category),
+            joinedload(Product.vendor),
         )
     )
     return list((await session.scalars(stmt)).all())

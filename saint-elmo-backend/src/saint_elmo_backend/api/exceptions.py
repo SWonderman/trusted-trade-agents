@@ -89,6 +89,9 @@ class ErrorCode(StrEnum):
     # Mandates
     MANDATE_NOT_FOUND = "MANDATE_NOT_FOUND"
 
+    # Quotes
+    QUOTE_NOT_FOUND = "QUOTE_NOT_FOUND"
+
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
     DUPLICATE_LOCATION = "DUPLICATE_LOCATION"
@@ -656,6 +659,15 @@ class MandateNotFound(SaintElmoHTTPException):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             error_code=ErrorCode.MANDATE_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class QuoteNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "No quote with this id in your buyer organisation"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.QUOTE_NOT_FOUND,
             detail=detail,
         )
 
