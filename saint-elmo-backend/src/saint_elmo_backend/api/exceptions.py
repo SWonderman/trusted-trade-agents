@@ -88,8 +88,13 @@ class ErrorCode(StrEnum):
     VALIO_AIMO_UNAVAILABLE = "VALIO_AIMO_UNAVAILABLE"
     CUSTOMER_NUMBER_MISSING = "CUSTOMER_NUMBER_MISSING"
 
+    # Agents
+    AGENT_NOT_FOUND = "AGENT_NOT_FOUND"
+    AGENT_TOKEN_NOT_FOUND = "AGENT_TOKEN_NOT_FOUND"
+
     # Mandates
     MANDATE_NOT_FOUND = "MANDATE_NOT_FOUND"
+    MANDATE_REQUIRED = "MANDATE_REQUIRED"
 
     # Quotes
     QUOTE_NOT_FOUND = "QUOTE_NOT_FOUND"
@@ -666,6 +671,33 @@ class MandateNotFound(SaintElmoHTTPException):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             error_code=ErrorCode.MANDATE_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class MandateRequired(SaintElmoHTTPException):
+    def __init__(self, detail: str = "The agent has no mandate; set one before issuing a token"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.MANDATE_REQUIRED,
+            detail=detail,
+        )
+
+
+class AgentNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "No agent with this id in your buyer organisation"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.AGENT_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class AgentTokenNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "This agent has no token with this id"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.AGENT_TOKEN_NOT_FOUND,
             detail=detail,
         )
 
