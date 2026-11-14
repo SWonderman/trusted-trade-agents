@@ -10,7 +10,12 @@ from saint_elmo_backend.catalog.models import Product
 async def search_product_ids(
     session: AsyncSession, *, limit: int, offset: int
 ) -> list[int]:
-    stmt = select(Product.id).limit(limit).offset(offset)
+    stmt = (
+        select(Product.id)
+        .order_by(Product.delivery_reliability.desc().nulls_last(), Product.code)
+        .limit(limit)
+        .offset(offset)
+    )
     return list((await session.execute(stmt)).scalars().all())
 
 

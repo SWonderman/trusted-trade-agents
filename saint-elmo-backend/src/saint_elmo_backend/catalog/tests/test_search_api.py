@@ -2,6 +2,8 @@
 POST /api/v1/products/search, exercised over HTTP.
 """
 
+from decimal import Decimal
+
 from saint_elmo_backend.catalog.tests.factories import make_product
 from saint_elmo_backend.core.settings import get_settings
 
@@ -24,6 +26,21 @@ async def test_browse_returns_products_with_provenance(reference_data, session, 
         "source": "Valio Aimo static catalog + GS1 Synkka",
         "catalogSnapshotDate": get_settings().catalog_snapshot_date.isoformat(),
     }
+
+
+async def test_browse_returns_most_reliable_products_first(reference_data, session, client):
+    await make_product(session, code="100001", delivery_reliability=Decimal("0.40"))
+    await make_product(session, code="100002", delivery_reliability=None)
+    await make_product(session, code="100003", delivery_reliability=Decimal("0.95"))
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    assert [item["code"] for item in response.json()["items"]] == [
+        "100003",
+        "100001",
+        "100002",
+    ]
 
 
 async def test_empty_body_is_a_valid_browse_request(client):
