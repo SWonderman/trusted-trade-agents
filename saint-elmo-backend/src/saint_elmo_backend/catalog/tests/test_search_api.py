@@ -140,6 +140,60 @@ async def test_browse_hits_have_no_relevance(reference_data, session, client):
     assert response.json()["items"][0]["relevance"] is None
 
 
+async def test_hit_carries_the_product_attributes(reference_data, session, client):
+    await make_product(
+        session,
+        code="100001",
+        names={"en": "Lactose free milk"},
+        gtin="06408430000012",
+        category="C200",
+        vendor="Valio Oy",
+        brand="Valio",
+        sales_unit="KI",
+        base_unit="ST",
+        allowed_lot_size=Decimal("1"),
+        variable_unit=False,
+        country_of_origin="fi",
+        delivery_reliability=Decimal("0.975"),
+        carbon_footprint=Decimal("1.250"),
+    )
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    [hit] = response.json()["items"]
+    expected = {
+        "code": "100001",
+        "name": "Lactose free milk",
+        "gtin": "06408430000012",
+        "categoryCode": "C200",
+        "vendor": "Valio Oy",
+        "brand": "Valio",
+        "salesUnit": "KI",
+        "baseUnit": "ST",
+        "allowedLotSize": 1.0,
+        "variableUnit": False,
+        "countryOfOrigin": "fi",
+        "deliveryReliability": 0.975,
+        "carbonFootprint": {"value": 1.25, "basis": "PRODUCT_GROUP_AVERAGE"},
+    }
+    assert {key: hit.get(key) for key in expected} == expected
+
+
+async def test_missing_reliability_carbon_footprint_and_brand_are_null(
+    reference_data, session, client
+):
+    await make_product(session, brand=None, delivery_reliability=None, carbon_footprint=None)
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    [hit] = response.json()["items"]
+    assert hit["deliveryReliability"] is None
+    assert hit["carbonFootprint"] is None
+    assert hit["brand"] is None
+
+
 async def test_empty_body_is_a_valid_browse_request(client):
     response = await client.post(SEARCH_URL, json={})
 

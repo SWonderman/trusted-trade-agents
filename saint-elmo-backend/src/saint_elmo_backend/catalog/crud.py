@@ -1,7 +1,7 @@
 from sqlalchemy import Select, cast, func, literal, null, or_, select
 from sqlalchemy.dialects.postgresql import REGCONFIG
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload, selectinload
 
 from saint_elmo_backend.catalog.dtos import ProductMatch
 from saint_elmo_backend.catalog.models import Product, ProductTranslation
@@ -67,7 +67,16 @@ async def search_products(
             .join(matches, matches.c.product_id == Product.id)
             .order_by(matches.c.relevance.desc(), Product.code)
         )
-    stmt = stmt.limit(limit).offset(offset).options(selectinload(Product.translations))
+    stmt = (
+        stmt.limit(limit)
+        .offset(offset)
+        .options(
+            selectinload(Product.translations),
+            joinedload(Product.category),
+            joinedload(Product.vendor),
+            joinedload(Product.brand),
+        )
+    )
     return [
         ProductMatch(product=product, relevance=relevance)
         for product, relevance in (await session.execute(stmt)).all()

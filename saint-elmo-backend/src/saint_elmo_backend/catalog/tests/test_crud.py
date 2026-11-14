@@ -150,3 +150,18 @@ async def test_text_match_ranks_above_a_fuzzy_match(reference_data, session):
     matches = await crud.search_products(session, query="milk", limit=20, offset=0)
 
     assert [match.product.id for match in matches] == [exact.id, fuzzy.id]
+
+
+@pytest.mark.parametrize("query", [None, "milk"], ids=["browse", "query"])
+async def test_search_loads_category_vendor_and_brand(reference_data, session, query):
+    await make_product(
+        session, names={"en": "Milk"}, category="C200", vendor="Valio Oy", brand="Valio"
+    )
+    session.expunge_all()
+
+    [match] = await crud.search_products(session, query=query, limit=20, offset=0)
+
+    assert match.product.category.code == "C200"
+    assert match.product.vendor.name == "Valio Oy"
+    assert match.product.brand is not None
+    assert match.product.brand.name == "Valio"

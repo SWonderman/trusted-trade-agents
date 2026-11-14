@@ -1,4 +1,6 @@
 from datetime import date
+from decimal import Decimal
+from typing import Literal
 
 from pydantic import Field
 
@@ -9,6 +11,10 @@ from saint_elmo_backend.catalog.dtos import (
 )
 from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.core.schema import CamelBaseModel
+
+# TODO(sw): this could be moved to core.utils.py or somethinl like that
+def _to_float(value: Decimal | None) -> float | None:
+    return float(value) if value is not None else None
 
 
 class ProductSearchRequest(CamelBaseModel):
@@ -36,16 +42,62 @@ class Provenance(CamelBaseModel):
         )
 
 
+class CarbonFootprint(CamelBaseModel):
+    value: float = Field(description="kg CO2-eq per kg")
+    basis: Literal["PRODUCT_GROUP_AVERAGE"] = Field(
+        default="PRODUCT_GROUP_AVERAGE",
+        description="The value is the average of the product's group, not of this product",
+    )
+
+
 class ProductHit(CamelBaseModel):
     code: str
     name: str | None
+    gtin: str | None
+    category_code: str = Field(description="Category names are not in the source data")
+    vendor: str
+    brand: str | None
+    sales_unit: str = Field(description="Unit the product is ordered and priced in")
+    base_unit: str
+    allowed_lot_size: float = Field(
+        description="Order quantity must be a multiple of this, in sales units"
+    )
+    variable_unit: bool | None = Field(
+        description="Sold by variable weight, so the actual quantity of a unit varies"
+    )
+    country_of_origin: str | None = Field(description="ISO 3166-1 alpha-2, lowercase")
+    delivery_reliability: float | None = Field(
+        description="Share of historical orders delivered as ordered, 0-1; "
+        "null means no history, not unreliable"
+    )
+    carbon_footprint: CarbonFootprint | None
     relevance: float | None = Field(
         description="Text search rank, higher is better; null when there was no query"
     )
 
     @classmethod
     def from_hit(cls, hit: ProductSearchHit) -> "ProductHit":
-        return cls(code=hit.product.code, name=hit.name, relevance=hit.relevance)
+        product = hit.product
+        return cls(
+            code=product.code,
+            name=hit.name,
+            gtin=product.gtin,
+            category_code=product.category.code,
+            vendor=product.vendor.name,
+            brand=product.brand.name if product.brand else None,
+            sales_unit=product.sales_unit,
+            base_unit=product.base_unit,
+            allowed_lot_size=float(product.allowed_lot_size),
+            variable_unit=product.variable_unit,
+            country_of_origin=product.country_of_origin,
+            delivery_reliability=_to_float(product.delivery_reliability),
+            carbon_footprint=(
+                CarbonFootprint(value=float(product.carbon_footprint))
+                if product.carbon_footprint is not None
+                else None
+            ),
+            relevance=hit.relevance,
+        )
 
 
 class ProductSearchResponse(CamelBaseModel):
