@@ -16,14 +16,12 @@ from saint_elmo_backend.catalog.dtos import (
 from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.catalog.exceptions import ProductNotFoundError, UnknownCodesError
 from saint_elmo_backend.catalog.models import (
-    Allergen,
     Category,
     ClaimElement,
     ClaimType,
     Diet,
     Label,
     Product,
-    ProductAllergen,
     ProductDiet,
     ProductLabel,
 )
@@ -141,11 +139,6 @@ async def get_vocabulary(session: AsyncSession) -> CatalogVocabulary:
         labels=await crud.used_codes(
             session, Label, code=ProductLabel.label_code, product_id=ProductLabel.product_id
         ),
-        allergens=await crud.used_codes(
-            session,
-            Allergen,
-            code=ProductAllergen.allergen_code,
-            product_id=ProductAllergen.product_id,
-        ),
+        allergens=await crud.used_allergens(session),
         categories=await crud.used_categories(session),
     )

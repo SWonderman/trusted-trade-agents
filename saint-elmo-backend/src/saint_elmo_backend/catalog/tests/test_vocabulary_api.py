@@ -65,20 +65,36 @@ async def test_labels_list_only_used_codes_with_product_counts(reference_data, s
     ]
 
 
-async def test_allergens_count_every_product_declaring_any_status(reference_data, session, client):
+async def test_allergens_break_product_counts_down_by_declared_status(
+    reference_data, session, client
+):
+    await make_product(session, allergens={"AM": AllergenContainment.CONTAINS})
+    await make_product(session, allergens={"AM": AllergenContainment.MAY_CONTAIN})
     await make_product(
-        session, allergens={"AM": AllergenContainment.CONTAINS, "AW": AllergenContainment.FREE_FROM}
+        session,
+        allergens={"AM": AllergenContainment.FREE_FROM, "AW": AllergenContainment.FREE_FROM},
     )
-    await make_product(session, allergens={"AM": AllergenContainment.FREE_FROM})
+    await make_product(session, allergens={"AM": AllergenContainment.UNDECLARED})
+    # No AM row: unknown status, counted nowhere
     await make_product(session)
     await session.commit()
 
     response = await client.get(VOCABULARY_URL)
 
     allergens = response.json()["allergens"]
-    assert [(a["code"], a["name"], a["productCount"]) for a in allergens] == [
-        ("AM", "Milk and its derivatives", 2),
-        ("AW", "Cereals and its derivatives", 1),
+    assert [(a["code"], a["name"], a["productCount"], a["statusCounts"]) for a in allergens] == [
+        (
+            "AM",
+            "Milk and its derivatives",
+            4,
+            {"contains": 1, "mayContain": 1, "undeclared": 1, "freeFrom": 1},
+        ),
+        (
+            "AW",
+            "Cereals and its derivatives",
+            1,
+            {"contains": 0, "mayContain": 0, "undeclared": 0, "freeFrom": 1},
+        ),
     ]
     assert allergens[0]["definition"].startswith(
         "Definition (includes Common Name): Refers to the presence of milk"

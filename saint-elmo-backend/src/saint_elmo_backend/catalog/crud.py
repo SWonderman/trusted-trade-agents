@@ -19,6 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute, joinedload, selectinload
 
 from saint_elmo_backend.catalog.dtos import (
+    AllergenUsage,
     CategoryUsage,
     ClaimUsage,
     CodeUsage,
@@ -26,8 +27,9 @@ from saint_elmo_backend.catalog.dtos import (
     ProductFilters,
     ProductMatch,
 )
-from saint_elmo_backend.catalog.enums import Language
+from saint_elmo_backend.catalog.enums import AllergenContainment, Language
 from saint_elmo_backend.catalog.models import (
+    Allergen,
     Category,
     ClaimElement,
     ClaimType,
@@ -302,3 +304,35 @@ async def used_categories(session: AsyncSession) -> list[CategoryUsage]:
         CategoryUsage(code=row.code, product_count=row.product_count)
         for row in (await session.execute(stmt)).all()
     ]
+
+
+async def used_allergens(session: AsyncSession) -> list[AllergenUsage]:
+    """
+    Allergens that at least one product declares a status for, ordered by code, with
+    the number of products per status. Statuses no product declares count as 0.
+    """
+    stmt = (
+        select(
+            Allergen.code,
+            Allergen.name,
+            Allergen.definition,
+            ProductAllergen.containment,
+            func.count(distinct(ProductAllergen.product_id)).label("product_count"),
+        )
+        .join_from(Allergen, ProductAllergen, ProductAllergen.allergen_code == Allergen.code)
+        .group_by(Allergen.id, ProductAllergen.containment)
+        .order_by(Allergen.code)
+    )
+
+    usages: dict[str, AllergenUsage] = {}
+    for row in (await session.execute(stmt)).all():
+        usage = usages.get(row.code)
+        if usage is None:
+            usage = usages[row.code] = AllergenUsage(
+                code=row.code,
+                name=row.name,
+                definition=row.definition,
+                status_counts=dict.fromkeys(AllergenContainment, 0),
+            )
+        usage.status_counts[row.containment] = row.product_count
+    return list(usages.values())
