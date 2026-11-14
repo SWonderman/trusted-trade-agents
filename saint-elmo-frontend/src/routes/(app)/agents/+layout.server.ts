@@ -1,0 +1,10 @@
+import { api } from '#lib/server/api/index.js';
+import { requireCaller, requireRole } from '#lib/server/session.js';
+import type { LayoutServerLoad } from './$types';
+
+export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
+	const caller = requireCaller(locals, url);
+	requireRole(caller, 'buyer_admin');
+	depends('app:agents');
+	return { agents: await api.agents.list(caller) };
+};

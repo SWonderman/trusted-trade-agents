@@ -1,0 +1,274 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* Self-hosted type: nothing is fetched from a font CDN. */
+@import '@fontsource-variable/public-sans/wght.css';
+@import '@fontsource/alegreya/400.css';
+@import '@fontsource/alegreya/400-italic.css';
+@import '@fontsource/alegreya/500.css';
+@import '@fontsource/alegreya/700.css';
+@import '@fontsource/alegreya-sc/500.css';
+@import '@fontsource/grenze-gotisch/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/*
+ * Tokens. Raw values live in --se-* so dark mode can swap them; Tailwind
+ * utilities read them through @theme (bg-surface, text-ink, border-line…).
+ */
+:root {
+	/* App: ledger and margin */
+	--se-surface: #f5f6f8;
+	--se-panel: #ffffff;
+	--se-sunken: #eef0f4;
+	--se-line: #e2e5eb;
+	--se-line-strong: #c9ced8;
+	--se-ink: #1a2233;
+	--se-muted: #5b6475;
+	--se-faint: #8a92a3;
+	--se-lapis: #2a3f8f;
+	--se-lapis-hover: #22347a;
+	--se-lapis-wash: #e9edf8;
+	--se-ok: #1f7a4d;
+	--se-ok-wash: #e6f3ec;
+	--se-hold: #9a5b00;
+	--se-hold-wash: #fbf0dc;
+	--se-stop: #b42318;
+	--se-stop-wash: #fbe9e7;
+	--se-focus: #4f6bd8;
+	--se-margin: #f7f4ec;
+	--se-on-lapis: #ffffff;
+
+	/* Marketing: illuminated folio */
+	--se-folio-lapis: #1e2f6b;
+	--se-folio-deep: #131e47;
+	--se-gold: #c8a24a;
+	--se-vellum: #efe6d0;
+	--se-vermilion: #a8321e;
+	--se-corona: #8fa8ff;
+
+	color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		--se-surface: #10141d;
+		--se-panel: #171c27;
+		--se-sunken: #0c1017;
+		--se-line: #262d3b;
+		--se-line-strong: #364052;
+		--se-ink: #e6e9f0;
+		--se-muted: #a3abbb;
+		--se-faint: #737c8e;
+		--se-lapis: #8fa3ec;
+		--se-lapis-hover: #a9b9f2;
+		--se-lapis-wash: #1d2647;
+		--se-ok: #5cc28f;
+		--se-ok-wash: #12291e;
+		--se-hold: #e8a840;
+		--se-hold-wash: #2e2210;
+		--se-stop: #f2776b;
+		--se-stop-wash: #331614;
+		--se-focus: #8fa3ec;
+		--se-margin: #1b1f26;
+		--se-on-lapis: #10141d;
+		color-scheme: dark;
+	}
+}
+
+:root[data-theme='dark'] {
+	--se-surface: #10141d;
+	--se-panel: #171c27;
+	--se-sunken: #0c1017;
+	--se-line: #262d3b;
+	--se-line-strong: #364052;
+	--se-ink: #e6e9f0;
+	--se-muted: #a3abbb;
+	--se-faint: #737c8e;
+	--se-lapis: #8fa3ec;
+	--se-lapis-hover: #a9b9f2;
+	--se-lapis-wash: #1d2647;
+	--se-ok: #5cc28f;
+	--se-ok-wash: #12291e;
+	--se-hold: #e8a840;
+	--se-hold-wash: #2e2210;
+	--se-stop: #f2776b;
+	--se-stop-wash: #331614;
+	--se-focus: #8fa3ec;
+	--se-margin: #1b1f26;
+	--se-on-lapis: #10141d;
+	color-scheme: dark;
+}
+
+@theme static {
+	--color-surface: var(--se-surface);
+	--color-panel: var(--se-panel);
+	--color-sunken: var(--se-sunken);
+	--color-line: var(--se-line);
+	--color-line-strong: var(--se-line-strong);
+	--color-ink: var(--se-ink);
+	--color-muted: var(--se-muted);
+	--color-faint: var(--se-faint);
+	--color-lapis: var(--se-lapis);
+	--color-lapis-hover: var(--se-lapis-hover);
+	--color-lapis-wash: var(--se-lapis-wash);
+	--color-ok: var(--se-ok);
+	--color-ok-wash: var(--se-ok-wash);
+	--color-hold: var(--se-hold);
+	--color-hold-wash: var(--se-hold-wash);
+	--color-stop: var(--se-stop);
+	--color-stop-wash: var(--se-stop-wash);
+	--color-margin: var(--se-margin);
+
+	--color-folio-lapis: var(--se-folio-lapis);
+	--color-folio-deep: var(--se-folio-deep);
+	--color-gold: var(--se-gold);
+	--color-vellum: var(--se-vellum);
+	--color-vermilion: var(--se-vermilion);
+	--color-corona: var(--se-corona);
+
+	--font-sans: 'Public Sans Variable', 'Public Sans', system-ui, sans-serif;
+	--font-serif: 'Alegreya', 'Iowan Old Style', Georgia, serif;
+	--font-smallcaps: 'Alegreya SC', 'Alegreya', Georgia, serif;
+	--font-blackletter: 'Grenze Gotisch', 'Alegreya', serif;
+	--font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+}
+
+@layer base {
+	html {
+		background: var(--se-surface);
+		color: var(--se-ink);
+		font-family: var(--font-sans);
+		font-feature-settings: 'tnum' 0;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	body {
+		min-height: 100dvh;
+		background: var(--se-surface);
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--se-focus);
+		outline-offset: 2px;
+	}
+
+	/* Figures in tables and money line up. */
+	.tabular {
+		font-variant-numeric: tabular-nums;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+/* Shared controls. Radii carry hierarchy: 4px controls, 8px panels, 12px overlays. */
+@layer components {
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		min-height: 2.25rem;
+		padding: 0 0.875rem;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--se-line-strong);
+		background: var(--se-panel);
+		color: var(--se-ink);
+		font-size: 0.875rem;
+		font-weight: 550;
+		line-height: 1;
+		white-space: nowrap;
+		cursor: pointer;
+		transition:
+			background-color 120ms,
+			border-color 120ms;
+	}
+	.btn:hover {
+		background: var(--se-sunken);
+	}
+	.btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	.btn-primary {
+		background: var(--se-lapis);
+		border-color: var(--se-lapis);
+		color: var(--se-on-lapis);
+	}
+	.btn-primary:hover {
+		background: var(--se-lapis-hover);
+		border-color: var(--se-lapis-hover);
+	}
+	.btn-danger {
+		color: var(--se-stop);
+		border-color: color-mix(in srgb, var(--se-stop) 45%, var(--se-line));
+	}
+	.btn-danger:hover {
+		background: var(--se-stop-wash);
+	}
+	.btn-quiet {
+		border-color: transparent;
+		background: transparent;
+		color: var(--se-muted);
+	}
+	.btn-quiet:hover {
+		background: var(--se-sunken);
+		color: var(--se-ink);
+	}
+	.btn-sm {
+		min-height: 1.875rem;
+		padding: 0 0.625rem;
+		font-size: 0.8125rem;
+	}
+
+	.field-label {
+		display: block;
+		margin-bottom: 0.375rem;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--se-ink);
+	}
+	.field-hint {
+		margin-top: 0.375rem;
+		font-size: 0.8125rem;
+		color: var(--se-muted);
+	}
+	.input {
+		width: 100%;
+		min-height: 2.375rem;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--se-line-strong);
+		background: var(--se-panel);
+		color: var(--se-ink);
+		font-size: 0.9375rem;
+	}
+	.input:focus {
+		border-color: var(--se-focus);
+		box-shadow: 0 0 0 1px var(--se-focus);
+	}
+	.panel {
+		border: 1px solid var(--se-line);
+		border-radius: var(--radius-md);
+		background: var(--se-panel);
+	}
+	.code {
+		font-family: var(--font-mono);
+		font-size: 0.8125em;
+		letter-spacing: -0.01em;
+	}
+}
