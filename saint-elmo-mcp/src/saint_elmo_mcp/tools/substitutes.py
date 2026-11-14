@@ -3,6 +3,7 @@ from typing import Annotated, Literal
 from urllib.parse import quote
 
 from mcp.server.mcpserver import Context, MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 from pydantic import Field, StringConstraints, WithJsonSchema
 
@@ -137,6 +138,9 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
             Field(description="Language of product names; defaults to en, falls back to fi."),
         ] = None,
     ) -> Substitutes:
+        # Mirrors the backend's SubstitutesIn._unit_needs_quantity
+        if unit is not None and quantity is None:
+            raise ToolError("VALIDATION_ERROR: `unit` needs `quantity`; give both or neither.")
         data = await backend.post(
             f"/api/v1/products/{quote(code, safe='')}/substitutes",
             agent_key=agent_key(ctx),

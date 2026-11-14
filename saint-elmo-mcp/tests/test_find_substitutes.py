@@ -315,3 +315,12 @@ async def test_missing_key_is_an_error_and_backend_is_not_called(connect, backen
     assert result.is_error
     assert "MISSING_AGENT_KEY" in text(result)
     assert backend.requests == []
+
+
+async def test_a_unit_without_a_quantity_is_rejected_without_a_backend_call(connect, backend):
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        result = await client.call_tool("find_substitutes", {"code": "463038", "unit": "L"})
+
+    assert result.is_error
+    assert "quantity" in text(result)
+    assert backend.requests == []
