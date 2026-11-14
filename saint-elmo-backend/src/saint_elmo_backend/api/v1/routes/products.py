@@ -9,9 +9,7 @@ router = APIRouter()
 
 # TODO(#7): require auth once the auth ticket lands; the catalogue is global, non-tenant data
 @router.post("/search", response_model=ProductSearchResponse)
-async def search_products(
-    data: ProductSearchRequest, session: ASession
-) -> ProductSearchResponse:
+async def search_products(data: ProductSearchRequest, session: ASession) -> ProductSearchResponse:
     result = await services.search_products(
         session,
         query=data.query,

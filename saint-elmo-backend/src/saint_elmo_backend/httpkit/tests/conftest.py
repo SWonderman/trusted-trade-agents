@@ -1,8 +1,7 @@
+from collections.abc import Mapping
 from typing import Protocol
 
 import pytest
-
-from collections.abc import Mapping
 
 from saint_elmo_backend.httpkit.response import ResponseWrapper
 from saint_elmo_backend.httpkit.tests.fakes import (
@@ -56,9 +55,7 @@ def make_async_client() -> MakeAsyncClient:
         headers: Mapping[str, str] | None = None,
     ) -> tuple[FakeAsyncClient, FakeAsyncTransport]:
         transport = FakeAsyncTransport(response=response, raises=raises)
-        client = FakeAsyncClient(
-            api_url="https://api", api_key="key", transport=transport
-        )
+        client = FakeAsyncClient(api_url="https://api", api_key="key", transport=transport)
         if headers is not None:
             client.headers = headers
 

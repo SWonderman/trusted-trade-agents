@@ -41,9 +41,7 @@ async def create_database(url: str) -> None:
 
     parsed = make_url(url)
     # CREATE DATABASE cannot run inside a transaction, nor in the target database
-    engine = create_async_engine(
-        parsed.set(database="postgres"), isolation_level="AUTOCOMMIT"
-    )
+    engine = create_async_engine(parsed.set(database="postgres"), isolation_level="AUTOCOMMIT")
     try:
         async with engine.connect() as conn:
             exists = await conn.scalar(
@@ -66,14 +64,18 @@ async def truncate_all(url: str) -> None:
     try:
         async with engine.begin() as conn:
             tables = (
-                await conn.execute(
-                    text(
-                        "SELECT tablename FROM pg_tables "
-                        "WHERE schemaname = 'public' "
-                        "AND tablename <> 'alembic_version'"
+                (
+                    await conn.execute(
+                        text(
+                            "SELECT tablename FROM pg_tables "
+                            "WHERE schemaname = 'public' "
+                            "AND tablename <> 'alembic_version'"
+                        )
                     )
                 )
-            ).scalars().all()
+                .scalars()
+                .all()
+            )
             if tables:
                 names = ", ".join(f'"{name}"' for name in tables)
                 await conn.execute(text(f"TRUNCATE {names} RESTART IDENTITY CASCADE"))

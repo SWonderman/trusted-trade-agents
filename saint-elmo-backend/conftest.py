@@ -9,18 +9,16 @@ Pure unit tests request none of these fixtures and stay DB-free.
 """
 
 import asyncio
-
 from collections.abc import AsyncIterator, Iterator
 from pathlib import Path
 
 import pytest
-
-from alembic import command
 from alembic.config import Config
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from alembic import command
 from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.db.engine import dispose_engine, get_engine, get_sessionmaker
 from saint_elmo_backend.db.seeders.code_lists import seed_code_lists

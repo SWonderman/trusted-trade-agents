@@ -7,10 +7,9 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from saint_elmo_backend.core.settings import get_settings
-
 # Importing registers the RLS after_begin listener on the Session class.
 import saint_elmo_backend.db.tenancy  # noqa: F401
+from saint_elmo_backend.core.settings import get_settings
 
 
 @lru_cache

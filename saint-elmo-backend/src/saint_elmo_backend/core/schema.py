@@ -1,8 +1,7 @@
 import re
-
+from collections.abc import Iterable, Mapping
 from decimal import Decimal
 from typing import Annotated, overload
-from collections.abc import Mapping, Iterable
 
 from pydantic import BaseModel, ConfigDict, PlainSerializer
 

@@ -27,9 +27,6 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from saint_elmo_backend.db.base import Base
-from saint_elmo_backend.db.types import JSONB_
-
 from saint_elmo_backend.catalog.enums import (
     AllergenContainment,
     FishProductionMethod,
@@ -37,6 +34,8 @@ from saint_elmo_backend.catalog.enums import (
     SafetyStatementType,
     VatCode,
 )
+from saint_elmo_backend.db.base import Base
+from saint_elmo_backend.db.types import JSONB_
 
 CODE_LENGTH = 80
 
@@ -183,9 +182,7 @@ class Producer(Base):
 class Product(Base):
     __tablename__ = "products"
     __table_args__ = (
-        CheckConstraint(
-            "delivery_reliability BETWEEN 0 AND 1", name="delivery_reliability_range"
-        ),
+        CheckConstraint("delivery_reliability BETWEEN 0 AND 1", name="delivery_reliability_range"),
         CheckConstraint("allowed_lot_size > 0", name="allowed_lot_size_positive"),
     )
 
@@ -314,9 +311,7 @@ class ProductProducer(Base):
     __tablename__ = "product_producers"
     __table_args__ = (UniqueConstraint("product_id", "producer_id"),)
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     producer_id: Mapped[int] = mapped_column(
         ForeignKey("producers.id", ondelete="CASCADE"), index=True
     )
@@ -373,9 +368,7 @@ class ProductTranslation(Base):
         ),
     )
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="translations")
 
 
@@ -395,9 +388,7 @@ class ProductUnit(Base):
     size_in_base_units: Mapped[Decimal] = mapped_column(Numeric(14, 4))
     gtin: Mapped[str | None] = mapped_column(String(14))
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="units")
 
 
@@ -409,9 +400,7 @@ class ProductPackagingLevel(Base):
     __tablename__ = "product_packaging_levels"
     __table_args__ = (UniqueConstraint("product_id", "level"),)
 
-    level: Mapped[PackagingLevel] = mapped_column(
-        Enum(PackagingLevel, name="packaging_level")
-    )
+    level: Mapped[PackagingLevel] = mapped_column(Enum(PackagingLevel, name="packaging_level"))
     length_mm: Mapped[Decimal | None] = mapped_column(Numeric(10, 1))
     width_mm: Mapped[Decimal | None] = mapped_column(Numeric(10, 1))
     height_mm: Mapped[Decimal | None] = mapped_column(Numeric(10, 1))
@@ -421,9 +410,7 @@ class ProductPackagingLevel(Base):
     volume_value: Mapped[Decimal | None] = mapped_column(Numeric(14, 4))
     volume_unit: Mapped[str | None] = mapped_column(String(20))
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="packaging_levels")
 
 
@@ -443,9 +430,7 @@ class ProductDeposit(Base):
     )
     unit: Mapped[str] = mapped_column(String(10))
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="deposits")
 
 
@@ -469,9 +454,7 @@ class ProductAllergen(Base):
         Enum(AllergenContainment, name="allergen_containment")
     )
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="allergens")
 
 
@@ -496,9 +479,7 @@ class ProductClaim(Base):
     )
     claim_element: Mapped["ClaimElement"] = relationship()
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="claims")
 
 
@@ -515,9 +496,7 @@ class ProductDiet(Base):
     )
     diet: Mapped["Diet"] = relationship()
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="diets")
 
 
@@ -536,9 +515,7 @@ class ProductLabel(Base):
     )
     label: Mapped["Label"] = relationship()
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="labels")
 
 
@@ -584,9 +561,7 @@ class ProductNutrient(Base):
         String(CODE_LENGTH), ForeignKey("measurement_units.code", ondelete="RESTRICT")
     )
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="nutrients")
 
 
@@ -598,13 +573,9 @@ class ProductIngredient(Base):
         SmallInteger, comment="Position in the ingredient list, from 1"
     )
     percentage: Mapped[Decimal | None] = mapped_column(Numeric(6, 3))
-    names: Mapped[dict[str, str]] = mapped_column(
-        JSONB_, comment="Name per ISO 639-1 language"
-    )
+    names: Mapped[dict[str, str]] = mapped_column(JSONB_, comment="Name per ISO 639-1 language")
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="ingredients")
 
     origins: Mapped[list["IngredientOrigin"]] = relationship(
@@ -621,9 +592,7 @@ class IngredientOrigin(Base):
         ForeignKey("activity_types.code", ondelete="RESTRICT"),
         comment="e.g. FARMING, MILKING, LAST_PROCESSING",
     )
-    country: Mapped[str] = mapped_column(
-        String(10), comment="ISO 3166-1 numeric, or NON_EU"
-    )
+    country: Mapped[str] = mapped_column(String(10), comment="ISO 3166-1 numeric, or NON_EU")
 
     ingredient_id: Mapped[int] = mapped_column(
         ForeignKey("product_ingredients.id", ondelete="CASCADE")
@@ -642,9 +611,7 @@ class ProductMedia(Base):
     media_id: Mapped[int] = mapped_column(BigInteger)
     is_primary: Mapped[bool]
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="media")
 
 
@@ -652,14 +619,10 @@ class ProductFishSpecies(Base):
     __tablename__ = "product_fish_species"
     __table_args__ = (UniqueConstraint("product_id", "species_code"),)
 
-    species_code: Mapped[str] = mapped_column(
-        String(10), comment="FAO 3-alpha code, e.g. SAL"
-    )
+    species_code: Mapped[str] = mapped_column(String(10), comment="FAO 3-alpha code, e.g. SAL")
     latin_name: Mapped[str] = mapped_column(String(255))
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="fish_species")
 
     catch_methods: Mapped[list["FishCatchMethod"]] = relationship(
@@ -688,9 +651,7 @@ class FishCatchMethod(Base):
     fish_species_id: Mapped[int] = mapped_column(
         ForeignKey("product_fish_species.id", ondelete="CASCADE"), index=True
     )
-    fish_species: Mapped["ProductFishSpecies"] = relationship(
-        back_populates="catch_methods"
-    )
+    fish_species: Mapped["ProductFishSpecies"] = relationship(back_populates="catch_methods")
 
 
 class ProductSafetySheet(Base):
@@ -699,9 +660,7 @@ class ProductSafetySheet(Base):
 
     sheet_id: Mapped[str] = mapped_column(String(50))
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(back_populates="safety_sheets")
 
     statements: Mapped[list["SafetyStatement"]] = relationship(
@@ -739,9 +698,7 @@ class ProductSubstitution(Base):
         CheckConstraint("product_id <> substitute_id", name="not_self"),
     )
 
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.id", ondelete="CASCADE")
-    )
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
     product: Mapped["Product"] = relationship(
         back_populates="substitutions", foreign_keys=[product_id]
     )

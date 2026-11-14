@@ -6,7 +6,6 @@ non-standard codes the catalogue seeder added are upgraded once GS1 lists them.
 """
 
 from loguru import logger
-
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Any
 
 from loguru import logger
-
 from sqlalchemy import Table, insert, select, text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -122,9 +121,7 @@ async def _insert_lookup(
     Insert one row per distinct key and return {key: id}.
     """
     keys = sorted(values)
-    ids = await _insert_returning_ids(
-        session, model, [{key: k, **values[k]} for k in keys]
-    )
+    ids = await _insert_returning_ids(session, model, [{key: k, **values[k]} for k in keys])
     return dict(zip(keys, ids, strict=True))
 
 
@@ -272,9 +269,7 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
             {"product_id": product_id, "label_code": code}
             for code in sorted(source.collect_codes(synkka, "packagingMarkedLabel"))
         ]
-        nutrients += [
-            {"product_id": product_id, **row} for row in source.collect_nutrients(synkka)
-        ]
+        nutrients += [{"product_id": product_id, **row} for row in source.collect_nutrients(synkka)]
 
         # The same media item can be listed twice; it is primary if either says so
         primary_by_media: dict[int, bool] = {}
@@ -318,8 +313,7 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
             for f in synkka.fishing_reports
         ]
         safety_sheets += [
-            ({"product_id": product_id, "sheet_id": sd.sheet_id}, sd)
-            for sd in synkka.safety_data
+            ({"product_id": product_id, "sheet_id": sd.sheet_id}, sd) for sd in synkka.safety_data
         ]
 
     non_standard = 0
@@ -378,9 +372,7 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
         [
             {
                 "fish_species_id": fish_species_id,
-                "production_method": source.normalize_production_method(
-                    m.production_method
-                ),
+                "production_method": source.normalize_production_method(m.production_method),
                 "method_codes": m.methods,
                 "area_codes": m.areas,
             }

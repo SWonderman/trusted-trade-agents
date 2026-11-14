@@ -1,13 +1,13 @@
 import json as _json
+from collections.abc import Mapping
 from types import TracebackType
 from typing import Self, cast, override
-from collections.abc import Mapping
 
 from pydantic import BaseModel, JsonValue
 
+from saint_elmo_backend.httpkit.client import HttpkitBaseAsyncClient, HttpkitBaseSyncClient
 from saint_elmo_backend.httpkit.dataclasses import Request
 from saint_elmo_backend.httpkit.response import ResponseWrapper
-from saint_elmo_backend.httpkit.client import HttpkitBaseAsyncClient, HttpkitBaseSyncClient
 from saint_elmo_backend.httpkit.transport.base import AsyncTransport, SyncTransport
 
 
@@ -83,9 +83,7 @@ class FakeTransport:
 
 
 class FakeAsyncTransport:
-    def __init__(
-        self, response: ResponseWrapper | None = None, raises: Exception | None = None
-    ):
+    def __init__(self, response: ResponseWrapper | None = None, raises: Exception | None = None):
         self._response: ResponseWrapper | None = response
         self._raises: Exception | None = raises
 

@@ -50,8 +50,7 @@ def _matching_product_ids(query: str) -> Select:
         (
             text_match,
             0.5
-            + func.ts_rank(ProductTranslation.search_vector, text_query, _RANK_IN_UNIT_RANGE)
-            / 2,
+            + func.ts_rank(ProductTranslation.search_vector, text_query, _RANK_IN_UNIT_RANGE) / 2,
         ),
         else_=func.similarity(ProductTranslation.name, query) / 2,
     )

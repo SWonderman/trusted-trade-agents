@@ -19,9 +19,7 @@ async def test_browse_without_query_matches_every_product(reference_data, sessio
     assert {match.product.id for match in matches} == {milk.id, butter.id}
 
 
-async def test_browse_orders_by_reliability_desc_nulls_last_then_code(
-    reference_data, session
-):
+async def test_browse_orders_by_reliability_desc_nulls_last_then_code(reference_data, session):
     unknown = await make_product(session, code="100001", delivery_reliability=None)
     reliable_b = await make_product(session, code="100003", delivery_reliability=Decimal("0.95"))
     reliable_a = await make_product(session, code="100002", delivery_reliability=Decimal("0.95"))
@@ -67,9 +65,7 @@ async def test_search_returns_products_with_translations_loaded(reference_data, 
 
 
 @pytest.mark.parametrize("query", ["milk", "maito", "mjölk"], ids=["en", "fi", "sv"])
-async def test_query_finds_a_product_by_its_name_in_each_language(
-    reference_data, session, query
-):
+async def test_query_finds_a_product_by_its_name_in_each_language(reference_data, session, query):
     milk = await make_product(
         session,
         names={"en": "Lactose free milk", "fi": "Laktoositon maito", "sv": "Laktosfri mjölk"},
@@ -126,9 +122,7 @@ async def test_browse_has_no_relevance(reference_data, session):
     assert match.relevance is None
 
 
-async def test_misspelled_query_finds_the_product_by_trigram_similarity(
-    reference_data, session
-):
+async def test_misspelled_query_finds_the_product_by_trigram_similarity(reference_data, session):
     milk = await make_product(session, names={"en": "Lactose free milk"})
     await make_product(session, names={"en": "Butter"})
 
@@ -140,9 +134,7 @@ async def test_misspelled_query_finds_the_product_by_trigram_similarity(
 
 async def test_text_match_ranks_above_a_fuzzy_match(reference_data, session):
     # The fuzzy match is more reliable, so it would come first if ranking were ignored
-    fuzzy = await make_product(
-        session, names={"en": "Milkk"}, delivery_reliability=Decimal("0.99")
-    )
+    fuzzy = await make_product(session, names={"en": "Milkk"}, delivery_reliability=Decimal("0.99"))
     exact = await make_product(
         session, names={"en": "Whole milk"}, delivery_reliability=Decimal("0.10")
     )
@@ -168,9 +160,7 @@ async def test_search_loads_category_vendor_and_brand(reference_data, session, q
 
 
 @pytest.mark.parametrize("query", [None, "milk"], ids=["browse", "query"])
-async def test_search_loads_units_deposits_claims_diets_and_labels(
-    reference_data, session, query
-):
+async def test_search_loads_units_deposits_claims_diets_and_labels(reference_data, session, query):
     await make_product(
         session,
         names={"en": "Milk"},

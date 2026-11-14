@@ -6,7 +6,6 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-
 from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.db.registry import Base
 from saint_elmo_backend.db.types import EncryptedString

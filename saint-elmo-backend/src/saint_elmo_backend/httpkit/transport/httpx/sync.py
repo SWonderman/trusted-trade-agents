@@ -4,22 +4,19 @@ from typing import Self
 import httpx
 
 from saint_elmo_backend.httpkit.dataclasses import Request
-from saint_elmo_backend.httpkit.response import ResponseWrapper
 from saint_elmo_backend.httpkit.exceptions import (
-    HttpkitTransportError,
-    HttpkitTimeoutError,
     HttpkitConnectionError,
+    HttpkitTimeoutError,
+    HttpkitTransportError,
 )
-
-from saint_elmo_backend.httpkit.transport.httpx.response import HttpxResponse
+from saint_elmo_backend.httpkit.response import ResponseWrapper
 from saint_elmo_backend.httpkit.transport.httpx.config import HttpxClientConfig
+from saint_elmo_backend.httpkit.transport.httpx.response import HttpxResponse
 
 
 class HttpxSyncTransport:
     def __init__(self, config: HttpxClientConfig | None = None) -> None:
-        self._client: httpx.Client = httpx.Client(
-            base_url=config.base_url if config else ""
-        )
+        self._client: httpx.Client = httpx.Client(base_url=config.base_url if config else "")
 
     def __enter__(self) -> Self:
         return self
@@ -48,9 +45,7 @@ class HttpxSyncTransport:
                 )
             )
         except httpx.TimeoutException as e:
-            raise HttpkitTimeoutError(
-                message=str(e), method=request.method, url=request.url
-            ) from e
+            raise HttpkitTimeoutError(message=str(e), method=request.method, url=request.url) from e
         except httpx.NetworkError as e:
             raise HttpkitConnectionError(
                 message=str(e), method=request.method, url=request.url

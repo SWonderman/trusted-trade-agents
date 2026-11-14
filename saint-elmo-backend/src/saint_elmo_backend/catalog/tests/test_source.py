@@ -151,7 +151,9 @@ def test_to_grams(unit, value, grams):
 
 
 def test_normalize_production_method_strips_stray_suffix():
-    assert source.normalize_production_method("MARINE_FISHERY1") == FishProductionMethod.MARINE_FISHERY
+    assert (
+        source.normalize_production_method("MARINE_FISHERY1") == FishProductionMethod.MARINE_FISHERY
+    )
     assert source.normalize_production_method("AQUACULTURE") == FishProductionMethod.AQUACULTURE
 
 

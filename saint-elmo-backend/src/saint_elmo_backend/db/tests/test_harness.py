@@ -34,9 +34,7 @@ async def test_client_app_reads_the_test_database(reference_data, session, clien
     response = await client.get("/")
     async with get_sessionmaker()() as app_session:
         name = await app_session.scalar(
-            select(ProductTranslation.name).where(
-                ProductTranslation.product_id == product.id
-            )
+            select(ProductTranslation.name).where(ProductTranslation.product_id == product.id)
         )
 
     assert response.status_code == 200

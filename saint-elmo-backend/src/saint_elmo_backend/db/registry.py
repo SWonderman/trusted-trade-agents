@@ -5,8 +5,7 @@ Alembic autogenerate only sees tables whose models were imported, so add each ne
 `models` module here.
 """
 
-from saint_elmo_backend.db.base import Base
-
 from saint_elmo_backend.catalog import models as catalog_models  # noqa: F401
+from saint_elmo_backend.db.base import Base
 
 __all__ = ["Base"]

@@ -89,9 +89,7 @@ async def test_make_product_defaults_and_shares_category_and_vendor(reference_da
 
     product = await _load(session, first.code)
     assert [t.language for t in product.translations] == ["en"]
-    assert [(u.unit_code, u.size_in_base_units) for u in product.units] == [
-        ("ST", Decimal("1"))
-    ]
+    assert [(u.unit_code, u.size_in_base_units) for u in product.units] == [("ST", Decimal("1"))]
     assert product.claims == []
     assert product.allergens == []
     assert product.delivery_reliability is None

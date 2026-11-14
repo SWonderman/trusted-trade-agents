@@ -2,7 +2,6 @@ from functools import lru_cache
 from typing import override
 
 from cryptography.fernet import Fernet, MultiFernet
-
 from sqlalchemy import JSON, Dialect, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import TypeDecorator
@@ -17,9 +16,7 @@ JSONB_ = JSON().with_variant(JSONB, "postgresql")
 def _cipher() -> MultiFernet:
     keys = get_settings().credential_keys
     if not keys:
-        raise RuntimeError(
-            "No credentials key configured - cannot use EncryptedString type"
-        )
+        raise RuntimeError("No credentials key configured - cannot use EncryptedString type")
 
     return MultiFernet([Fernet(k.encode()) for k in keys])
 

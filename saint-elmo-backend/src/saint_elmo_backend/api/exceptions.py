@@ -2,8 +2,7 @@ from enum import StrEnum
 from typing import Any
 
 from fastapi import HTTPException, status
-
-from pydantic import create_model, Field
+from pydantic import Field, create_model
 
 from saint_elmo_backend.core.schema import CamelBaseModel
 
@@ -105,9 +104,7 @@ class SaintElmoHTTPException(HTTPException):
 
 
 class SomethingWentWrong(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Something went wrong", headers: Headers | None = None
-    ):
+    def __init__(self, detail: str = "Something went wrong", headers: Headers | None = None):
         super().__init__(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code=ErrorCode.INTERNAL,
@@ -218,9 +215,7 @@ class EmailVerificationNotFound(SaintElmoHTTPException):
 
 
 class EmailVerificationInvalid(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "This confirmation link has expired. Request a new one."
-    ):
+    def __init__(self, detail: str = "This confirmation link has expired. Request a new one."):
         super().__init__(
             status_code=status.HTTP_410_GONE,
             error_code=ErrorCode.EMAIL_VERIFICATION_INVALID,
@@ -247,9 +242,7 @@ class InvitationInvalid(SaintElmoHTTPException):
 
 
 class IncompleteRegistration(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "First name, last name, and password are required"
-    ):
+    def __init__(self, detail: str = "First name, last name, and password are required"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.INCOMPLETE_REGISTRATION,
@@ -258,9 +251,7 @@ class IncompleteRegistration(SaintElmoHTTPException):
 
 
 class InvitationRequiresAuthentication(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Log in as the invited email to accept this invitation"
-    ):
+    def __init__(self, detail: str = "Log in as the invited email to accept this invitation"):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             error_code=ErrorCode.INVITATION_REQUIRES_AUTHENTICATION,
@@ -311,9 +302,7 @@ class OrganizationLimitReached(SaintElmoHTTPException):
 
 
 class NotOrganizationOwner(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Only the organization owner can perform this action"
-    ):
+    def __init__(self, detail: str = "Only the organization owner can perform this action"):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
             error_code=ErrorCode.NOT_ORGANIZATION_OWNER,
@@ -340,9 +329,7 @@ class StorefrontNotSyncable(SaintElmoHTTPException):
 
 
 class MarketplaceMisconfigured(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Storefront marketplace connection is misconfigured"
-    ):
+    def __init__(self, detail: str = "Storefront marketplace connection is misconfigured"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.MARKETPLACE_MISCONFIGURED,
@@ -483,9 +470,7 @@ class CarrierUnavailable(SaintElmoHTTPException):
 
 
 class NoDefaultCarrier(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "No default carrier configured for this storefront"
-    ):
+    def __init__(self, detail: str = "No default carrier configured for this storefront"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.NO_DEFAULT_CARRIER,
@@ -512,9 +497,7 @@ class CarrierServiceNotFound(SaintElmoHTTPException):
 
 
 class CarrierAssignmentNotFound(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Carrier assignment not found for this storefront"
-    ):
+    def __init__(self, detail: str = "Carrier assignment not found for this storefront"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.CARRIER_ASSIGNMENT_NOT_FOUND,
