@@ -639,3 +639,81 @@ class Quote(CamelModel):
     buyer_request: str
     rationale: str
     previous_quote_id: str | None
+
+
+# --- Orders (POST /api/v1/orders, GET /api/v1/orders[/{orderId}], issue #15) ---
+# Every field of the backend's OrderResponse. Statuses are a Literal copied from the
+# backend's OrderStatus, so a new value fails loudly. There is no approval model:
+# approving is user-only, and no agent tool can do it.
+
+OrderStatus = Literal["CONFIRMED", "PENDING_APPROVAL", "APPROVED", "PLACED", "REJECTED"]
+
+
+class OrderPolicy(CamelModel):
+    outcome: PolicyOutcome = Field(
+        description="The policy outcome of the latest live re-check, which the order follows."
+    )
+    reasons: list[PolicyReason] = Field(description="Lines in order, then the order's own.")
+    mandate_version: int = Field(description="The mandate version the re-check judged against.")
+
+
+class OrderChange(CamelModel):
+    line_ref: str = Field(description="The line's position (from 1).")
+    field: str = Field(
+        description="unitPrice (net per sales unit), availableAmount, earliestDate, "
+        "closingTime or salesBlocked."
+    )
+    quoted: Any = Field(description="The value the quote was judged on.")
+    now: Any = Field(description="The live value the order was judged on.")
+
+
+class StatusChange(CamelModel):
+    status: OrderStatus
+    at: str
+    by: str = Field(
+        description='Who caused it: "agent:<name>", "user:<name>" (an approver), or '
+        '"system" for placing a confirmed or approved order.'
+    )
+
+
+class OrderAgent(CamelModel):
+    id: str
+    name: str
+
+
+class Order(CamelModel):
+    order_id: str
+    quote_id: str
+    status: OrderStatus = Field(
+        description="PLACED: done. PENDING_APPROVAL: a human decides; poll get_order_status "
+        "after checkAgainAfterSeconds. REJECTED: final, see policy.reasons and approverNote. "
+        "CONFIRMED and APPROVED are brief steps before PLACED."
+    )
+    created_at: str
+    agent: OrderAgent
+    deliver_by: str = Field(description="The delivery date ordered for; check it.")
+    lines: list[QuoteLine] = Field(
+        description="Each line's live offer at the latest re-check, and its verdict."
+    )
+    totals: QuoteTotals = Field(description="Excluding deposits.")
+    deposits: list[QuoteDeposit]
+    policy: OrderPolicy
+    changes: list[OrderChange] = Field(
+        description="Where live data differs from what the quote was judged on. The order "
+        "follows the live result, so it can differ from the quote."
+    )
+    buyer_request: str
+    rationale: str
+    status_history: list[StatusChange] = Field(description="Oldest first.")
+    approver_note: str | None = Field(
+        description="Why the approver decided as they did, once a human decided."
+    )
+    decided_at: str | None
+    check_again_after_seconds: int | None = Field(
+        description="While PENDING_APPROVAL: poll get_order_status no sooner than this."
+    )
+
+
+class OrderList(CamelModel):
+    total: int = Field(description="Orders matching the filter, across all pages.")
+    items: list[Order] = Field(description="Most recent first.")

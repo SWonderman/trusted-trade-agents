@@ -80,7 +80,9 @@ def parse_response[M: BaseModel](model: type[M], data: Any) -> M:
 def _tool_error_from(response: httpx.Response) -> ToolError:
     """Map the backend error envelope to agent-readable text.
 
-    Envelope: {"error": {"code", "message", "requestId"?, "details"?: [{field, message}]}}
+    Envelope: {"error": {"code", "message", "requestId"?, "details"?}}, where
+    details is a list of {field, message} (validation) or an object of facts the
+    agent acts on, e.g. {"orderId"} for QUOTE_ALREADY_ORDERED.
     """
     try:
         error = response.json()["error"]
@@ -95,7 +97,9 @@ def _tool_error_from(response: httpx.Response) -> ToolError:
 
     text = f"{code}: {message}"
     details = error.get("details") or []
-    if details:
+    if isinstance(details, dict):
+        text += "\n" + "\n".join(f"- {key}: {value}" for key, value in details.items())
+    elif details:
         text += "\n" + "\n".join(
             f"- {d.get('field', '?')}: {d.get('message', '')}" for d in details
         )

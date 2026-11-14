@@ -27,9 +27,12 @@ async def test_lists_tools_and_search_uses_rest_field_names(connect):
         "create_quote",
         "get_my_mandate",
         "get_offers",
+        "get_order_status",
         "get_product",
         "get_quote",
         "get_vocabulary",
+        "list_orders",
+        "place_order",
         "search_products",
     ]
     tool = next(t for t in tools if t.name == "search_products")
