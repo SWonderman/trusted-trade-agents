@@ -14,8 +14,10 @@ dependencies = [
     "fastapi[standard]>=0.162.7",
     "httpx>=0.28.1",
     "loguru>=0.8.0",
+    "pwdlib[argon2]>=0.4.0",
     "pydantic>=2.14.3",
     "pydantic-settings>=2.16.3",
+    "pyjwt>=2.15.1",
     "sqlalchemy[asyncio]>=2.1.8",
 ]
 
@@ -46,3 +48,7 @@ target-version = "py313"
 select = ["E", "F", "W", "I", "B", "UP"]
 # Line length is enforced by the formatter; long strings it can't wrap are fine.
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Test signing keys are set before the imports that read settings
+"conftest.py" = ["E402"]

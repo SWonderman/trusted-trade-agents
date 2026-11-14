@@ -15,9 +15,8 @@ created and migrated to head automatically on first use, and truncated before ea
 test, so the seeded dev database is never touched.
 
 - `reference_data` seeds only the GS1 code lists. Insert the products a test needs
-  with `catalog/tests/factories.py`.
-- In tests the app connects to the test database as the owner role, because no
-  migration provisions `app_runtime` yet.
+  with `catalog/tests/factories.py`, and buyer organisations and users with
+  `accounts/tests/factories.py`.
 
 ## Valio Aimo API
 

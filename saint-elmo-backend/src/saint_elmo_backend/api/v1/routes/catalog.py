@@ -1,13 +1,23 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.api.annotations import ASession
+from saint_elmo_backend.api.exceptions import (
+    InvalidCredentials,
+    PermissionDenied,
+    to_response_error,
+)
+from saint_elmo_backend.api.v1.auth import authenticate
 from saint_elmo_backend.catalog import services
 from saint_elmo_backend.catalog.schemas import VocabularyResponse
 
-router = APIRouter()
+# The catalogue is global, so the principal only gates access: it doesn't filter results
+router = APIRouter(
+    dependencies=[Depends(authenticate(users=True, agent_scope=Scope.CATALOG_READ))],
+    responses=to_response_error(InvalidCredentials, PermissionDenied),
+)
 
 
-# TODO(#7): require auth once the auth ticket lands; the catalogue is global, non-tenant data
 @router.get(
     "/vocabulary",
     response_model=VocabularyResponse,

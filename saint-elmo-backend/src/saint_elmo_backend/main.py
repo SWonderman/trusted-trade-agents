@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from saint_elmo_backend.api.error_handlers import register_error_handlers
 from saint_elmo_backend.api.middleware import RequestContextMiddleware
 from saint_elmo_backend.api.v1.router import router as api_v1_router
+from saint_elmo_backend.api.well_known import router as well_known_router
 from saint_elmo_backend.core.logger import setup_logger
 from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.db.engine import dispose_engine
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     register_error_handlers(app)
 
     app.include_router(api_v1_router)
+    app.include_router(well_known_router)
 
     return app
 

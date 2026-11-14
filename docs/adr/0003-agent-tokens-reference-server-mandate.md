@@ -6,7 +6,7 @@ We considered putting the full mandate in the token so the backend could enforce
 
 ## Consequences
 
-- Every authenticated agent request costs a database lookup (credential status, mandate). We pay that anyway for the RLS tenant context and the policy.
+- Every authenticated agent request costs a database lookup (credential status, mandate). We pay that anyway for the policy.
 - Editing a mandate affects all live tokens of that agent at once. The mandate carries a version, and quotes and orders record which version they were judged against.
 - There is no approve scope. Approving is restricted to the user scheme, so no agent token can grant it.
 - User session JWTs stay HS256 with a separate secret, so an agent token can never pass as a user session.

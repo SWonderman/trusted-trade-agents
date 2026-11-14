@@ -11,7 +11,6 @@ from saint_elmo_backend.db.seeders.code_lists import seed_code_lists
 async def run_seeders() -> None:
     settings = get_settings()
 
-    # Seeders use the owner role
     engine = create_async_engine(settings.db_url)
     maker = async_sessionmaker(engine, expire_on_commit=False)
     try:

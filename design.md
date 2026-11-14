@@ -69,7 +69,7 @@ Four parts:
 
 | Module | Responsibility |
 |---|---|
-| **Catalogue index** | Loads the 17.5k products and both CSVs. Searchable by text (fi/en/sv), category, claims, allergens, labels, vendor and origin. Stored in Postgres, searched with full-text search plus `pg_trgm` for fuzzy matching. Shared by all tenants (no row-level security). |
+| **Catalogue index** | Loads the 17.5k products and both CSVs. Searchable by text (fi/en/sv), category, claims, allergens, labels, vendor and origin. Stored in Postgres, searched with full-text search plus `pg_trgm` for fuzzy matching. Global: shared by all buyer organisations, with no `org_id`. |
 | **Valio Aimo API client** | Calls `/api/price` and `/api/availability` for shortlists only, batched (≤1,000 per call), cached within each price's validity window, and respecting rate limits. |
 | **Quantity normaliser** | Converts the requested quantity (litres or kg) into sales units, rounds to `allowedLotSize`, and shows the conversion (litres per sales unit from `catalogPrice / comparisonPrice`, cross-checked against the product name and `unitConversions`). |
 | **Offer ranking and substitution** | Ranks candidates by price, available date versus deadline, delivery reliability, CO₂ and labels. Substitutes must keep the required claims and allergen exclusions, starting from the curated substitution rules and widening to attribute-based search within the same category. |
@@ -96,7 +96,7 @@ Four parts:
 - **On every request:**
   1. `hooks.server.ts` reads the cookie, checks it hasn't expired, and puts the user in `event.locals`.
   2. Server-side calls to FastAPI forward the JWT as `Authorization: Bearer <jwt>`.
-  3. FastAPI verifies the signature and takes `org_id` from the token for the RLS `SET LOCAL`.
+  3. FastAPI verifies the signature and resolves the user, whose `org_id` scopes the request (see 3.7).
 - **Signing:** HS256 with one shared secret (`JWT_SECRET` env var), known only to FastAPI. SvelteKit doesn't verify the signature; it only reads `exp` to redirect to login early, and FastAPI verifies every request. Next step: RS256 or EdDSA, for key rotation and so other services can verify tokens.
 - **Approval inbox updates:** the inbox page polls (re-runs its `load` every 5–10 s with `invalidate`). Agents poll `get_order_status` the same way. Next step: server-sent events.
 - **Token lifetime:** short-lived access tokens (e.g. 60 minutes). No refresh token in the MVP; the user logs in again. Logout clears the cookie.
@@ -104,7 +104,7 @@ Four parts:
 - **Two separate authentication schemes in FastAPI:**
   - human users: JWT bearer tokens, issued through SvelteKit
   - agents: Agent tokens (EdDSA-signed JWTs with a separate key, public key at `/.well-known/jwks.json`), coming in through the MCP server or directly. Each request checks the token's `jti` against its credential row, so revocation is immediate, and each route declares the Scope it requires
-  Both resolve to the same principal (`org_id` plus `user_id` or `agent_id`), so RLS and the audit log treat them the same way. Each route declares which scheme it accepts. Approving orders is for users only, so no Agent token can ever approve; there is no approve Scope.
+  Both resolve to the same principal (`org_id` plus `user_id` or `agent_id`), so services and the audit log treat them the same way. Each route declares which scheme it accepts. Approving orders is for users only, so no Agent token can ever approve; there is no approve Scope.
 
 ### 3.5 Quote and order lifecycle
 
@@ -137,17 +137,16 @@ The fields of a mandate:
 - **Delivery:** whether a later date than requested is acceptable without approval; minimum delivery reliability.
 - **Escalation:** anything outside these bounds → `needs_human`. Hard violations (a blocked allergen, a sales block) → `reject`.
 
-### 3.7 Multi-tenancy
+### 3.7 Buyer organisations
 
-Isolation lives in the data model and is enforced by the database, through Postgres row-level security (RLS). The tenant-management features stay minimal.
+The demo has no tenant isolation in the database ([ADR 0004](docs/adr/0004-buyer-organisation-is-a-plain-foreign-key.md)). A buyer organisation is a plain foreign key, and services filter by it.
 
-**Data model.** Every tenant-owned row carries `org_id`:
+**Data model.** `organization` holds the buyer organisation's name and its Valio Aimo customer number, which is passed to the mock API. These tables carry `org_id`, a foreign key to it:
 
-- `organization` (includes the Valio Aimo customer number, which is passed to the mock API)
 - `user`, `agent`, `agent_credential`, `mandate`
 - `quote`, `quote_line`, `order`, `order_line`, `approval`, `audit_event`
 
-Global tables, which have no `org_id` and no RLS:
+Global tables, which have no `org_id`:
 
 - the catalogue and its derived search tables
 - delivery reliability and carbon footprint
@@ -155,32 +154,17 @@ Global tables, which have no `org_id` and no RLS:
 
 Prices and availability are customer-specific in reality but not in the mock. Key the cache by customer number anyway, so moving to real customer-specific data later is easy.
 
-**How a request gets its tenant:**
+**How a request gets its buyer organisation:**
 
-1. An agent's Agent token (MCP or REST) or a user's session (frontend) is resolved to an `org_id`, plus an `agent_id` or `user_id`, by a FastAPI dependency. The client never sends a tenant or customer id itself.
-2. The same dependency opens a transaction and runs `SET LOCAL app.org_id = '<uuid>'`. That setting lasts only for the transaction, so it can't leak to the next request through the connection pool.
-3. RLS policies on every tenant table limit what the connection can see and write:
-   ```sql
-   ALTER TABLE quote ENABLE ROW LEVEL SECURITY;
-   ALTER TABLE quote FORCE ROW LEVEL SECURITY;
-   CREATE POLICY tenant_isolation ON quote
-     USING (org_id = current_setting('app.org_id')::uuid)
-     WITH CHECK (org_id = current_setting('app.org_id')::uuid);
-   ```
-   If `app.org_id` isn't set, `current_setting` raises an error, so a forgotten tenant context fails closed instead of returning every tenant's rows.
+1. An agent's Agent token (MCP or REST) or a user's session (frontend) is resolved to a principal, an `org_id` plus an `agent_id` or `user_id`, by a FastAPI dependency. The client never sends a buyer organisation or customer id itself.
+2. Services that read or change buyer-owned data take the `org_id` from the principal as a required argument and filter by it in the query. It's an argument, not ambient request state, so a missing filter shows in the code.
+3. A user belongs to exactly one buyer organisation. There are no memberships and no switching between organisations.
 
-**Database roles:**
+**Database:** one role owns the tables, runs Alembic and serves the application.
 
-- `app_migrator`: owns the tables and runs Alembic.
-- `app_runtime`: the role the application connects as. It is not a superuser, not the table owner, and doesn't have `BYPASSRLS`. Without that, RLS would be silently skipped. `FORCE ROW LEVEL SECURITY` is an extra safeguard.
-- `aimo_staff` (stretch): a read-only role with a policy, or `BYPASSRLS`, limited to the audit views, for the cross-customer Aimo view.
+**Tests:** HTTP-level tests check that a user of buyer organisation B can't see or change A's agents, Agent tokens, quotes, orders or approvals.
 
-**Alembic:** autogenerate doesn't detect RLS. The `ENABLE` / `FORCE` / `CREATE POLICY` statements and the role grants are written by hand with `op.execute(...)` in the migrations. Every new tenant table needs a test that it has a policy.
-
-**Tests:**
-
-- Integration tests run as `app_runtime`. They check that a query under org A never returns org B's rows, and that inserting a row with another tenant's `org_id` is rejected.
-- A test fails if any table with an `org_id` column lacks RLS.
+**Production step:** Postgres row-level security on the existing `org_id` columns: `ENABLE` and `FORCE ROW LEVEL SECURITY` with a policy on `current_setting('app.org_id')`, a per-transaction `SET LOCAL app.org_id`, and a non-owner runtime role without `BYPASSRLS`. It needs no change to the data model.
 
 **MVP roles and seed data:**
 
@@ -188,7 +172,7 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 - Two seeded organisations:
   - a hotel chain, for the milk scenario and its spend limits
   - a hospital kitchen, with strict allergen rules and every substitute needing approval
-- Out of scope: self-signup, invitations, SSO, a separate database or schema per tenant, billing.
+- Out of scope: self-signup, invitations, SSO, users in several buyer organisations, row-level security, billing.
 
 ## 4. Tech stack
 
@@ -196,9 +180,9 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 |---|---|---|
 | Language and packaging | Python 3.12+, **uv** | `uv` workspace if the backend and MCP server become separate packages; `uv.lock` committed |
 | Backend API | **FastAPI** + Pydantic v2 | OpenAPI generated automatically; reuse the existing HTTP code |
-| Database | **PostgreSQL** (16+) | Required for RLS; also runs catalogue search (full-text search + `pg_trgm`) |
-| ORM / migrations | **SQLAlchemy 2.x** (async, `asyncpg`) + **Alembic** | RLS policies and grants written by hand in migrations |
-| Multi-tenancy | **Postgres RLS** | See 3.7 |
+| Database | **PostgreSQL** (16+) | Also runs catalogue search (full-text search + `pg_trgm`); row-level security is the production step for isolating buyer organisations |
+| ORM / migrations | **SQLAlchemy 2.x** (async, `asyncpg`) + **Alembic** | |
+| Buyer organisations | Plain `org_id` foreign key, filtered in services | See 3.7 and [ADR 0004](docs/adr/0004-buyer-organisation-is-a-plain-foreign-key.md) |
 | Valio Aimo API client | `httpx` (async) | Batching, caching within each price's validity window, retry and backoff on rate limits |
 | MCP server | Official MCP Python SDK (`FastMCP`) | Separate process, streamable HTTP transport; calls the backend's REST API with the agent's key (see 4.1) |
 | Orchestration | **Docker Compose** | Whole system with one `docker compose up` (see 4.1) |
@@ -213,13 +197,13 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 | Service | Runs | Depends on | Exposed |
 |---|---|---|---|
 | `db` | Postgres 16, with a healthcheck | — | no (optionally `127.0.0.1:5432`, for debugging) |
-| `migrate` | One-off job: `alembic upgrade head`, then the seed (catalogue, CSVs, demo organisations and users). Connects as `app_migrator` | `db` healthy | — |
-| `backend` | FastAPI on `uvicorn`, connects as `app_runtime` | `migrate` completed successfully | `:8000` (REST and OpenAPI docs; agents may also use it directly) |
+| `migrate` | One-off job: `alembic upgrade head`, then the seed (catalogue, CSVs, demo organisations and users) | `db` healthy | — |
+| `backend` | FastAPI on `uvicorn` | `migrate` completed successfully | `:8000` (REST and OpenAPI docs; agents may also use it directly) |
 | `mcp` | FastMCP over streamable HTTP; calls only `http://backend:8000` | `backend` | `:8001/mcp` |
 | `frontend` | SvelteKit (`adapter-node`); server-side code calls `http://backend:8000` | `backend` | `:3000` |
 
 - **One Python image** (uv workspace, `uv sync --frozen`) serves `migrate`, `backend` and `mcp`, with a different command per service. The frontend has its own Node image.
-- **Configuration** goes in `.env`, which is not committed (a committed `.env.example` lists the variables): `VALIO_API_BASE_URL`, `VALIO_API_KEY`, `JWT_SECRET`, `AGENT_TOKEN_SIGNING_KEY` (Ed25519 private key), `DB_MIGRATOR_PASSWORD`, `DB_RUNTIME_PASSWORD`.
+- **Configuration** goes in `.env`, which is not committed (a committed `.env.example` lists the variables): `VALIO_API_BASE_URL`, `VALIO_API_KEY`, `JWT_SECRET`, `AGENT_TOKEN_SIGNING_KEY` (Ed25519 private key), `DB_PASSWORD`.
   - The `mcp` and `frontend` services only need the backend's URL. They never see the Valio Aimo key or the database credentials.
 - **Development:** run only `db` (and `migrate`) in Compose, and run `backend`, `mcp` and `frontend` on the host with hot reload. The demo or judging setup is the full `docker compose up`.
 - **Connecting a demo agent:**
@@ -237,4 +221,4 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 ## 6. Open decisions
 
 - What period-based spend limits mean when orders are only mocked.
-- RLS on `audit_event` versus Aimo's cross-customer read access: a separate policy or a separate read-only view.
+- For production, once row-level security is added (ADR 0004): how Aimo's cross-customer read access to `audit_event` fits with it, either as a separate policy or as a separate read-only view.
