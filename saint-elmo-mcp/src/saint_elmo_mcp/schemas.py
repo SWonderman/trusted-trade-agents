@@ -12,6 +12,10 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 
+# Mirrors the backend's catalog AllergenStrictness; search filter and mandate share it
+AllergenStrictness = Literal["contains", "may_contain", "declared_free"]
+
+
 class CamelModel(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel, populate_by_name=True, extra="ignore"
@@ -467,7 +471,7 @@ class Mandate(CamelModel):
     required_labels: list[str] = Field(description="Every product must carry all of these.")
     required_diets: list[str] = Field(description="Every product must carry all of these.")
     excluded_allergens: list[str] = Field(description="GS1 allergen codes.")
-    allergen_strictness: Literal["contains", "may_contain", "declared_free"] = Field(
+    allergen_strictness: AllergenStrictness = Field(
         description="contains: a product declared CONTAINS is excluded; may_contain: "
         "MAY_CONTAIN too; declared_free: only products declared FREE_FROM every excluded "
         "allergen are allowed."

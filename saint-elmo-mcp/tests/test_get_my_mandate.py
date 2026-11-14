@@ -1,7 +1,8 @@
 import pytest
-from conftest import text, tool_named
+from conftest import error, text, tool_named
 
-# As the backend answers for the seeded dairy-restock agent (#11, db/seeders/demo.py)
+# As the backend answers for the seeded dairy-restock agent (#11, db/seeders/demo.py;
+# allowedCategoryCodes trimmed to the first few DAIRY_CATEGORY_CODES)
 DAIRY_RESTOCK_MANDATE = {
     "id": "6f1c2b9e-0d4a-4a8e-9c1e-3b7f5d2a1e01",
     "version": 1,
@@ -12,7 +13,7 @@ DAIRY_RESTOCK_MANDATE = {
     "periodSpendCap": 5000.0,
     "spendPeriod": "WEEK",
     "categorySpendCaps": [],
-    "allowedCategoryCodes": ["10400", "10401"],
+    "allowedCategoryCodes": ["10400", "10401", "10404", "10405", "10411"],
     "blockedCategoryCodes": [],
     "allowedVendors": [],
     "blockedVendors": [],
@@ -37,10 +38,6 @@ DAIRY_RESTOCK_MANDATE = {
 
 # Every top-level field of the backend's MandateResponse (#11)
 MANDATE_FIELDS = set(DAIRY_RESTOCK_MANDATE)
-
-
-def error(code: str, message: str) -> dict:
-    return {"error": {"code": code, "message": message, "requestId": "r-1"}}
 
 
 async def test_get_my_mandate_is_listed_with_no_inputs_and_every_output_field(connect):

@@ -71,6 +71,11 @@ def connect(backend: FakeBackend):
     return _connect
 
 
+def error(code: str, message: str) -> dict:
+    """A backend error envelope."""
+    return {"error": {"code": code, "message": message, "requestId": "r-1"}}
+
+
 def text(result) -> str:
     return "\n".join(block.text for block in result.content if block.type == "text")
 
