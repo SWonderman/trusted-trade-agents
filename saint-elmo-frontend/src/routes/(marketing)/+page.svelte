@@ -140,7 +140,7 @@
 	<title>Saint Elmo</title>
 	<meta
 		name="description"
-		content="The gateway that lets a kitchen’s purchasing agents order from Valio Aimo within limits a person sets, with every decision written down."
+		content="Autonomous procurement for hotels, restaurants and professional kitchens: purchasing agents order from Valio Aimo within the mandate you set, with every decision on the record."
 	/>
 	<link rel="preload" as="image" href="/art/erasmus-plate-900.webp" />
 </svelte:head>
@@ -163,7 +163,7 @@
 				<a href={resolve('login')} class="nav-signin">Sign in</a>
 				<Button
 					href={resolve('login')}
-					class="hidden h-9 rounded-full bg-vellum px-4 text-lapis-night hover:bg-white sm:inline-flex"
+					class="hidden h-9 rounded-full bg-lapis-night px-4 text-vellum hover:bg-lapis-deep sm:inline-flex"
 				>
 					Open the console
 				</Button>
@@ -172,28 +172,27 @@
 	</header>
 
 	<main id="main">
-		<!-- Hero: night lapis, the panel in an altar-arch, and the console's own answers laid over it. -->
+		<!-- Hero: ivory paper, the panel in an altar-arch, and the console's own answers laid over it. -->
 		<section class="hero" aria-labelledby="hero-title">
 			<div class="glow" aria-hidden="true"></div>
 			<div class="wrap hero-grid">
 				<div class="hero-text">
 					<p class="eyebrow">
 						<span class="eyebrow-dot" aria-hidden="true"></span>
-						Agent purchasing for Valio Aimo customers
+						Hotels · Restaurants · Professional kitchens
 					</p>
 					<h1 id="hero-title" class="font-display-tight">
-						A watch kept over <em>every agent</em> that buys for your kitchen
+						A watch kept over every agent that <em>buys you time</em>
 					</h1>
 					<p class="lede">
-						Saint Elmo stands between your purchasing agents and Valio Aimo. Agents search, compare
-						and order on their own, inside limits a person sets. Anything outside those limits waits
-						for a human, and every step is written down.
+						Your agents order from Valio Aimo on their own, inside the limits you set. Anything
+						beyond them waits for you.
 					</p>
 					<div class="ctas">
 						<Button
 							href={resolve('login')}
 							size="lg"
-							class="h-12 rounded-full bg-gold px-6 text-base text-lapis-night shadow-[0_10px_30px_-10px] shadow-gold/60 hover:bg-vellum"
+							class="h-12 rounded-full bg-lapis-night px-6 text-base text-vellum shadow-[0_14px_30px_-14px] shadow-lapis-night/60 hover:bg-lapis-deep"
 						>
 							Open the console <ArrowRightIcon />
 						</Button>
@@ -453,8 +452,8 @@
 
 <style>
 	/*
-	 * A fixed palette, independent of the console's light/dark mode: night lapis
-	 * sections with gold and vellum type, alternating with vellum leaves in ink.
+	 * A fixed palette, independent of the console's light/dark mode: an ivory hero
+	 * and vellum leaves in ink, alternating with night-lapis sections in gold and vellum.
 	 */
 	.page {
 		--ink: oklch(0.24 0.03 60);
@@ -466,8 +465,14 @@
 		--hold-tone: oklch(0.8 0.12 80);
 		--stop-tone: oklch(0.7 0.16 32);
 		--gold-fixed: oklch(0.76 0.11 82);
+		/* The bright half: ivory paper, ink type, an ochre gold that holds contrast on light. */
+		--ivory: oklch(0.985 0.008 85);
+		--ivory-deep: oklch(0.965 0.016 85);
+		--ochre: oklch(0.55 0.11 68);
+		--ink-faint: oklch(0.24 0.03 60 / 0.1);
 
-		background: var(--lapis-night);
+		/* Ivory under the sticky nav; every section paints its own background. */
+		background: var(--ivory);
 		color: var(--on-night);
 		font-family: var(--font-sans);
 		overflow-x: clip;
@@ -511,16 +516,20 @@
 		font-style: italic;
 		color: var(--gold-fixed);
 	}
+	.hero em {
+		color: var(--ochre);
+	}
 
 	/* Nav: glass over the night sky */
 	.nav {
 		position: sticky;
 		top: 0;
 		z-index: 40;
-		background: oklch(0.16 0.05 270 / 0.72);
+		background: oklch(0.985 0.008 85 / 0.78);
 		backdrop-filter: blur(14px) saturate(1.4);
 		-webkit-backdrop-filter: blur(14px) saturate(1.4);
-		border-bottom: 1px solid oklch(1 0 0 / 0.07);
+		border-bottom: 1px solid var(--ink-faint);
+		color: var(--ink);
 	}
 	.nav-inner {
 		display: flex;
@@ -552,13 +561,13 @@
 	}
 	.nav-links a,
 	.nav-signin {
-		color: var(--on-night-soft);
+		color: var(--ink-soft);
 		text-decoration: none;
 		transition: color 150ms;
 	}
 	.nav-links a:hover,
 	.nav-signin:hover {
-		color: var(--on-night);
+		color: var(--ink);
 	}
 	.nav-actions {
 		display: flex;
@@ -573,21 +582,24 @@
 		position: relative;
 		isolation: isolate;
 		padding-block: 3.5rem 5rem;
+		background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory) 55%, var(--ivory-deep) 100%);
+		color: var(--ink);
+		border-bottom: 1px solid var(--ink-faint);
 	}
 	@media (min-width: 1024px) {
 		.hero {
 			padding-block: 5rem 7.5rem;
 		}
 	}
-	/* Saint Elmo's fire as ambient light, plus a faint grain so the night has texture. */
+	/* Gold leaf as ambient light behind the panel, plus a faint paper grain. */
 	.glow {
 		position: absolute;
 		inset: 0;
 		z-index: -1;
 		background:
-			radial-gradient(ellipse 55% 45% at 72% 18%, oklch(0.78 0.11 268 / 0.22), transparent 70%),
-			radial-gradient(ellipse 40% 40% at 10% 90%, oklch(0.73 0.11 82 / 0.08), transparent 70%),
-			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E");
+			radial-gradient(ellipse 42% 55% at 74% 42%, oklch(0.86 0.09 82 / 0.35), transparent 70%),
+			radial-gradient(ellipse 30% 30% at 76% 14%, oklch(0.85 0.06 268 / 0.25), transparent 70%),
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
 	}
 	.hero-grid {
 		display: grid;
@@ -621,18 +633,18 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.375rem 0.875rem 0.375rem 0.625rem;
-		border: 1px solid var(--hair);
+		border: 1px solid oklch(0.73 0.11 82 / 0.45);
 		border-radius: 999px;
-		background: oklch(1 0 0 / 0.04);
+		background: oklch(1 0 0 / 0.7);
 		font-size: 0.8125rem;
-		color: var(--on-night-soft);
+		color: var(--ink-soft);
 	}
 	.eyebrow-dot {
 		width: 0.5rem;
 		height: 0.5rem;
 		border-radius: 50%;
-		background: var(--corona);
-		box-shadow: 0 0 0 4px oklch(0.78 0.11 268 / 0.22);
+		background: var(--gold-fixed);
+		box-shadow: 0 0 0 4px oklch(0.76 0.11 82 / 0.22);
 	}
 	h1 {
 		margin-top: 1.5rem;
@@ -640,14 +652,14 @@
 		font-size: clamp(3rem, 7vw, 5.75rem);
 		line-height: 0.98;
 		text-wrap: balance;
-		color: var(--on-night);
+		color: var(--ink);
 	}
 	.lede {
 		margin-top: 1.75rem;
 		max-width: 36rem;
 		font-size: 1.125rem;
 		line-height: 1.65;
-		color: var(--on-night-soft);
+		color: var(--ink-soft);
 	}
 	@media (min-width: 640px) {
 		.lede {
@@ -663,14 +675,14 @@
 	}
 	.cta-ghost {
 		font-size: 0.9375rem;
-		color: var(--on-night);
+		color: var(--ink);
 		text-decoration: underline;
-		text-decoration-color: var(--hair);
+		text-decoration-color: oklch(0.55 0.11 68 / 0.4);
 		text-underline-offset: 6px;
 		transition: text-decoration-color 150ms;
 	}
 	.cta-ghost:hover {
-		text-decoration-color: var(--gold-fixed);
+		text-decoration-color: var(--ochre);
 	}
 	.partner {
 		display: flex;
@@ -678,7 +690,7 @@
 		gap: 0.875rem;
 		margin-top: 3.5rem;
 		font-size: 0.8125rem;
-		color: var(--on-night-soft);
+		color: var(--ink-soft);
 	}
 	.partner img {
 		height: 2.25rem;
@@ -698,10 +710,10 @@
 		border-radius: 50% 50% 1.25rem 1.25rem / 12% 12% 1.25rem 1.25rem;
 		overflow: hidden;
 		box-shadow:
-			0 0 0 1px oklch(0.73 0.11 82 / 0.7),
-			0 0 0 7px oklch(0.16 0.05 270),
-			0 0 0 8px oklch(0.73 0.11 82 / 0.3),
-			0 40px 90px -30px oklch(0 0 0 / 0.75);
+			0 0 0 1px oklch(0.73 0.11 82 / 0.8),
+			0 0 0 9px var(--ivory),
+			0 0 0 10px oklch(0.73 0.11 82 / 0.45),
+			0 50px 80px -40px oklch(0.35 0.06 60 / 0.45);
 	}
 	.arch img {
 		display: block;
@@ -736,7 +748,7 @@
 		margin-top: 1.25rem;
 		font-size: 0.8125rem;
 		line-height: 1.55;
-		color: var(--on-night-soft);
+		color: var(--ink-soft);
 	}
 	figcaption cite {
 		font-family: var(--font-display);
@@ -751,7 +763,7 @@
 		border-radius: 0.875rem;
 		font-size: 0.8125rem;
 		line-height: 1.35;
-		box-shadow: 0 24px 50px -20px oklch(0 0 0 / 0.6);
+		box-shadow: 0 24px 50px -24px oklch(0.3 0.05 60 / 0.5);
 		animation:
 			rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both,
 			bob 7s ease-in-out 1.2s infinite;
@@ -779,6 +791,14 @@
 		animation-delay: 700ms, 2.6s;
 	}
 	@media (min-width: 1024px) {
+		.float-outcome {
+			right: -1.25rem;
+		}
+		.float-mandate {
+			left: -2.5rem;
+		}
+	}
+	@media (min-width: 1280px) {
 		.float-outcome {
 			right: -3.5rem;
 		}
