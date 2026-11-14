@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from conftest import text, tool_named
+from conftest import error, text, tool_named
 
 DELIVER_BY = "2030-06-03"
 
@@ -93,10 +93,6 @@ BARE_OFFER = {
 
 def offers_response(*items: dict) -> dict:
     return {"deliverBy": DELIVER_BY, "evaluatedAt": "2026-11-14T10:00:01Z", "items": list(items)}
-
-
-def error(code: str, message: str) -> dict:
-    return {"error": {"code": code, "message": message, "requestId": "r-1"}}
 
 
 async def test_get_offers_is_listed_with_input_and_output_schemas(connect):

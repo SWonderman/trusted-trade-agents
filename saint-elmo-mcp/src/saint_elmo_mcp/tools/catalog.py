@@ -8,6 +8,7 @@ from pydantic import Field, WithJsonSchema
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response
 from saint_elmo_mcp.schemas import (
+    AllergenStrictness,
     CatalogVocabulary,
     Claim,
     ProductDetail,
@@ -68,7 +69,6 @@ VocabularyName = Literal["claims", "diets", "labels", "allergens", "categories"]
 
 CODES_HINT = "Valid codes: see get_vocabulary."
 
-AllergenStrictness = Literal["contains", "may_contain", "declared_free"]
 ALLERGEN_STRICTNESS_DESCRIPTION = (
     "How excludedAllergens filter. contains: drop products declared CONTAINS. "
     "may_contain: also drop MAY_CONTAIN. declared_free: keep only products declared "
