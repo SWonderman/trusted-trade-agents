@@ -43,6 +43,20 @@ async def test_browse_returns_most_reliable_products_first(reference_data, sessi
     ]
 
 
+async def test_total_counts_every_match_while_items_hold_one_page(
+    reference_data, session, client
+):
+    for code in ("100001", "100002", "100003"):
+        await make_product(session, code=code)
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"limit": 1, "offset": 1})
+
+    body = response.json()
+    assert body["total"] == 3
+    assert [item["code"] for item in body["items"]] == ["100002"]
+
+
 async def test_empty_body_is_a_valid_browse_request(client):
     response = await client.post(SEARCH_URL, json={})
 

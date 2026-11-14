@@ -35,6 +35,17 @@ async def test_browse_orders_by_reliability_desc_nulls_last_then_code(
     ]
 
 
+async def test_search_returns_the_requested_page(reference_data, session):
+    await make_product(session, code="100001")
+    second = await make_product(session, code="100002")
+    third = await make_product(session, code="100003")
+    await make_product(session, code="100004")
+
+    products = await crud.search_products(session, limit=2, offset=1)
+
+    assert [product.id for product in products] == [second.id, third.id]
+
+
 async def test_count_without_query_counts_every_product(reference_data, session):
     await make_product(session)
     await make_product(session)
