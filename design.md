@@ -35,13 +35,13 @@ Four parts:
 - **One place enforces the rules.** The MCP server and the frontend call the same backend API, so every rule is checked in exactly one place.
 - **Expose the same API two ways.** Publish the backend's agent-facing API as OpenAPI as well as through MCP. MCP is one way in and REST is another, and the brief leaves the production form open. This costs almost nothing and helps the "openness" score.
 - **Use deterministic code for every decision.** No language model runs on the backend. Every decision has a reason code and the same input gives the same result, so the audit trail can be reproduced.
-- **Don't build the buyer's agent as a product.** Any MCP client (Claude Desktop, Claude Code) connected with an agent key is enough. That also demonstrates the system is open.
+- **Don't build the buyer's agent as a product.** Any MCP client (Claude Desktop, Claude Code) connected with an Agent token is enough. That also demonstrates the system is open.
 
 ## 3. Components
 
 ### 3.1 Buyer's agents (clients)
 
-- **Each agent gets its own identity and a credential bound to one mandate.** Credentials are created in the frontend. Example agents:
+- **Each agent gets its own identity and Agent tokens bound to one mandate.** A buyer admin issues tokens in the frontend, with Scopes and an expiry; each can be revoked immediately. The token references the mandate but never carries its limits (see [ADR 0003](docs/adr/0003-agent-tokens-reference-server-mandate.md)). Example agents:
   - `dairy-restock`: dairy categories only, €2,000 per-order limit, substitutes must keep `FREE_FROM_LACTOSE`.
   - `event-planner`: may order from any category, but every substitution needs approval.
 - **Demo client:** Claude Desktop or Claude Code connected to the MCP server.
@@ -50,7 +50,7 @@ Four parts:
 
 ### 3.2 MCP server (gateway)
 
-- **The credential:** for the MVP, an API key per agent sent as an MCP header. Next step: the MCP specification's OAuth flow.
+- **The credential:** an Agent token (EdDSA-signed JWT, see [ADR 0003](docs/adr/0003-agent-tokens-reference-server-mandate.md)), pasted into the MCP client config and sent as `X-Agent-Key` or `Authorization: Bearer <token>`; the MCP server forwards it untouched (ADR 0001). Next step: the MCP specification's OAuth flow, issuing the same JWT.
 - **Tools.** Each one is a thin wrapper around a backend endpoint:
 
 | Tool | Purpose |
@@ -81,7 +81,7 @@ Four parts:
 ### 3.4 Frontend
 
 - **Buyer admin (MVP):**
-  - Agents and their mandates: create an agent, set limits, issue or revoke its key.
+  - Agents and their mandates: create an agent, set limits, issue Agent tokens (Scopes, label, expiry; shown once) and revoke them.
   - Approval inbox: each pending order shows the agent's explanation alongside the policy's reasons (e.g. "over the €2,000 limit", "substitute isn't marked lactose-free"). Approve or reject.
   - Audit log viewer, per agent and per order.
 - **Aimo-side view (stretch):** a read-only view of all agent activity across customers, to show the log is readable by both buyer and Valio Aimo.
@@ -103,8 +103,8 @@ Four parts:
 - **CSRF:** `SameSite=Lax` plus SvelteKit's built-in origin check on form actions. Anything that changes state (approve, reject, edit a mandate) goes through form actions.
 - **Two separate authentication schemes in FastAPI:**
   - human users: JWT bearer tokens, issued through SvelteKit
-  - agents: API keys, coming in through the MCP server
-  Both resolve to the same principal (`org_id` plus `user_id` or `agent_id`), so RLS and the audit log treat them the same way. Each route declares which scheme it accepts. Approving orders is for users only, so an agent key can never approve.
+  - agents: Agent tokens (EdDSA-signed JWTs with a separate key, public key at `/.well-known/jwks.json`), coming in through the MCP server or directly. Each request checks the token's `jti` against its credential row, so revocation is immediate, and each route declares the Scope it requires
+  Both resolve to the same principal (`org_id` plus `user_id` or `agent_id`), so RLS and the audit log treat them the same way. Each route declares which scheme it accepts. Approving orders is for users only, so no Agent token can ever approve; there is no approve Scope.
 
 ### 3.5 Quote and order lifecycle
 
@@ -157,7 +157,7 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 
 **How a request gets its tenant:**
 
-1. An agent's API key (MCP) or a user's session (frontend) is resolved to an `org_id`, plus an `agent_id` or `user_id`, by a FastAPI dependency. The client never sends a tenant or customer id itself.
+1. An agent's Agent token (MCP or REST) or a user's session (frontend) is resolved to an `org_id`, plus an `agent_id` or `user_id`, by a FastAPI dependency. The client never sends a tenant or customer id itself.
 2. The same dependency opens a transaction and runs `SET LOCAL app.org_id = '<uuid>'`. That setting lasts only for the transaction, so it can't leak to the next request through the connection pool.
 3. RLS policies on every tenant table limit what the connection can see and write:
    ```sql
@@ -204,7 +204,7 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 | Orchestration | **Docker Compose** | Whole system with one `docker compose up` (see 4.1) |
 | Frontend | **SvelteKit** (Svelte 5, TypeScript) | Backend-for-frontend: server-side `load` functions and actions call FastAPI; TS types can be generated from FastAPI's OpenAPI |
 | Auth (users) | **JWT in an `httpOnly` cookie** | Issued by FastAPI, set by SvelteKit, forwarded server-to-server as a bearer token; see 3.4 |
-| Auth (agents) | API key per agent | Stored hashed, with a visible prefix; sent by the MCP client to the MCP server, which forwards it to FastAPI |
+| Auth (agents) | Agent token (EdDSA JWT + JWKS) | Issued per agent in the frontend; references the mandate, never embeds it; `jti` stored for revocation; sent by the MCP client to the MCP server, which forwards it to FastAPI. See [ADR 0003](docs/adr/0003-agent-tokens-reference-server-mandate.md) |
 
 ### 4.1 Deployment (Docker Compose)
 
@@ -219,12 +219,11 @@ Prices and availability are customer-specific in reality but not in the mock. Ke
 | `frontend` | SvelteKit (`adapter-node`); server-side code calls `http://backend:8000` | `backend` | `:3000` |
 
 - **One Python image** (uv workspace, `uv sync --frozen`) serves `migrate`, `backend` and `mcp`, with a different command per service. The frontend has its own Node image.
-- **Configuration** goes in `.env`, which is not committed (a committed `.env.example` lists the variables): `VALIO_API_BASE_URL`, `VALIO_API_KEY`, `JWT_SECRET`, `DB_MIGRATOR_PASSWORD`, `DB_RUNTIME_PASSWORD`.
+- **Configuration** goes in `.env`, which is not committed (a committed `.env.example` lists the variables): `VALIO_API_BASE_URL`, `VALIO_API_KEY`, `JWT_SECRET`, `AGENT_TOKEN_SIGNING_KEY` (Ed25519 private key), `DB_MIGRATOR_PASSWORD`, `DB_RUNTIME_PASSWORD`.
   - The `mcp` and `frontend` services only need the backend's URL. They never see the Valio Aimo key or the database credentials.
 - **Development:** run only `db` (and `migrate`) in Compose, and run `backend`, `mcp` and `frontend` on the host with hot reload. The demo or judging setup is the full `docker compose up`.
 - **Connecting a demo agent:**
-  - Claude Code can add a remote HTTP MCP server at `http://localhost:8001/mcp`, with the agent key in a custom header.
-  - If an MCP client can't send custom headers, the MCP server also accepts the key as `Authorization: Bearer <agent-key>`.
+  - Claude Code can add a remote HTTP MCP server at `http://localhost:8001/mcp`, with the Agent token in the `X-Agent-Key` header or as `Authorization: Bearer <token>` (ADR 0001).
 
 ## 5. Build order (scope control)
 

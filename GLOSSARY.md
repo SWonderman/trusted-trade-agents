@@ -9,12 +9,16 @@ A Valio Aimo customer (hotel chain, school, hospital kitchen) that runs agents a
 _Avoid_: Tenant (in conversation), client, customer account
 
 **Agent**:
-A piece of software acting for a buyer organisation on one task, identified by its own agent key and bound to exactly one mandate. Always untrusted.
+A piece of software acting for a buyer organisation on one task, identified by its agent tokens and bound to exactly one mandate. Always untrusted.
 _Avoid_: Bot, assistant, client
 
-**Agent key**:
-The credential that identifies an agent and, through it, its buyer organisation and mandate.
-_Avoid_: Token, API key (ambiguous with the Valio Aimo API key)
+**Agent token**:
+A signed, expiring credential a buyer admin issues for an agent, naming the agent, its buyer organisation, its scopes and its mandate. It identifies the agent's authority and never carries it: the mandate Saint Elmo holds is what is enforced.
+_Avoid_: Agent key, API key (ambiguous with the Valio Aimo API key), JWT (in conversation)
+
+**Buyer admin**:
+A human in the buyer organisation who manages its agents, their mandates and their agent tokens.
+_Avoid_: Admin (on its own), operator
 
 **Approver**:
 A human in the buyer organisation who signs off orders that need approval.
@@ -87,6 +91,13 @@ _Avoid_: Alternative, replacement, swap
 **Mandate**:
 The limits a buyer organisation sets for one agent: spend, assortment, requirements, substitution and delivery rules. Set by a human, readable by the agent, never changeable by it.
 _Avoid_: Policy (the policy applies the mandate), permissions, rules
+
+**Scope**:
+A coarse capability on an agent token saying which kinds of operation the agent may call at all, such as reading the catalog or placing orders, independent of any mandate limit.
+_Avoid_: Permission, privilege, role
+
+**Revocation**:
+A buyer admin withdrawing an agent token, or every token of an agent, so that it is refused from the next request on.
 
 **Policy**:
 The deterministic judgement of a quote or order against a mandate, giving a policy outcome and reason codes.
