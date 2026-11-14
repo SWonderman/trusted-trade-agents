@@ -45,7 +45,9 @@ async def test_get_vocabulary_is_listed_with_an_output_schema_for_all_five_vocab
         tool = await tool_named(client, "get_vocabulary")
 
     assert tool.output_schema is not None
-    assert VOCABULARIES <= set(tool.output_schema["properties"])
+    assert set(tool.output_schema["properties"]) == VOCABULARIES
+    subset = tool.input_schema["properties"]["vocabularies"]["anyOf"][0]
+    assert set(subset["items"]["enum"]) == VOCABULARIES
     assert tool.annotations is not None and tool.description is not None
     assert tool.annotations.read_only_hint is True
     assert tool.annotations.idempotent_hint is True
@@ -115,3 +117,33 @@ async def test_server_instructions_say_to_get_the_vocabulary_before_filtering(co
 
     assert instructions is not None
     assert "get_vocabulary" in instructions
+
+
+async def test_a_vocabulary_missing_from_the_backend_is_a_contract_mismatch(connect, backend):
+    backend.respond_json(200, {k: v for k, v in VOCABULARY.items() if k != "claims"})
+
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        result = await client.call_tool("get_vocabulary", {"vocabularies": ["diets"]})
+
+    assert result.is_error
+    assert "BACKEND_CONTRACT_MISMATCH" in text(result)
+    assert "claims" in text(result)
+
+
+async def test_an_entry_missing_its_name_field_is_a_contract_mismatch(connect, backend):
+    diet = {k: v for k, v in VOCABULARY["diets"][0].items() if k != "name"}
+    backend.respond_json(200, {**VOCABULARY, "diets": [diet]})
+
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        result = await client.call_tool("get_vocabulary", {})
+
+    assert result.is_error
+    assert "BACKEND_CONTRACT_MISMATCH" in text(result)
+
+
+async def test_an_empty_subset_is_rejected_before_the_backend(connect, backend):
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        result = await client.call_tool("get_vocabulary", {"vocabularies": []})
+
+    assert result.is_error
+    assert backend.requests == []

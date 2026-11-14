@@ -190,10 +190,11 @@ def _is_none(value: object) -> bool:
 
 class VocabularyGS1Code(CamelModel):
     code: str
+    # Required though nullable, as in the backend: a dropped field is contract drift
     name: str | None = Field(
-        default=None, description="GS1 name; null for codes the data uses but GS1 doesn't list."
+        description="GS1 name; null for codes the data uses but GS1 doesn't list."
     )
-    definition: str | None = None
+    definition: str | None
 
 
 class VocabularyCode(VocabularyGS1Code):
@@ -228,8 +229,18 @@ class VocabularyCategory(CamelModel):
     product_count: int
 
 
+class CatalogVocabulary(CamelModel):
+    """The backend's full reply. Every vocabulary is required, so drift fails loudly."""
+
+    claims: list[VocabularyClaim]
+    diets: list[VocabularyCode]
+    labels: list[VocabularyCode]
+    allergens: list[VocabularyAllergen]
+    categories: list[VocabularyCategory]
+
+
 class Vocabulary(CamelModel):
-    """Valid filter codes. A vocabulary that wasn't asked for is left out."""
+    """Tool output: valid filter codes. A vocabulary that wasn't asked for is left out."""
 
     claims: list[VocabularyClaim] | None = Field(
         default=None,

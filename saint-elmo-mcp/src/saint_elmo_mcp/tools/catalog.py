@@ -7,7 +7,13 @@ from pydantic import Field, WithJsonSchema
 
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response
-from saint_elmo_mcp.schemas import Claim, ProductDetail, ProductSearchResult, Vocabulary
+from saint_elmo_mcp.schemas import (
+    CatalogVocabulary,
+    Claim,
+    ProductDetail,
+    ProductSearchResult,
+    Vocabulary,
+)
 
 SEARCH_PRODUCTS_DESCRIPTION = """\
 Search the Valio Aimo product catalog (about 17,500 food-service products).
@@ -220,14 +226,11 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
         ctx: Context,
         vocabularies: Annotated[
             list[VocabularyName] | None,
-            Field(description="Only these vocabularies. Omit for all five."),
+            Field(min_length=1, description="Only these vocabularies. Omit for all five."),
         ] = None,
     ) -> Vocabulary:
         data = await backend.get("/api/v1/catalog/vocabulary", agent_key=agent_key(ctx))
-        vocabulary = parse_response(Vocabulary, data)
-        if vocabularies is None:
-            return vocabulary
+        catalog_vocabulary = parse_response(CatalogVocabulary, data)
         # The backend has no subset parameter (#6); trimming the reply is presentation only
-        return vocabulary.model_copy(
-            update={name: None for name in get_args(VocabularyName) if name not in vocabularies}
-        )
+        wanted: set[str] = set(vocabularies or get_args(VocabularyName))
+        return Vocabulary.model_validate(catalog_vocabulary.model_dump(include=wanted))
