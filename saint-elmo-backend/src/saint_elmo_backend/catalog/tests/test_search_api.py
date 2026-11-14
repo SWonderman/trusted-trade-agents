@@ -57,6 +57,29 @@ async def test_total_counts_every_match_while_items_hold_one_page(
     assert [item["code"] for item in body["items"]] == ["100002"]
 
 
+async def test_language_selects_the_returned_name(reference_data, session, client):
+    await make_product(
+        session, names={"en": "Milk", "fi": "Maito", "sv": "Mjölk"}
+    )
+    await session.commit()
+
+    names = {}
+    for language in ("en", "fi", "sv"):
+        response = await client.post(SEARCH_URL, json={"language": language})
+        names[language] = response.json()["items"][0]["name"]
+
+    assert names == {"en": "Milk", "fi": "Maito", "sv": "Mjölk"}
+
+
+async def test_missing_translation_falls_back_to_finnish(reference_data, session, client):
+    await make_product(session, names={"en": "Milk", "fi": "Maito"})
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"language": "sv"})
+
+    assert response.json()["items"][0]["name"] == "Maito"
+
+
 async def test_empty_body_is_a_valid_browse_request(client):
     response = await client.post(SEARCH_URL, json={})
 

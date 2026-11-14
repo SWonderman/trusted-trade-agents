@@ -1,13 +1,14 @@
 from datetime import date
-from typing import Literal
 
 from pydantic import Field
 
-from saint_elmo_backend.catalog.models import Product
-from saint_elmo_backend.catalog.dtos import CatalogProvenance, ProductSearchResult
+from saint_elmo_backend.catalog.dtos import (
+    CatalogProvenance,
+    ProductSearchHit,
+    ProductSearchResult,
+)
+from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.core.schema import CamelBaseModel
-
-type Language = Literal["en", "fi", "sv"]
 
 
 class ProductSearchRequest(CamelBaseModel):
@@ -16,7 +17,7 @@ class ProductSearchRequest(CamelBaseModel):
         description="Free text matched against fi, sv and en names and texts at once",
     )
     language: Language = Field(
-        default="en",
+        default=Language.EN,
         description="Language of the returned texts; falls back to fi when missing",
     )
     limit: int = Field(default=20, ge=1, le=100)
@@ -40,9 +41,8 @@ class ProductHit(CamelBaseModel):
     name: str | None
 
     @classmethod
-    def from_product(cls, product: Product, language: Language) -> "ProductHit":
-        name = next((t.name for t in product.translations if t.language == language), None)
-        return cls(code=product.code, name=name)
+    def from_hit(cls, hit: ProductSearchHit) -> "ProductHit":
+        return cls(code=hit.product.code, name=hit.name)
 
 
 class ProductSearchResponse(CamelBaseModel):
@@ -51,11 +51,9 @@ class ProductSearchResponse(CamelBaseModel):
     provenance: Provenance
 
     @classmethod
-    def from_result(
-        cls, result: ProductSearchResult, language: Language
-    ) -> "ProductSearchResponse":
+    def from_result(cls, result: ProductSearchResult) -> "ProductSearchResponse":
         return cls(
             total=result.total,
-            items=[ProductHit.from_product(product, language) for product in result.products],
+            items=[ProductHit.from_hit(hit) for hit in result.hits],
             provenance=Provenance.from_provenance(result.provenance),
         )

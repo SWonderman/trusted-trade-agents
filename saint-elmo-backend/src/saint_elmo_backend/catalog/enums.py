@@ -1,6 +1,16 @@
 from enum import StrEnum
 
 
+class Language(StrEnum):
+    """
+    ISO 639-1 language the catalogue has texts in.
+    """
+
+    FI = "fi"
+    SV = "sv"
+    EN = "en"
+
+
 class VatCode(StrEnum):
     """
     Finnish VAT class. Indicative only: the price API's `tax.taxRate` is authoritative.

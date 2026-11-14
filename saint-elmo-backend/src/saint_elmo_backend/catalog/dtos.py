@@ -13,7 +13,13 @@ class CatalogProvenance:
 
 
 @dataclass(frozen=True, slots=True)
+class ProductSearchHit:
+    product: "Product"
+    name: str | None
+
+
+@dataclass(frozen=True, slots=True)
 class ProductSearchResult:
     total: int
-    products: list["Product"]
+    hits: list[ProductSearchHit]
     provenance: CatalogProvenance
