@@ -23,7 +23,7 @@ async def test_lists_catalog_tools_and_search_uses_rest_field_names(connect):
     async with connect({"X-Agent-Key": "k1"}) as client:
         tools = (await client.list_tools()).tools
 
-    assert sorted(t.name for t in tools) == ["get_product", "search_products"]
+    assert sorted(t.name for t in tools) == ["get_product", "get_vocabulary", "search_products"]
     tool = next(t for t in tools if t.name == "search_products")
     assert set(tool.input_schema["properties"]) == {"query", "language", "limit", "offset"} | FILTERS
     assert tool.output_schema is not None
