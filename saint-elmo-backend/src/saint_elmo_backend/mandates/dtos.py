@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
@@ -66,6 +67,8 @@ class PeriodSpend:
     period_end: datetime
     committed: Decimal
     remaining: Decimal
+    # The same per category code; a category without an entry has committed nothing
+    committed_by_category: Mapping[str, Decimal] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)

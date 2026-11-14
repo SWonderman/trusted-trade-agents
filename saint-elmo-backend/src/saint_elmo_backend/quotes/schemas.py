@@ -1,16 +1,17 @@
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Self
+from typing import Self
 
 from pydantic import UUID4, Field, model_validator
 
-from saint_elmo_backend.core.schema import CamelBaseModel, DecimalNumber
-from saint_elmo_backend.offers.schemas import OfferOut
-from saint_elmo_backend.policy.dtos import PolicyReason
-from saint_elmo_backend.policy.enums import PolicyOutcome, PolicyReasonCode, Severity
-from saint_elmo_backend.quotes.dtos import QuoteLineRequest, QuoteRequest
+from saint_elmo_backend.core.schema import CamelBaseModel
+from saint_elmo_backend.offers.schemas import DepositOut, Totals
+from saint_elmo_backend.policy.dtos import LineRequest
+from saint_elmo_backend.policy.enums import PolicyOutcome
+from saint_elmo_backend.policy.schemas import JudgedLineOut, PolicyReasonOut
+from saint_elmo_backend.quotes.dtos import QuoteRequest
 from saint_elmo_backend.quotes.enums import QuoteStatus
-from saint_elmo_backend.quotes.models import Quote, QuoteLine
+from saint_elmo_backend.quotes.models import Quote
 
 # Request
 
@@ -44,8 +45,8 @@ class QuoteLineIn(CamelBaseModel):
             raise ValueError("a line can't substitute for its own product")
         return self
 
-    def to_line_request(self) -> QuoteLineRequest:
-        return QuoteLineRequest(
+    def to_line_request(self) -> LineRequest:
+        return LineRequest(
             product_code=self.product_code,
             quantity=self.quantity,
             unit=self.unit.upper() if self.unit else None,
@@ -88,65 +89,6 @@ class QuoteIn(CamelBaseModel):
 # Response
 
 
-class PolicyReasonOut(CamelBaseModel):
-    code: PolicyReasonCode
-    severity: Severity
-    line_ref: str | None = Field(description="The line's position (from 1); null for the quote")
-    message: str = Field(description="One plain-English sentence for approvers")
-    facts: dict[str, Any] = Field(
-        description="The numbers behind the reason, e.g. available vs ordered amounts"
-    )
-
-    @classmethod
-    def from_reason(cls, reason: PolicyReason) -> "PolicyReasonOut":
-        return cls(
-            code=reason.code,
-            severity=reason.severity,
-            line_ref=reason.line_ref,
-            message=reason.message,
-            # Amounts go out as JSON numbers, like every other amount in the API
-            facts={
-                key: float(value) if isinstance(value, Decimal) else value
-                for key, value in reason.facts.items()
-            },
-        )
-
-
-class QuoteLineOut(OfferOut):
-    """
-    The line's offer, as `POST /offers` returns it, plus what the quote adds.
-    """
-
-    position: int
-    substitutes_for: str | None
-    outcome: PolicyOutcome = Field(description="The most severe outcome of the line's reasons")
-    reasons: list[PolicyReasonOut]
-
-    @classmethod
-    def from_quote_line(cls, line: QuoteLine) -> "QuoteLineOut":
-        return cls.model_validate(
-            {
-                **line.offer,
-                "position": line.position,
-                "substitutesFor": line.substitutes_for,
-                "outcome": line.outcome,
-                "reasons": line.reasons,
-            }
-        )
-
-
-class QuoteTotals(CamelBaseModel):
-    net: DecimalNumber
-    gross: DecimalNumber
-    currency: str
-
-
-class DepositOut(CamelBaseModel):
-    material_code: str
-    quantity: DecimalNumber = Field(description="Deposit units for the whole quote")
-    unit: str
-
-
 class QuotePolicy(CamelBaseModel):
     outcome: PolicyOutcome = Field(
         description="What placing an order from this quote would give if live data hasn't changed"
@@ -164,8 +106,8 @@ class QuoteResponse(CamelBaseModel):
         "deliverBy, and the quote time-to-live"
     )
     deliver_by: date
-    lines: list[QuoteLineOut]
-    totals: QuoteTotals = Field(description="Excluding deposits")
+    lines: list[JudgedLineOut]
+    totals: Totals = Field(description="Excluding deposits")
     deposits: list[DepositOut] = Field(
         description="Returnable packaging charged on top; Valio Aimo gives no deposit price"
     )
@@ -182,10 +124,8 @@ class QuoteResponse(CamelBaseModel):
             created_at=quote.created_at,
             expires_at=quote.expires_at,
             deliver_by=quote.deliver_by,
-            lines=[QuoteLineOut.from_quote_line(line) for line in quote.lines],
-            totals=QuoteTotals(
-                net=quote.net_total, gross=quote.gross_total, currency=quote.currency
-            ),
+            lines=[JudgedLineOut.from_line(line) for line in quote.lines],
+            totals=Totals(net=quote.net_total, gross=quote.gross_total, currency=quote.currency),
             deposits=[DepositOut.model_validate(deposit) for deposit in quote.deposits],
             policy=QuotePolicy(
                 outcome=quote.outcome,

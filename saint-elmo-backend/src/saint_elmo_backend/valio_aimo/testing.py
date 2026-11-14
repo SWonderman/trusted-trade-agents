@@ -242,6 +242,8 @@ class FakeValioAimoApi:
       (e.g. 429 with a `Retry-After`) before answering normally again; `after=n`
       lets n requests through first.
     - `raise_next(exc)` makes the next request raise a transport error.
+    - `change_price(...)` and `change_availability(...)` move a product's live data,
+      e.g. between a quote and its order.
     - More than 1,000 products in one request is rejected with 422, like the API.
     """
 
@@ -250,6 +252,47 @@ class FakeValioAimoApi:
         self.closed: bool = False
         # None answers normally; scripted entries are consumed one per request
         self._scripted: deque[FakeResponse | Exception | None] = deque()
+        # Per product, replacing the scripted catalogue's answer
+        self._prices: dict[str, Callable[[str], dict[str, Any]]] = dict(_SCRIPTED_PRICES)
+        self._availability: dict[str, Callable[[str, date], dict[str, Any]]] = dict(
+            _SCRIPTED_AVAILABILITY
+        )
+
+    def change_price(self, product_id: str, *, value: float, comparison: float) -> None:
+        """
+        Price `product_id` at `value` per sales unit from now on, keeping its comparison unit.
+        """
+        unit = self._prices[product_id](product_id)["comparisonUnit"]
+        self._prices[product_id] = lambda p: _priced(p, value, comparison, unit)
+
+    def change_availability(
+        self,
+        product_id: str,
+        *,
+        closing_time: str | None = None,
+        available_amount: float | None = None,
+        sales_block: bool | None = None,
+    ) -> None:
+        """
+        Answer `product_id`'s availability with these values from now on, e.g. a
+        `closing_time` that has passed, such as `2026-11-14T09:00:00+0200`.
+        """
+        scripted = self._availability[product_id]
+
+        def changed(p: str, requested: date) -> dict[str, Any]:
+            answer = scripted(p, requested)
+            if closing_time is not None:
+                answer["closingTime"] = closing_time
+            for line in answer["scheduleLines"]:
+                if available_amount is not None:
+                    line["availableAmount"] = available_amount
+                if sales_block is not None:
+                    line["salesBlock"] = sales_block
+            if sales_block is not None:
+                answer["salesBlock"] = sales_block
+            return answer
+
+        self._availability[product_id] = changed
 
     def fail_next(
         self, status: int, *, times: int = 1, retry_after: str | None = None, after: int = 0
@@ -313,24 +356,20 @@ class FakeValioAimoApi:
             200, build(body["customer"], date.fromisoformat(body["requestedDate"]), products)
         )
 
-    @staticmethod
-    def _price_body(customer: str, requested: date, products: list[str]) -> JsonValue:
+    def _price_body(self, customer: str, requested: date, products: list[str]) -> JsonValue:
         return {
             "customerId": customer,
             "currency": "EUR",
             "pricingDate": _timestamp(requested),
-            "products": [_SCRIPTED_PRICES[p](p) for p in products if p in _SCRIPTED_PRICES],
+            "products": [self._prices[p](p) for p in products if p in self._prices],
         }
 
-    @staticmethod
-    def _availability_body(_customer: str, requested: date, products: list[str]) -> JsonValue:
+    def _availability_body(self, _customer: str, requested: date, products: list[str]) -> JsonValue:
         return {
             "timeNow": _TIME_NOW,
             "requestedDate": _timestamp(requested),
             "products": [
-                _SCRIPTED_AVAILABILITY[p](p, requested)
-                for p in products
-                if p in _SCRIPTED_AVAILABILITY
+                self._availability[p](p, requested) for p in products if p in self._availability
             ],
         }
 

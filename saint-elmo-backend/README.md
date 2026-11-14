@@ -146,5 +146,45 @@ organisation; another organisation's quote is a 404 `QUOTE_NOT_FOUND`.
   (`saint_elmo_backend/audit/`). The event holds the full request, every offer used with
   its conversion and provenance (substituted products included), the policy result and
   the mandate version.
-- Period spend is still 0 until orders exist (#15), so the period and category caps only
-  see the quote itself.
+- **Period spend** counts the agent's pending, approved and placed orders (below), so the
+  period and category caps see them as well as the quote itself.
+
+## Orders
+
+`POST /api/v1/orders` (Agent token, `order:place`) places an order from one of the
+agent's own quotes; the Valio Aimo API takes no orders, so they live in Saint Elmo's
+order book (`saint_elmo_backend/orders/`). `GET /api/v1/orders` and
+`GET /api/v1/orders/{orderId}` read them: an Agent token (`order:read`) sees its own
+orders, a user their buyer organisation's. `POST /api/v1/orders/{orderId}/approve` and
+`/reject` take a user session only: an Agent token is refused whatever its scopes.
+
+- **Idempotent per quote**: the quote id is the key. A second order from the same quote is
+  409 `QUOTE_ALREADY_ORDERED` with `details.orderId`, checked before expiry so a late retry
+  still finds its order. An expired quote is 409 `QUOTE_EXPIRED`.
+- **Live re-check**: placing re-prices every quote line with `use_cache=False` and judges it
+  through the same `policy/assessment.py` as a quote, against the current mandate and
+  period spend. AUTO_APPROVE → CONFIRMED → PLACED, NEEDS_HUMAN → PENDING_APPROVAL (with
+  `checkAgainAfterSeconds`, 30), REJECT → REJECTED (a 201). `changes` lists where the live
+  unit price, available amount, earliest date, closing time or sales block differ from the
+  quote's. If the Valio Aimo API is unavailable, placing answers 503 and creates no order,
+  so the quote can still be ordered once the API is back.
+- **Approval** re-checks once more, without counting the order against its own period
+  spend. The NEEDS_HUMAN reasons (by code and line) and the total the order was pending
+  with are what the approver accepts. A REJECT reason (e.g. `CLOSING_TIME_PASSED`) rejects it; a
+  NEEDS_HUMAN reason it wasn't pending with, or a total above the one it was pending
+  with, keeps it PENDING_APPROVAL, showing them, to be decided again (an approval never
+  commits more than the approver saw); otherwise it is APPROVED and PLACED. The order
+  shows the latest re-check.
+- **Status history**: each step with its time and `by`, whoever's request led to it:
+  `agent:<name>` on placing, `user:<first and last name>` on approving or rejecting
+  (including a rejection by the approval re-check). Only placing a confirmed or approved
+  order is `system`.
+- **Audit**: `ORDER_REQUESTED`, `ORDER_RECHECKED` (offers, policy, changes; on approval
+  also the approver, note and any unseen reasons) on placing and approving, then one
+  `ORDER_<STATUS>` per status entered. A human approval is `ORDER_APPROVED` and a human
+  rejection `ORDER_REJECTED_BY_HUMAN`; both, and a rejection by the approval re-check,
+  carry the approver and note.
+- **Period spend** is summed from the order book in `mandates/crud.py`, which reads only
+  the orders' tables, so `mandates` never depends on the order services.
+- **Tests**: `FakeValioAimoApi.change_price` and `change_availability` move live data
+  between a quote and its order.

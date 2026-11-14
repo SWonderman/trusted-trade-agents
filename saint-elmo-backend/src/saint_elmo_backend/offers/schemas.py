@@ -82,6 +82,22 @@ class MoneyAmount(CamelBaseModel):
         return cls(net=money.net, gross=money.gross)
 
 
+class Totals(CamelBaseModel):
+    net: DecimalNumber
+    gross: DecimalNumber
+    currency: str
+
+
+class DepositOut(CamelBaseModel):
+    """
+    Returnable packaging, charged on top of the price; Valio Aimo gives no deposit price.
+    """
+
+    material_code: str
+    quantity: DecimalNumber = Field(description="Deposit units for all the lines")
+    unit: str
+
+
 class Measure(CamelBaseModel):
     value: DecimalNumber
     unit: str
