@@ -12,9 +12,9 @@ async def test_browse_without_query_matches_every_product(reference_data, sessio
     milk = await make_product(session)
     butter = await make_product(session)
 
-    product_ids = await crud.search_product_ids(session, limit=20, offset=0)
+    products = await crud.search_products(session, limit=20, offset=0)
 
-    assert set(product_ids) == {milk.id, butter.id}
+    assert {product.id for product in products} == {milk.id, butter.id}
 
 
 async def test_browse_orders_by_reliability_desc_nulls_last_then_code(
@@ -25,9 +25,14 @@ async def test_browse_orders_by_reliability_desc_nulls_last_then_code(
     reliable_a = await make_product(session, code="100002", delivery_reliability=Decimal("0.95"))
     shaky = await make_product(session, code="100004", delivery_reliability=Decimal("0.40"))
 
-    product_ids = await crud.search_product_ids(session, limit=20, offset=0)
+    products = await crud.search_products(session, limit=20, offset=0)
 
-    assert product_ids == [reliable_a.id, reliable_b.id, shaky.id, unknown.id]
+    assert [product.id for product in products] == [
+        reliable_a.id,
+        reliable_b.id,
+        shaky.id,
+        unknown.id,
+    ]
 
 
 async def test_count_without_query_counts_every_product(reference_data, session):
@@ -37,12 +42,12 @@ async def test_count_without_query_counts_every_product(reference_data, session)
     assert await crud.count_products(session) == 2
 
 
-async def test_load_products_returns_them_with_translations(reference_data, session):
-    milk = await make_product(session, code="100001", names={"en": "Milk", "fi": "Maito"})
-    await make_product(session)
+async def test_search_returns_products_with_translations_loaded(reference_data, session):
+    await make_product(session, code="100001", names={"en": "Milk", "fi": "Maito"})
     session.expunge_all()
 
-    [loaded] = await crud.load_products(session, [milk.id])
+    [product] = await crud.search_products(session, limit=20, offset=0)
 
-    assert loaded.code == "100001"
-    assert {t.language: t.name for t in loaded.translations} == {"en": "Milk", "fi": "Maito"}
+    # Accessing an unloaded relationship on an async session raises, so this proves
+    # the translations were loaded eagerly
+    assert {t.language: t.name for t in product.translations} == {"en": "Milk", "fi": "Maito"}

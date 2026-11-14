@@ -17,15 +17,8 @@ def catalog_provenance() -> CatalogProvenance:
 async def search_products(
     session: AsyncSession, *, limit: int, offset: int
 ) -> ProductSearchResult:
-    product_ids = await crud.search_product_ids(session, limit=limit, offset=offset)
+    products = await crud.search_products(session, limit=limit, offset=offset)
     total = await crud.count_products(session)
-    # NOTE(sw): Getting product info loses the search order so we need to bring it back here put the products back in it
-    # TODO(sw): would it not be better to just have a "search_products" crud function instead to avoid this?
-    products_by_id = {
-        product.id: product for product in await crud.load_products(session, product_ids)
-    }
     return ProductSearchResult(
-        total=total,
-        products=[products_by_id[product_id] for product_id in product_ids],
-        provenance=catalog_provenance(),
+        total=total, products=products, provenance=catalog_provenance()
     )
