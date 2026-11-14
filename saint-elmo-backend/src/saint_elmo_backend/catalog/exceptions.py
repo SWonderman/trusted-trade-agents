@@ -7,4 +7,4 @@ class UnknownCodesError(Exception):
 
     def __init__(self, unknown: dict[str, list[str]]) -> None:
         self.unknown = unknown
-        super().__init__(f"Unknown codes: {unknown}")
+        super().__init__(unknown)

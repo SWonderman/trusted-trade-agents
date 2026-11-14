@@ -394,7 +394,7 @@ async def test_unknown_code_error_is_documented_in_openapi(client):
 
     unprocessable = schema["paths"][SEARCH_URL]["post"]["responses"]["422"]
     examples = unprocessable["content"]["application/json"]["examples"]
-    assert "UnknownCode" in examples
+    assert "UnknownFilterCodes" in examples
 
 
 async def test_search_request_is_documented_in_openapi(client):

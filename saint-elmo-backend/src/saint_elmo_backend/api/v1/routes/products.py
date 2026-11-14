@@ -1,11 +1,10 @@
 from fastapi import APIRouter
 
 from saint_elmo_backend.api.annotations import ASession
-from saint_elmo_backend.api.exceptions import UnknownCode, to_response_error
+from saint_elmo_backend.api.exceptions import UnknownFilterCodes, to_response_error
 from saint_elmo_backend.catalog import services
 from saint_elmo_backend.catalog.exceptions import UnknownCodesError
 from saint_elmo_backend.catalog.schemas import ProductSearchRequest, ProductSearchResponse
-from saint_elmo_backend.core.schema import camelize
 
 router = APIRouter()
 
@@ -14,7 +13,7 @@ router = APIRouter()
 @router.post(
     "/search",
     response_model=ProductSearchResponse,
-    responses=to_response_error(UnknownCode),
+    responses=to_response_error(UnknownFilterCodes),
 )
 async def search_products(data: ProductSearchRequest, session: ASession) -> ProductSearchResponse:
     try:
@@ -27,9 +26,10 @@ async def search_products(data: ProductSearchRequest, session: ASession) -> Prod
             offset=data.offset,
         )
     except UnknownCodesError as exc:
-        unknown = ", ".join(
-            f"{camelize(name)}=[{', '.join(codes)}]" for name, codes in exc.unknown.items()
-        )
-        raise UnknownCode(f"Unknown codes: {unknown}") from exc
+        # Named by request field, so the agent can map each code back to its filter
+        fields = ProductSearchRequest.model_fields
+        raise UnknownFilterCodes.for_filters(
+            {fields[name].alias or name: codes for name, codes in exc.unknown.items()}
+        ) from exc
 
     return ProductSearchResponse.from_result(result)

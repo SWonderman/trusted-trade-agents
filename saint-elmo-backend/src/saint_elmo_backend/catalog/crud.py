@@ -25,8 +25,6 @@ _SEARCH_CONFIGS: dict[Language, str] = {
     Language.EN: "pg_catalog.english",
 }
 
-NO_FILTERS = ProductFilters()
-
 # ts_rank normalization flag: rank / (rank + 1), which keeps the rank in [0, 1)
 _RANK_IN_UNIT_RANGE = 32
 
@@ -106,7 +104,7 @@ async def search_products(
     session: AsyncSession,
     *,
     query: str | None,
-    filters: ProductFilters = NO_FILTERS,
+    filters: ProductFilters,
     limit: int,
     offset: int,
 ) -> list[ProductMatch]:
@@ -145,7 +143,7 @@ async def search_products(
 
 
 async def count_products(
-    session: AsyncSession, *, query: str | None, filters: ProductFilters = NO_FILTERS
+    session: AsyncSession, *, query: str | None, filters: ProductFilters
 ) -> int:
     stmt = select(func.count()).select_from(Product).where(*_filter_conditions(filters))
     if query is not None:

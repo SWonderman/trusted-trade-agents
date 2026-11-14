@@ -55,14 +55,9 @@ async def _unknown_filter_codes(
     """
     claim_types = [claim_type for claim_type, _ in filters.required_claims]
     claim_elements = [element for _, element in filters.required_claims]
-    known_types = await crud.existing_codes(session, ClaimType.code, claim_types)
-    known_elements = await crud.existing_codes(session, ClaimElement.code, claim_elements)
-    unknown_claim_codes = [
-        code
-        for claim_type, element in filters.required_claims
-        for code, known in ((claim_type, known_types), (element, known_elements))
-        if code not in known
-    ]
+    unknown_claim_codes = await _unknown_codes(
+        session, ClaimType.code, claim_types
+    ) + await _unknown_codes(session, ClaimElement.code, claim_elements)
 
     unknown = {
         "category_codes": await _unknown_codes(session, Category.code, filters.category_codes),

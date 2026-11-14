@@ -587,16 +587,24 @@ class DuplicateIdentifier(SaintElmoHTTPException):
         )
 
 
-class UnknownCode(SaintElmoHTTPException):
-    def __init__(
-        self,
-        detail: str = "Unknown codes: requiredDiets=[CARNIVORE], requiredLabels=[ORGANIC]",
-    ):
+class UnknownFilterCodes(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Search filters name codes the catalog does not know"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.UNKNOWN_CODE,
             detail=detail,
         )
+
+    @classmethod
+    def for_filters(cls, unknown: dict[str, list[str]]) -> "UnknownFilterCodes":
+        """
+        `unknown` maps request field names to their unknown codes.
+
+        Example:
+        "Unknown codes: requiredDiets=[CARNIVORE], requiredLabels=[ORGANIC]".
+        """
+        listed = ", ".join(f"{field}=[{', '.join(codes)}]" for field, codes in unknown.items())
+        return cls(f"Unknown codes: {listed}")
 
 
 class LocationNotFound(SaintElmoHTTPException):
