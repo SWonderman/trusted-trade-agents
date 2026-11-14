@@ -1,7 +1,7 @@
 from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
-from saint_elmo_mcp.tools import catalog, mandate, offers
+from saint_elmo_mcp.tools import catalog, mandate, offers, quotes
 
 INSTRUCTIONS = """\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
@@ -16,7 +16,11 @@ The full flow (tools are added as the backend grows, so use the ones you have):
 3. get_offers: live price and availability for a shortlist on a delivery date,
    with buyer quantities (e.g. 1000 L) converted to sales units and priced.
    Check meetsDeadline, reasonCodes and crossCheck; offers are binding on nothing.
-4. create_quote: price a basket and see the policy outcome before committing.
+4. create_quote: turn the chosen basket into a quote and see the policy outcome
+   (AUTO_APPROVE, NEEDS_HUMAN or REJECT, with reasons) before committing. Give
+   buyerRequest (the buyer's words) and rationale (why these lines); approvers
+   see both. Revise with previousQuoteId. get_quote re-reads a quote; EXPIRED
+   means quote again.
 5. place_order: commit a quote. If it is pending approval, a human decides;
    poll get_order_status. You can never approve your own orders.
 
@@ -42,4 +46,5 @@ def build_server(backend: BackendClient) -> MCPServer:
     mandate.register(mcp, backend)
     catalog.register(mcp, backend)
     offers.register(mcp, backend)
+    quotes.register(mcp, backend)
     return mcp

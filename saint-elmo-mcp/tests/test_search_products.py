@@ -24,9 +24,11 @@ async def test_lists_tools_and_search_uses_rest_field_names(connect):
         tools = (await client.list_tools()).tools
 
     assert sorted(t.name for t in tools) == [
+        "create_quote",
         "get_my_mandate",
         "get_offers",
         "get_product",
+        "get_quote",
         "get_vocabulary",
         "search_products",
     ]

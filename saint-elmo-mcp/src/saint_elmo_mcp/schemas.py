@@ -6,11 +6,10 @@ renamed field fails validation, which is how contract drift shows up in tests
 (ADR 0001).
 """
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
-
 
 # Mirrors the backend's catalog AllergenStrictness; search filter and mandate share it
 AllergenStrictness = Literal["contains", "may_contain", "declared_free"]
@@ -498,3 +497,137 @@ class Mandate(CamelModel):
     )
 
     period_spend: PeriodSpend
+
+
+# --- Quotes (POST /api/v1/quotes, GET /api/v1/quotes/{quoteId}, issue #14) ---
+# Every field of the backend's QuoteResponse. Outcomes and reason codes are
+# Literals copied from the backend's policy catalogue (#13), so a new value fails
+# loudly.
+
+
+class QuoteLineIn(CamelModel):
+    """One quote line. Tool input, sent to the backend as given."""
+
+    # Bounds mirror the backend's QuoteLineIn
+    product_code: str = Field(
+        min_length=1, max_length=20, description="Valio Aimo product code from search_products."
+    )
+    quantity: float = Field(gt=0, description="How much, in `unit`.")
+    unit: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=10,
+        description="Unit of `quantity`: L, KG, or one of the product's unit codes (e.g. KI, "
+        "ST). Give the buyer's unit (L or KG) and let the backend convert. Omit for sales "
+        "units.",
+    )
+    substitutes_for: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=20,
+        description="The product code this line replaces, so the mandate's substitution "
+        "rules and price-increase limit apply. Omit for a line that replaces nothing.",
+    )
+
+
+PolicyOutcome = Literal["AUTO_APPROVE", "NEEDS_HUMAN", "REJECT"]
+
+PolicyReasonCode = Literal[
+    # Reject
+    "SALES_BLOCKED",
+    "NOT_DELIVERABLE",
+    "NO_PRICE",
+    "CLOSING_TIME_PASSED",
+    "CONTAINS_EXCLUDED_ALLERGEN",
+    "MAY_CONTAIN_EXCLUDED_ALLERGEN",
+    "ALLERGEN_NOT_DECLARED_FREE",
+    "BLOCKED_CATEGORY",
+    "BLOCKED_VENDOR",
+    "SUBSTITUTION_NOT_ALLOWED",
+    "OVER_ORDER_LIMIT",
+    "CONVERSION_UNAVAILABLE",
+    # Needs a human
+    "CATEGORY_NOT_ALLOWED",
+    "VENDOR_NOT_ALLOWED",
+    "ORIGIN_NOT_ALLOWED",
+    "MISSING_REQUIRED_CLAIM",
+    "MISSING_REQUIRED_LABEL",
+    "MISSING_REQUIRED_DIET",
+    "OVER_AUTO_APPROVE_LIMIT",
+    "OVER_PERIOD_CAP",
+    "OVER_CATEGORY_CAP",
+    "PARTIAL_AVAILABILITY",
+    "LATE_DELIVERY",
+    "BELOW_MIN_RELIABILITY",
+    "SUBSTITUTE_NEEDS_APPROVAL",
+    "SUBSTITUTE_PRICE_INCREASE",
+    # Info
+    "STOCK_UNKNOWN",
+    "CONVERSION_UNCERTAIN",
+    "ROUNDED_TO_LOT_SIZE",
+]
+
+
+class PolicyReason(CamelModel):
+    code: PolicyReasonCode
+    severity: Literal["INFO", "NEEDS_HUMAN", "REJECT"] = Field(
+        description="INFO is only stated; NEEDS_HUMAN and REJECT set the outcome."
+    )
+    line_ref: str | None = Field(description="The line's position (from 1); null for the quote.")
+    message: str = Field(description="One plain-English sentence, as approvers see it.")
+    facts: dict[str, Any] = Field(
+        description="The numbers behind the reason, e.g. available vs ordered amounts."
+    )
+
+
+class QuoteLine(Offer):
+    """The line's offer, as get_offers returns it, plus the policy's verdict."""
+
+    position: int = Field(description="From 1, in request order.")
+    substitutes_for: str | None
+    outcome: PolicyOutcome = Field(description="The most severe outcome of the line's reasons.")
+    reasons: list[PolicyReason]
+
+
+class QuoteTotals(CamelModel):
+    net: float
+    gross: float
+    currency: str
+
+
+class QuoteDeposit(CamelModel):
+    material_code: str
+    quantity: float = Field(description="Deposit units for the whole quote.")
+    unit: str
+
+
+class QuotePolicy(CamelModel):
+    outcome: PolicyOutcome = Field(
+        description="What placing an order from this quote would give if live data hasn't "
+        "changed. AUTO_APPROVE: place_order goes through; NEEDS_HUMAN: an approver decides; "
+        "REJECT: revise first."
+    )
+    reasons: list[PolicyReason] = Field(description="Lines in order, then the quote's own.")
+    mandate_version: int = Field(description="The mandate version the quote was judged against.")
+
+
+class Quote(CamelModel):
+    quote_id: str
+    status: Literal["QUOTED", "EXPIRED"] = Field(
+        description="EXPIRED: past expiresAt, no order can be placed from it; quote again."
+    )
+    created_at: str
+    expires_at: str = Field(
+        description="The earliest of the lines' price validity, their closing time and the "
+        "quote time-to-live. place_order before then."
+    )
+    deliver_by: str = Field(description="The delivery date quoted for; check it.")
+    lines: list[QuoteLine]
+    totals: QuoteTotals = Field(description="Excluding deposits.")
+    deposits: list[QuoteDeposit] = Field(
+        description="Returnable packaging charged on top; Valio Aimo gives no deposit price."
+    )
+    policy: QuotePolicy
+    buyer_request: str
+    rationale: str
+    previous_quote_id: str | None
