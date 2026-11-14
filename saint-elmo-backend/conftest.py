@@ -14,6 +14,8 @@ import secrets
 
 # NOTE(sw): keys do not depend on the developer's .env keys
 os.environ["JWT_SECRET"] = secrets.token_urlsafe(48)
+# A demo setting in a developer's .env must not change what tests expect of closing times
+os.environ["OFFERS_IGNORE_CLOSING_TIME"] = "false"
 os.environ["AGENT_TOKEN_SIGNING_KEY"] = base64.urlsafe_b64encode(os.urandom(32)).decode()
 
 import asyncio
