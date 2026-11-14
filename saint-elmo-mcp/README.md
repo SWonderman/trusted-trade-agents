@@ -8,7 +8,7 @@ Built on the official MCP Python SDK v2 (`MCPServer`, which was called `FastMCP`
 
 | Tool | Backend endpoint | Status |
 |---|---|---|
-| `search_products` | `POST /api/v1/products/search` (#2, #3) | query, language, paging; filters `categoryCodes`, `vendors`, `requiredClaims`, `requiredDiets`, `requiredLabels`, `countriesOfOrigin`, `minDeliveryReliability` |
+| `search_products` | `POST /api/v1/products/search` (#2, #3, #4) | query, language, paging; filters `categoryCodes`, `vendors`, `requiredClaims`, `requiredDiets`, `requiredLabels`, `countriesOfOrigin`, `minDeliveryReliability`; allergen exclusion `excludedAllergens` + `allergenStrictness` (`contains` / `may_contain` / `declared_free`); per-hit `allergens` status (`UNKNOWN` = no data, not safe) |
 
 The remaining tools (`get_product`, `get_vocabulary`, `get_my_mandate`, `get_offers`, `find_substitutes`, `create_quote`, `place_order`, `get_order_status`) are added as their backend endpoints land. See issues #10–#16.
 

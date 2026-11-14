@@ -102,5 +102,6 @@ MILK_HIT = {
     "deliveryReliability": None,
     "carbonFootprint": {"value": 1.2, "basis": "PRODUCT_GROUP_AVERAGE"},
     "relevance": 0.87,
+    "allergens": [{"code": "AM", "status": "CONTAINS"}],
     "somethingTheAgentDoesNotNeed": "ignored",
 }

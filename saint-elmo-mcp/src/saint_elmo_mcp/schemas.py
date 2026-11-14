@@ -45,6 +45,14 @@ class CarbonFootprint(CamelModel):
     )
 
 
+class HitAllergen(CamelModel):
+    code: str = Field(description="GS1 allergen type code, e.g. AM milk.")
+    status: Literal["CONTAINS", "MAY_CONTAIN", "FREE_FROM", "UNDECLARED", "UNKNOWN"] = Field(
+        description="UNKNOWN = no data for this allergen, NOT safe. Only FREE_FROM is a "
+        "declaration that the product is free of it."
+    )
+
+
 class ProductHit(CamelModel):
     code: str = Field(description="Valio Aimo product code; use it with every other tool.")
     name: str | None = None
@@ -70,6 +78,10 @@ class ProductHit(CamelModel):
     )
     carbon_footprint: CarbonFootprint | None = None
     relevance: float | None = None
+    allergens: list[HitAllergen] = Field(
+        description="Every excluded allergen, in request order, then every other allergen "
+        "the product CONTAINS. Not a full allergen list."
+    )
 
 
 class ProductSearchResult(CamelModel):
