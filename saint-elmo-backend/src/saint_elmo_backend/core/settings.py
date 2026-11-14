@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,6 +27,9 @@ class Settings(BaseSettings):
 
     # Cryptography (Fernet keys for EncryptedString; first key encrypts, all decrypt)
     credential_keys: list[str] = []
+
+    # Static Valio Aimo data set (product JSON + CSVs), loaded by the catalogue seeder
+    catalog_data_dir: Path = Path("../data")
 
 
 @lru_cache
