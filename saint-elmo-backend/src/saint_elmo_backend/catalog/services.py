@@ -34,8 +34,13 @@ async def search_products(
     limit: int,
     offset: int,
 ) -> ProductSearchResult:
+    # A blank search is still treated as a search
+    if query is not None and not query.strip():
+        query = None
+
     matches = await crud.search_products(session, query=query, limit=limit, offset=offset)
     total = await crud.count_products(session, query=query)
+
     return ProductSearchResult(
         total=total,
         hits=[

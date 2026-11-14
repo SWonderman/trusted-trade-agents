@@ -1,23 +1,33 @@
-from sqlalchemy import Select, cast, func, literal, null, or_, select
+from typing import Any
+
+from sqlalchemy import ColumnElement, Select, case, cast, func, literal, null, or_, select
 from sqlalchemy.dialects.postgresql import REGCONFIG
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from saint_elmo_backend.catalog.dtos import ProductMatch
+from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.catalog.models import Product, ProductTranslation
 
 # Each translation's search vector is built with its own language's configuration
-_SEARCH_CONFIGS = ("pg_catalog.finnish", "pg_catalog.swedish", "pg_catalog.english")
+_SEARCH_CONFIGS: dict[Language, str] = {
+    Language.FI: "pg_catalog.finnish",
+    Language.SV: "pg_catalog.swedish",
+    Language.EN: "pg_catalog.english",
+}
+
+# ts_rank normalization flag: rank / (rank + 1), which keeps the rank in [0, 1)
+_RANK_IN_UNIT_RANGE = 32
 
 
-def _text_query(query: str):
+def _text_query(query: str) -> ColumnElement[Any]:
     """
     The query parsed once per language and ORed (`||`), so a single tsquery matches
     fi, sv and en translations at once and the search vector's GIN index applies.
     """
     tsqueries = [
         func.websearch_to_tsquery(cast(literal(config), REGCONFIG), query)
-        for config in _SEARCH_CONFIGS
+        for config in _SEARCH_CONFIGS.values()
     ]
     combined = tsqueries[0]
     for tsquery in tsqueries[1:]:
@@ -29,26 +39,26 @@ def _matching_product_ids(query: str) -> Select:
     """
     (product_id, relevance) for every product with a translation matching the query by
     full text, or by name trigram similarity (`%`, pg_trgm's threshold) to handle potential typos.
-    Relevance is the better of the two scores and a product matching in several
-    languages keeps its best one.
+
+    Trigram similarity is only the fallback: full-text matches score in [0.5, 1) and
+    fuzzy-only matches in [0, 0.5], so every full-text match ranks above every fuzzy
+    one. A product matching in several languages keeps its best score.
     """
     text_query = _text_query(query)
+    text_match = ProductTranslation.search_vector.bool_op("@@")(text_query)
+    relevance = case(
+        (
+            text_match,
+            0.5
+            + func.ts_rank(ProductTranslation.search_vector, text_query, _RANK_IN_UNIT_RANGE)
+            / 2,
+        ),
+        else_=func.similarity(ProductTranslation.name, query) / 2,
+    )
+
     return (
-        select(
-            ProductTranslation.product_id,
-            func.max(
-                func.greatest(
-                    func.ts_rank(ProductTranslation.search_vector, text_query),
-                    func.similarity(ProductTranslation.name, query),
-                )
-            ).label("relevance"),
-        )
-        .where(
-            or_(
-                ProductTranslation.search_vector.bool_op("@@")(text_query),
-                ProductTranslation.name.bool_op("%")(query),
-            )
-        )
+        select(ProductTranslation.product_id, func.max(relevance).label("relevance"))
+        .where(or_(text_match, ProductTranslation.name.bool_op("%")(query)))
         .group_by(ProductTranslation.product_id)
     )
 
@@ -82,6 +92,7 @@ async def search_products(
             joinedload(Product.brand),
         )
     )
+
     return [
         ProductMatch(product=product, relevance=relevance)
         for product, relevance in (await session.execute(stmt)).all()
@@ -93,4 +104,5 @@ async def count_products(session: AsyncSession, *, query: str | None) -> int:
         stmt = select(func.count()).select_from(Product)
     else:
         stmt = select(func.count()).select_from(_matching_product_ids(query).subquery())
+
     return (await session.execute(stmt)).scalar_one()

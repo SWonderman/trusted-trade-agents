@@ -196,3 +196,21 @@ async def test_search_loads_units_deposits_claims_diets_and_labels(
     ]
     assert [diet.diet_code for diet in product.diets] == ["VEGAN"]
     assert [label.label_code for label in product.labels] == ["EU_ORGANIC_FARMING"]
+
+
+async def test_any_text_match_ranks_above_a_fuzzy_only_match(reference_data, session):
+    # "Milkk" is close to "milk" by trigram similarity but has no full-text match,
+    # so it comes after even a weak (marketing text) full-text match
+    fuzzy = await make_product(session, names={"en": "Milkk"})
+    text_match = await make_product(
+        session,
+        names={"en": "Cocoa drink"},
+        marketing_texts={"en": "Tastes best with cold milk"},
+    )
+
+    matches = await crud.search_products(session, query="milk", limit=20, offset=0)
+
+    assert [match.product.id for match in matches] == [text_match.id, fuzzy.id]
+    text_relevance, fuzzy_relevance = (match.relevance for match in matches)
+    assert text_relevance is not None and fuzzy_relevance is not None
+    assert text_relevance > fuzzy_relevance

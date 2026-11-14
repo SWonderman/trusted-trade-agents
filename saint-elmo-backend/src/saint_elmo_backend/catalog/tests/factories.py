@@ -53,6 +53,7 @@ async def make_product(
     base_unit: str = "ST",
     allowed_lot_size: Decimal = Decimal("0.01"),
     units: dict[str, Decimal] | None = None,
+    unit_gtins: dict[str, str] | None = None,
     claims: Sequence[tuple[str, str]] = (),
     diets: Sequence[str] = (),
     labels: Sequence[str] = (),
@@ -68,6 +69,7 @@ async def make_product(
     names = names or {"en": f"Test product {code}"}
     marketing_texts = marketing_texts or {}
     units = units or {base_unit: Decimal("1")}
+    unit_gtins = unit_gtins or {}
 
     product = Product(
         code=code,
@@ -86,7 +88,9 @@ async def make_product(
             for language in names | marketing_texts
         ],
         units=[
-            ProductUnit(unit_code=unit_code, size_in_base_units=size)
+            ProductUnit(
+                unit_code=unit_code, size_in_base_units=size, gtin=unit_gtins.get(unit_code)
+            )
             for unit_code, size in units.items()
         ],
         claims=[

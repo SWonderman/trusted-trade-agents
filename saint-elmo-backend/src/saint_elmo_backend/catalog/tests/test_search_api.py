@@ -198,13 +198,34 @@ async def test_hit_carries_units_deposit_flag_claims_diets_and_labels(
 
     [hit] = response.json()["items"]
     assert sorted(hit["units"], key=lambda unit: unit["sizeInBaseUnits"]) == [
-        {"code": "ST", "sizeInBaseUnits": 1.0},
-        {"code": "KI", "sizeInBaseUnits": 12.0},
+        {"code": "ST", "sizeInBaseUnits": 1.0, "gtin": None},
+        {"code": "KI", "sizeInBaseUnits": 12.0, "gtin": None},
     ]
     assert hit["hasDeposit"] is True
     assert hit["claims"] == [{"type": "FREE_FROM", "element": "LACTOSE"}]
     assert hit["diets"] == ["VEGAN"]
     assert hit["labels"] == ["EU_ORGANIC_FARMING"]
+
+
+async def test_each_unit_carries_its_own_gtin(reference_data, session, client):
+    await make_product(
+        session,
+        gtin="06408430000012",
+        base_unit="ST",
+        units={"ST": Decimal("1"), "KI": Decimal("12"), "PAL": Decimal("960")},
+        unit_gtins={"ST": "06408430000012", "KI": "16408430000019"},
+    )
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    [hit] = response.json()["items"]
+    assert hit["gtin"] == "06408430000012"
+    assert {unit["code"]: unit["gtin"] for unit in hit["units"]} == {
+        "ST": "06408430000012",
+        "KI": "16408430000019",
+        "PAL": None,
+    }
 
 
 async def test_product_without_deposits_has_no_deposit(reference_data, session, client):
@@ -228,6 +249,19 @@ async def test_missing_reliability_carbon_footprint_and_brand_are_null(
     assert hit["deliveryReliability"] is None
     assert hit["carbonFootprint"] is None
     assert hit["brand"] is None
+
+
+@pytest.mark.parametrize("query", ["", "   "], ids=["empty", "whitespace"])
+async def test_blank_query_browses_the_catalog(reference_data, session, client, query):
+    await make_product(session, code="100001")
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"query": query})
+
+    body = response.json()
+    assert body["total"] == 1
+    assert [item["code"] for item in body["items"]] == ["100001"]
+    assert body["items"][0]["relevance"] is None
 
 
 async def test_empty_body_is_a_valid_browse_request(client):
