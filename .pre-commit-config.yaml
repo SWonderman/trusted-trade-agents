@@ -1,0 +1,11 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.5
+    hooks:
+      - id: ruff-check
+        name: ruff check (saint-elmo-backend)
+        args: [--fix]
+        files: ^saint-elmo-backend/
+      - id: ruff-format
+        name: ruff format (saint-elmo-backend)
+        files: ^saint-elmo-backend/
