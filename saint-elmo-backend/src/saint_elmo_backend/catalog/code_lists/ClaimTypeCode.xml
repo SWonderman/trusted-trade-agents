@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeList term="T4358" SDDversion="7" SDDupdated="2026-03-18" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:ClaimTypeCode</urn>
+	<listName languageCode="en">Claim type code</listName>
+	<listName languageCode="sv">Typ av påstående</listName>
+	<GDDversion>1</GDDversion>
+	<GDDupdated>2026-05-16</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>ADDED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Added</name>
+		<description languageCode="en">A claim stating that a substance (e.g. sugar) has been added to a food. </description>
+	</code>
+	<code>
+		<value>CONTAINS</value>
+		<name languageCode="en">Contains</name>
+		<name languageCode="sv">Innehåller</name>
+		<description languageCode="en">A claim that a food contains the ingredient/nutrition/etc specified in the nutritionalClaimNutrientElementCode. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+		<description languageCode="sv">Ett påstående om att en produkt innehåller en specifik ingrediens/näringsämne/ämne/etc.</description>
+	</code>
+	<code>
+		<value>DECAFFEINATED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Decaffeinated</name>
+		<description languageCode="en">Indicates most or all of the caffeine is removed from the product. </description>
+	</code>
+	<code>
+		<value>ENRICHED_WITH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Enriched with</name>
+		<description languageCode="en">A claim that a food is enriched with the substance in the nutritionalClaimNutrientElementCode.  Enriched means adding back (to original levels) nutrients that were lost during food processing. e.g., Adding back certain B-vitamins lost in processing wheat to make white flour. Note the amount that determines enrichment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>EXCELLENT_SOURCE_OF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Excellent Source of</name>
+		<description languageCode="en">The claim made is the trade item is an "Excellent Source of" the element specified. This is determined by any regulatory bodies what "Excellent" means or is just a marketing claim.</description>
+	</code>
+	<code>
+		<value>EXCESS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Excess</name>
+		<description languageCode="en">A claim stating the specified element is in excess of some set value either by the manufacturer or according to local regulations.</description>
+	</code>
+	<code>
+		<value>EXTRA_LEAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Extra lean</name>
+		<description languageCode="en">The item is considered to be extra lean. USFDA criteria of this term can be found in 21 CFR at www.fda.gov. </description>
+	</code>
+	<code>
+		<value>FED_WITH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fed with</name>
+		<description languageCode="en">A claim that the animal product is fed with the substance in the ClaimElementCode.</description>
+	</code>
+	<code>
+		<value>FED_WITHOUT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fed without</name>
+		<description languageCode="en">A claim that the animal product is fed without the substance in the ClaimElementCode.</description>
+	</code>
+	<code>
+		<value>FORTIFIED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fortified</name>
+		<description languageCode="en">"A claim that a food is fortified with the substance in the nutritionalClaimNutrientElementCode. Fortified means adding vitamins or minerals to a food that weren't originally present in the food.  This is often do for ""Nutrition Policy"", to ensure a population has a sufficient intake of an essential nutrient.  Some foods ""may"" be voluntarily fortified; for others, fortification is mandatory.  e.g., Adding vitamin D to milk. Note the amount that determines fortified is based on target market regulations." </description>
+	</code>
+	<code>
+		<value>FREE_FROM</value>
+		<name languageCode="en">Free from</name>
+		<name languageCode="sv">Fri från</name>
+		<description languageCode="en">A claim that a product is completely free from the substance in the ClaimElementCode. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+		<description languageCode="sv">Ett påstående om att en produkt är fritt från en specifik ingrediens/näringsämne/ämne/etc.</description>
+	</code>
+	<code>
+		<value>FRESH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fresh</name>
+		<description languageCode="en">The item is considered to be fresh.USFDA criteria of this term can be found in 21 CFR at www.fda.gov. </description>
+	</code>
+	<code>
+		<value>FROZEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Frozen</name>
+		<description languageCode="en">"A product is frozen, for a longer shelf-life or preserved by freezing temperature and does not include any surface freezing that may occur during holding and transportation." </description>
+	</code>
+	<code>
+		<value>GOOD_SOURCE_OF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Good Source of</name>
+		<description languageCode="en">The claim made is the trade item is a "Good Source of" the element specified. This is determined by any regulatory bodies what "Good" means or is just a marketing claim.</description>
+	</code>
+	<code>
+		<value>GROWN_WITHOUT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Grown without</name>
+		<description languageCode="en">A claim stating that a substance (e.g. herbicide) has not been used in the process of growing fruits, vegetables, plants or flowers.</description>
+	</code>
+	<code>
+		<value>GUARANTEED_FREE_FROM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Guaranteed free from</name>
+		<description languageCode="en">A claim that a food is regularly analysed to guarantee that the product is free from the substance in the nutritionalClaimNutrientElementCode.</description>
+	</code>
+	<code>
+		<value>GUARANTEED_SOURCE_OF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Guaranteed source of</name>
+		<description languageCode="en">A claim that a food is regularly analysed to guarantee that the product contains the substance in the nutritionalClaimNutrientElementCode.</description>
+	</code>
+	<code>
+		<value>HEALTHY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Healthy</name>
+		<description languageCode="en">The item is claimed to be healthy. USFDA criteria of this term can be found in 21 CFR at www.fda.gov. </description>
+	</code>
+	<code>
+		<value>HIGH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">High</name>
+		<description languageCode="en">A claim that a food is high in the substance specified in the ClaimElementCode. Any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>HIGH_POTENCY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">High potency</name>
+		<description languageCode="en">Item is considered to be High Potency.  USFDA criteria of this term can be found in 21 CFR at www.fda.gov. </description>
+	</code>
+	<code>
+		<value>HUMAN_GRADE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Human grade</name>
+		<description languageCode="en">A product that is suitable for consumption by a human.</description>
+	</code>
+	<code>
+		<value>INCREASED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Increased</name>
+		<description languageCode="en">A claim that a food is increased specific ingredient/nutrition/etc. and any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations. In the case of foods naturally increased amount specific ingredient/nutrition/etc.in the nutritionalClaimNutrientElementCode, the term "naturally" may be used as a prefix to this claim.</description>
+	</code>
+	<code>
+		<value>LEAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lean</name>
+		<description languageCode="en">The item is considered to be lean. USFDA criteria of this term can be found in 21 CFR at www.fda.gov. </description>
+	</code>
+	<code>
+		<value>LIGHT_LITE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Light lite</name>
+		<description languageCode="en">A claim stating that a product is "light" or "lite", and any claim likely to have the same meaning for the consumer, shall follow the same conditions as those set for the term "reduced"; the claim shall also be accompanied by an indication of the characteristic(s) which make the food "light" or "lite".</description>
+	</code>
+	<code>
+		<value>LIMITED_INGREDIENTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Limited ingredients</name>
+		<description languageCode="en">A product formulated with a minimal number of ingredients.</description>
+	</code>
+	<code>
+		<value>LOW</value>
+		<name languageCode="en">Low</name>
+		<name languageCode="sv">Låg</name>
+		<description languageCode="en">A claim that a food is low in specific ingredient/nutrition/etc in the nutritionalClaimNutrientElementCode. Any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations.</description>
+		<description languageCode="sv">Ett påstående om att produkten har lågt innehåll av en specifik ingrediens/näringsämne/ämne/etc.</description>
+	</code>
+	<code>
+		<value>MADE_IN_FACILITY_FREE_FROM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made in facility free from</name>
+		<description languageCode="en">Trade item is made in a facility that is free from a specified element. This usually is regulated in a market by an authority. Please refer to the regulation specific to your market.</description>
+	</code>
+	<code>
+		<value>MADE_WITH</value>
+		<name languageCode="en">Made with from</name>
+		<name languageCode="sv">Tillverkad med/från</name>
+		<description languageCode="en">A claim that the item is made with or from a specific ingredient/nutrition/etc. and any claim likely to have the same meaning for the consumer. Please refer to any local regulations that determine containment levels for the claim.</description>
+		<description languageCode="sv">Ett påstående om att artikeln är tillverkad med/från en specifik tillverkningsegenskap.</description>
+	</code>
+	<code>
+		<value>MADE_WITH_100_PERCENT</value>
+		<name languageCode="en">Made with from 100%</name>
+		<name languageCode="sv">100% tillverkad med/från</name>
+		<description languageCode="en">A claim that the item is made with/from 100% of a specific ingredient/nutrition/etc. and any claim likely to have the same meaning for the consumer. Please refer to any local regulations that determine containment levels for the claim.</description>
+		<description languageCode="sv">Ett påstående om att artikeln är 100% tillverkad med/från en specifik tillverkningsegenskap.</description>
+	</code>
+	<code>
+		<value>MADE_WITH_FRESH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with fresh</name>
+		<description languageCode="en">Food that is made with fresh ingredient that has never been frozen and it is raw, uncooked, unprocessed and not preserved.</description>
+	</code>
+	<code>
+		<value>MADE_WITH_FRESH_AND_FROZEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with fresh and frozen</name>
+		<description languageCode="en">Food that is made of both fresh and previously frozen ingredient. </description>
+	</code>
+	<code>
+		<value>MADE_WITH_FROZEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with frozen</name>
+		<description languageCode="en">Food that is made with previously frozen ingredients. </description>
+	</code>
+	<code>
+		<value>MADE_WITH_MINCED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with minced</name>
+		<description languageCode="en">Food that is made with mechanically recovered flesh which may include blood, pigments, skin, and membrane particles, bones, and other material.  It may be formed into large frozen blocks which are cut to make value-added products. It is usually used for formed fish products e.g., (breaded) fingers, nuggets or balls, fish cakes or surimi. </description>
+	</code>
+	<code>
+		<value>MADE_WITH_NATURAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with natural</name>
+		<description languageCode="en">A claim describing the product is made with some natural element. </description>
+	</code>
+	<code>
+		<value>MADE_WITH_ORGANIC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with organic</name>
+		<description languageCode="en">A claim the trade item is made with specified element which is organic.</description>
+	</code>
+	<code>
+		<value>MADE_WITH_PASTEURIZED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with pasteurized</name>
+		<description languageCode="en">A food product that is made with specified ingredient which is pasteurized. </description>
+	</code>
+	<code>
+		<value>MADE_WITH_UNPASTEURIZED_OR_RAW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Made with unpasteurized or raw</name>
+		<description languageCode="en">A food product that is made with specified ingredient which is not pasteurized or it is raw. </description>
+	</code>
+	<code>
+		<value>MAY_CONTAIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">May contain</name>
+		<description languageCode="en">The claim to state the product may contain some element. </description>
+	</code>
+	<code>
+		<value>MAY_HAVE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">May have</name>
+		<description languageCode="en">The claim to state the product may have some descriptive element. </description>
+	</code>
+	<code>
+		<value>NATURAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Natural</name>
+		<description languageCode="en">A claim that a product does not contain synthetic or artificial ingredients.</description>
+	</code>
+	<code>
+		<value>NATURALLY_FREE_FROM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Naturally free from</name>
+		<description languageCode="en">A claim that a product is naturally free from the substance specified in the ClaimElementCode. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>NATURALLY_HIGH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Naturally high</name>
+		<description languageCode="en">A claim that a product is naturally high in the substance specified in the ClaimElementCode. Any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>NATURALLY_LOW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Naturally low</name>
+		<description languageCode="en">A claim that a product is naturally low in the substance specified in the ClaimElementCode. Any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>NATURALLY_VEGAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Naturally vegan</name>
+		<description languageCode="en">Products that are aligned to the definition of vegan, but in addition are made from a single natural product without additional ingredients or additives. Local regulations, where they exist, prevail since a vegan or vegetarian declaration for naturally vegan or vegetarian products could be objected to by the authorities as advertising with self-evident facts, especially for mono-products.</description>
+	</code>
+	<code>
+		<value>NATURAL_SOURCE_OF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Natural source of</name>
+		<description languageCode="en">A claim that a food is a natural source of the substance in the nutritionalClaimNutrientElementCode. Note the amount that determines if the product is a significant source of a given substance is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>NO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">No</name>
+		<description languageCode="en">A claim that a product does not contain (verifiably) the substance in the ClaimElementCode. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>NO_ADDED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">No added</name>
+		<description languageCode="en">A claim that the manufacturer has not added the substance in the nutritionalClaimNutrientElementCode.</description>
+	</code>
+	<code>
+		<value>NON_ALCOHOLIC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Non-alcoholic</name>
+		<description languageCode="en">A claim that a food contains no alcohol. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>PACKED_IN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Packed in</name>
+		<description languageCode="en">A claim the trade item is packed in a specified element. Example Juice.</description>
+	</code>
+	<code>
+		<value>PARTIALLY_MADE_WITH</value>
+		<name languageCode="en">Partially made with from</name>
+		<name languageCode="sv">Delvis tillverkad med/från</name>
+		<description languageCode="en">A claim that the item is partially made with/from specific ingredient/nutrition/etc. and any claim likely to have the same meaning for the consumer. Please refer to any local regulations that determine containment levels for the claim.</description>
+		<description languageCode="sv">Ett påstående om att artikeln är delvis tillverkad med/från en specifik tillverkningsegenskap.</description>
+	</code>
+	<code>
+		<value>PREVIOUSLY_FROZEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Previously frozen</name>
+		<description languageCode="en">Meat, poultry, or fish that has been frozen and thawed prior to sale.</description>
+	</code>
+	<code>
+		<value>PURE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pure</name>
+		<description languageCode="en">A claim that a food is Pure for a specific ingredient/etc. in the nutritionalClaimNutrientElementCode or the trade item itself. Note the determination a product/ingredient is "Pure" is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>RAISED_WITHOUT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Raised Without</name>
+		<description languageCode="en">A claim the trade item is raised without any of a specified element.</description>
+	</code>
+	<code>
+		<value>REAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Real</name>
+		<description languageCode="en">A claim that a food contains "Real" not imitation, specific ingredient/trade item/etc.in the nutritionalClaimNutrientElementCode or the trade item itself. Note the determination that a ingredient/trade item is "Real" is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>REDUCED_LESS</value>
+		<name languageCode="en">Reduced less</name>
+		<name languageCode="sv">Reducerat</name>
+		<description languageCode="en">A claim that a food has a reduced amount of the substance in the nutritionalClaimNutrientElementCode. Note the amount that determines a reduced amount is based on target market regulations.</description>
+		<description languageCode="sv">Ett påstående att en produkt har en reducerad mängd från en specifik ingrediens/näringsämne/ämne/etc.</description>
+	</code>
+	<code>
+		<value>SOURCE_OF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Source of</name>
+		<description languageCode="en">A claim that a food is a source of the substance in the nutritionalClaimNutrientElementCode . Note the amount that determines containment is based on target market regulations</description>
+	</code>
+	<code>
+		<value>SWEETENED_WITH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sweetened with</name>
+		<description languageCode="en">A claim that a food is sweetened with a specific ingredient/nutrition/etc. and any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>UNSALTED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Unsalted</name>
+		<description languageCode="en">Without salt (sodium chloride). Salt has not been added.</description>
+	</code>
+	<code>
+		<value>UNSCENTED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Unscented</name>
+		<description languageCode="en">Unscented refers to a product having no added fragrance or scent.</description>
+	</code>
+	<code>
+		<value>UNSWEETENED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Unsweetened</name>
+		<description languageCode="en">Without sugar or a similar substance having been added</description>
+	</code>
+	<code>
+		<value>VEGAN</value>
+		<name languageCode="en">Vegan</name>
+		<name languageCode="sv">Vegan</name>
+		<description languageCode="en">Products that are aligned to the definition of vegan, but in addition are made from a single natural product without additional ingredients or additives. Local regulations, where they exist, prevail since a vegan or vegetarian declaration for naturally vegan or vegetarian products could be objected to by the authorities as advertising with self-evident facts, especially for mono-products.</description>
+		<description languageCode="sv">Ett påstående att en produkt är vegansk</description>
+	</code>
+	<code>
+		<value>WITHOUT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Without</name>
+		<description languageCode="en">A claim that a product is without intentional addition of the substance in the ClaimElementCode. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>VERY_LOW</value>
+		<name languageCode="en">Very low</name>
+		<name languageCode="sv">Mycket låg</name>
+		<description languageCode="en">A claim that a food is very low in specific ingredient/nutrition/etc in the nutritionalClaimNutrientElementCode Any claim likely to have the same meaning for the consumer, may only be made where the product contains the amount that determines containment or lack of containment is based on target market regulations.</description>
+		<description languageCode="sv">Ett påstående att en produkt har ett mycket lågt innehåll  av en specifik ingrediens/näringsämne/ämne/etc.</description>
+	</code>
+</codeList>

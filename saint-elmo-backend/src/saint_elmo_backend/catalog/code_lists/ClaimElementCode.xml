@@ -1,0 +1,1776 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeList term="T4359" SDDversion="9" SDDupdated="2026-06-12" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:ClaimElementCode</urn>
+	<listName languageCode="en">Claim element code</listName>
+	<listName languageCode="sv">Ämne för påstående</listName>
+	<GDDversion>1</GDDversion>
+	<GDDupdated>2026-08-22</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>ACETONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Acetone</name>
+		<description languageCode="en">Acetone is the trivial name for the organic chemical compound propanone or dimethyl ketone.</description>
+	</code>
+	<code>
+		<value>ADDITIVES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Additives</name>
+		<description languageCode="en">Substances added to foods to prevent spoilage, improve appearance, enhance flavor or texture, or increase nutritional value.</description>
+	</code>
+	<code>
+		<value>AGAR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Agar</name>
+		<description languageCode="en">White, semi-translucent, flavourless substance consisting of polysaccharides obtained from the red algae species (primarily from Gracilaria and Gelidiaceae genus). It is commonly used as vegan substitute of gelatine, gelling agent in food, pharmaceutical drugs, photography and cosmetic manufacturing, growth medium in microbiology and other medical materials.</description>
+	</code>
+	<code>
+		<value>AGAVE_SYRUP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Agave Syrup</name>
+		<description languageCode="en">Syrup from the Agave plant.</description>
+	</code>
+	<code>
+		<value>ALCOHOL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Alcohol</name>
+		<description languageCode="en">Alcohol</description>
+	</code>
+	<code>
+		<value>ALMONDS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Almonds</name>
+		<description languageCode="en">The almond is a species of tree native to the Middle East and South Asia. "Almond" is also the name of the edible and widely cultivated seed of this tree. Within the genus Prunus, it is classified with the peach in the subgenus Amygdalus, distinguished from the other subgenera by the corrugated shell (endocarp) surrounding the seed. The fruit of the almond is a drupe, consisting of an outer hull and a hard shell with the seed (which is not a true nut) inside.</description>
+	</code>
+	<code>
+		<value>ALOE_VERA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Aloe vera</name>
+		<description languageCode="en">A gelatinous substance obtained from a kind of aloe. E.g., used in cosmetics, food.</description>
+	</code>
+	<code>
+		<value>ALUMINIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Aluminium</name>
+		<description languageCode="en">Aluminium-based compounds are the active ingredients in antiperspirants. They block the sweat glands to keep sweat from getting to the skin's surface.</description>
+	</code>
+	<code>
+		<value>AMMONIA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ammonia</name>
+		<description languageCode="en">Compound of nitrogen and hydrogen with the formula NH₃. A stable binary hydride, and the simplest pnictogen hydride, ammonia is a colourless gas with a characteristic pungent smell.</description>
+	</code>
+	<code>
+		<value>AMINO_ACIDS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Amino acids</name>
+		<description languageCode="en">A group of organic molecules that consist of a basic amino group, an acidic carboxyl group, and a unique organic side chain. Building blocks of protein.</description>
+	</code>
+	<code>
+		<value>ANIMAL_CRUELTY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Animal Cruelty</name>
+		<description languageCode="en">Cruelty to animals, also called animal abuse, animal neglect or animal cruelty, is the infliction by omission (animal neglect) or by commission by humans of suffering or harm upon any non-human. More narrowly, it can be the causing of harm or suffering for specific achievement, such as killing animals for food, for their fur or even their tusks; opinions differ about the extent of cruelty associated with a given method of slaughter.</description>
+	</code>
+	<code>
+		<value>ANIMAL_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Animal protein</name>
+		<description languageCode="en">Animal proteins are widely used for the formation of protein particles in the food industry, e.g., casein, whey protein, gelatin, egg proteins, and fibroin.</description>
+	</code>
+	<code>
+		<value>ANCIENT_GRAINS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ancient Grains</name>
+		<description languageCode="en">Ancient grains are considered to be uncommon grains cultivated before modern times. They are high in protein, calcium and magnesium. Some ancient grains include polenta, farro, spelt, millet, barley, oats, sorghum and quinoa.</description>
+	</code>
+	<code>
+		<value>ANIMAL_BY_PRODUCTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Animal by-products</name>
+		<description languageCode="en">Materials of animal origin that people do not consume.</description>
+	</code>
+	<code>
+		<value>ANIMAL_TESTING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Animal testing</name>
+		<description languageCode="en">Any scientific experiment or test in which a live animal is forced to undergo something that is likely to cause them pain, suffering, distress or lasting harm.</description>
+	</code>
+	<code>
+		<value>ANTIBIOTICS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Antibiotics</name>
+		<description languageCode="en">Antibiotics are used in the care of livestock.</description>
+	</code>
+	<code>
+		<value>ANTIOXIDANTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Antioxidants</name>
+		<description languageCode="en"> Antioxidants are defined as substances which inhibit oxidation. Oxidation reactions or oxidative stress can damage or kill cells, and are thought to play an important part in many human diseases. </description>
+	</code>
+	<code>
+		<value>ARTIFICIAL_COLOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Artificial Colour</name>
+		<description languageCode="en">Artificial colour is defined as colour formed by chemical synthesis and is not identical to substances found in nature.</description>
+	</code>
+	<code>
+		<value>ARTIFICIAL_FLAVOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Artificial flavour</name>
+		<description languageCode="en">Artificial flavours are formed by chemical synthesis and not identical to substances found in nature. They are used to improve the taste or smell (aroma) of the product.</description>
+	</code>
+	<code>
+		<value>ARTIFICIAL_PRESERVATIVES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Artificial Preservatives</name>
+		<description languageCode="en">Artificial preservatives are preservatives formed by chemical synthesis.</description>
+	</code>
+	<code>
+		<value>ARTIFICIAL_SWEETENERS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Artificial Sweeteners</name>
+		<description languageCode="en">Artificial sweeteners are sugar substitutes that are synthetic.</description>
+	</code>
+	<code>
+		<value>ASH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ash</name>
+		<description languageCode="en">The inorganic component of an organic carbon containing substance. It predominately consists of minerals.</description>
+	</code>
+	<code>
+		<value>ASPARTAME</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Aspartame</name>
+		<description languageCode="en">An artificial, non-saccharide sweetener used as a sugar substitute</description>
+	</code>
+	<code>
+		<value>AZO_DYE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Azo Dye</name>
+		<description languageCode="en">Any of a large class of synthetic dyes whose molecules contain two adjacent nitrogen atoms between carbon atoms.</description>
+	</code>
+	<code>
+		<value>AZODICARBONAMIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Azodicarbonamide</name>
+		<description languageCode="en">Azodicarbonamide (ADC) is a dough strengthener used by commercial bakers.</description>
+	</code>
+	<code>
+		<value>BACKBONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Backbone</name>
+		<description languageCode="en">The backbone is made up of series of vertebrae that supports the body, and also protects the spinal cord. </description>
+	</code>
+	<code>
+		<value>BARLEY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Barley</name>
+		<description languageCode="en">Barley a hardy cereal that has coarse bristles extending from the ears. It is widely cultivated, chiefly for use in brewing and stock feed.  The grain of the barley plant. </description>
+	</code>
+	<code>
+		<value>BEEF_GELATINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Beef Gelatine</name>
+		<description languageCode="en">Translucent, colourless, brittle (when dry), flavourless substance derived from collagen obtained from various  beef animal materials (connective tissues (skin) and bones). It is commonly used as a gelling agent in food, pharmaceutical drugs, photography, and cosmetic manufacturing.</description>
+	</code>
+	<code>
+		<value>BHA</value>
+		<name languageCode="en">Bisphenol A (BPA)</name>
+		<name languageCode="sv">Bisfenol A (BPA)</name>
+		<description languageCode="en">Butylated hydroxyanisole (BHA) is an antioxidant which retards rancidity in fats, oils, and oil-containing products.</description>
+	</code>
+	<code>
+		<value>BHT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">BHT</name>
+		<description languageCode="en">Butylated hydroxytoluene (BHT) is an antioxidant which retards rancidity in oils, and oil-containing products.</description>
+	</code>
+	<code>
+		<value>BIODEGRADABLE_MATERIAL</value>
+		<name languageCode="en">Biodegradable material</name>
+		<name languageCode="sv">Biologiskt nedbrytbart material</name>
+		<description languageCode="en">Biodegradable refers to the ability of things to get disintegrated (decomposed) by the action of micro-organisms such as bacteria or fungi biological (with or without oxygen) while getting assimilated into the natural environment.</description>
+		<description languageCode="sv">Biologiskt nedbrytbar hänvisar till sakers förmåga att sönderfalla (nedbrytas) genom inverkan av mikroorganismer som bakterier eller biologiska svampar (med eller utan syre) samtidigt som de assimileras i den naturliga miljön.</description>
+	</code>
+	<code>
+		<value>BIOGAS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Biogas</name>
+		<description languageCode="en">Biogas is a naturally occurring and renewable source of energy, resulting from the breakdown of organic matter.</description>
+	</code>
+	<code>
+		<value>BIOTIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Biotin</name>
+		<description languageCode="en">Biotin, also known as vitamin B7 or vitamin H or vitamin I, is a water-soluble vitamin from the B complex. As a prosthetic group of enzymes, it plays an important role in metabolism, but is also important in the nucleus for the epigenetic regulation of gene function. It plays an essential role in the production of energy from nutrients, as well as in the synthesis of fatty acids and amino acids. It is both provided by the diet and manufactured by the intestinal flora. Many countries like France often refer to biotin as vitamin B8. However, the name recommended by IUPAC (International Union of Pure and Applied Chemistry) is only biotin.</description>
+	</code>
+	<code>
+		<value>BLEACH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bleach</name>
+		<description languageCode="en">Generic name for any chemical product which is used industrially and domestically to clean, to lighten hair colour and to remove stains. It often refers, specifically, to a dilute solution of sodium hypochlorite, also called "liquid bleach".</description>
+	</code>
+	<code>
+		<value>BONES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bones</name>
+		<description languageCode="en">Bones are parts of the skeleton of animals.</description>
+	</code>
+	<code>
+		<value>BPA</value>
+		<name languageCode="en">Bisphenol A (BPA)</name>
+		<name languageCode="sv">Bisfenol A (BPA)</name>
+		<description languageCode="en">Bisphenol A (BPA) is a synthetic organic compound with the chemical formula C15H16O2, primarily used in the production of polycarbonate plastics and epoxy resins.</description>
+		<description languageCode="sv">Bisfenol A (BPA)</description>
+	</code>
+	<code>
+		<value>BRAZIL_NUTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Brazil nuts</name>
+		<description languageCode="en">The Brazil nut (Bertholletia excelsa) is a South American tree in the family Lecythidaceae, and also the name of the tree's commercially harvested edible seed. Order[edit]. The Brazil nut family is in the order Ericales, as are other well-known plants such as blueberries, cranberries, sapote, gutta-percha, tea, gooseberries, phlox, and persimmons.</description>
+	</code>
+	<code>
+		<value>BRINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Brine</name>
+		<description languageCode="en">Brine is a simple solution of water and salt that commonly used to preserve or season the food.</description>
+	</code>
+	<code>
+		<value>BROTH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Broth</name>
+		<description languageCode="en">Broth is a savory liquid made of water in which bones, meat, fish or vegetables have been simmered.</description>
+	</code>
+	<code>
+		<value>CADMIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cadmium</name>
+		<description languageCode="en">A soft, silver-white or blue, lustrous metal typically found in mineral deposits with lead, zinc, and copper.</description>
+	</code>
+	<code>
+		<value>CAFFEINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Caffeine</name>
+		<description languageCode="en">Caffeine is a central nervous system stimulant of the methylxanthine class.[10]
+  It is the world's most widely consumed psychoactive drug.</description>
+	</code>
+	<code>
+		<value>CALCIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Calcium</name>
+		<description languageCode="en">Calcium</description>
+	</code>
+	<code>
+		<value>CALORIE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Calorie</name>
+		<description languageCode="en">Calories.</description>
+	</code>
+	<code>
+		<value>CAMPHOR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Camphor</name>
+		<description languageCode="en">White, crystalline substance obtained from the wood of the camphor tree.</description>
+	</code>
+	<code>
+		<value>CANE_SUGAR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cane Sugar</name>
+		<description languageCode="en">Sugar from sugar cane.</description>
+	</code>
+	<code>
+		<value>CARBOHYDRATES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Carbohydrates</name>
+		<description languageCode="en">Mainly sugars and starches, together constituting one of the three principal types of nutrients used as energy sources (calories) by the body. Carbohydrates can also be defined chemically as neutral compounds of carbon, hydrogen and oxygen.</description>
+	</code>
+	<code>
+		<value>CARRAGEENAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Carrageenan</name>
+		<description languageCode="en">Carrageenan is a thickening, gelling, and stabilizing agent obtained from certain seaweeds.</description>
+	</code>
+	<code>
+		<value>CASHEWS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cashews</name>
+		<description languageCode="en">The cashew nut is served as a snack or used in recipes, like other nuts, although it is actually a seed. The cashew apple is a fruit, whose pulp can be processed into a sweet, astringent fruit drink or distilled into liqueur. The shell of the cashew nut yield derivatives that can be used in many applications from lubricants to paints, and other parts of the tree have traditionally been used for snake-bites and other folk remedies.</description>
+	</code>
+	<code>
+		<value>CAULIFLOWER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cauliflower</name>
+		<description languageCode="en">Cauliflower is one of several vegetables in the species Brassica oleracea in the genus Brassica, which is in the Brassicaceae family. It is an annual plant that reproduces by seed.</description>
+	</code>
+	<code>
+		<value>CELERY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Celery</name>
+		<description languageCode="en">Celery (Apium graveolens) is a marshland plant in the family Apiaceae that has been cultivated as a vegetable since antiquity. Celery has a long fibrous stalk tapering into leaves. </description>
+	</code>
+	<code>
+		<value>CERAMIDES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ceramides</name>
+		<description languageCode="en">Ceramides help to renew the natural skin protection barrier and maintain an adequate moisture balance.</description>
+	</code>
+	<code>
+		<value>CHEMICAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chemical</name>
+		<description languageCode="en">A substance with a distinct molecular composition that is produced by or used in a chemical process.</description>
+	</code>
+	<code>
+		<value>CHEMICAL_TREATMENT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chemical Treatment</name>
+		<description languageCode="en">Technologies that use chemicals or chemical processes to treat materials or wastes.</description>
+	</code>
+	<code>
+		<value>CHLORIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chloride</name>
+		<description languageCode="en">Chloride</description>
+	</code>
+	<code>
+		<value>CHLORINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chlorine</name>
+		<description languageCode="en">A chemical used as a disinfectant.</description>
+	</code>
+	<code>
+		<value>CHOLESTEROL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cholesterol</name>
+		<description languageCode="en">A claim that a food is free from Cholesterol. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>CHOLINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Choline</name>
+		<description languageCode="en">Choline</description>
+	</code>
+	<code>
+		<value>CHROMIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chromium</name>
+		<description languageCode="en">Chromium</description>
+	</code>
+	<code>
+		<value>CLONED_FOODS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cloned Foods</name>
+		<description languageCode="en">Meat and milk from cloned cattle, pigs, plants, etc. and from the offspring of clones of any species traditionally used as food.</description>
+	</code>
+	<code>
+		<value>COCONUT_COPRA_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coconut/Copra oil</name>
+		<description languageCode="en">An oil extracted from dried or fresh coconut.</description>
+	</code>
+	<code>
+		<value>COCONUT_CREAM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coconut cream</name>
+		<description languageCode="en">Coconut cream is much thicker and richer than coconut milk. It is made from simmering four parts shredded coconut in one part water. The cream that rises to the top of a can of coconut milk is also considered coconut cream.</description>
+	</code>
+	<code>
+		<value>COCONUT_WATER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coconut water</name>
+		<description languageCode="en">Coconut water, less commonly known as coconut juice, is the clear liquid inside coconuts.</description>
+	</code>
+	<code>
+		<value>COENZYME_Q10_UBIQUINONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coenzyme Q10 Ubiquinone</name>
+		<description languageCode="en">A coenzyme family that is ubiquitous in animals and most bacteria.</description>
+	</code>
+	<code>
+		<value>COLLAGENS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Collagens</name>
+		<description languageCode="en">Collagens are a group of structural proteins mainly found in multicellular animals / humans. Collagens are found in the white and inelastic fibres of tendons, ligaments, bones, layers of the skin and cartilages.</description>
+	</code>
+	<code>
+		<value>COLOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Colour</name>
+		<description languageCode="en">Colour is defined as colour found without any specific chemical synthesis, but not specified as natural colour.</description>
+	</code>
+	<code>
+		<value>COLOURING_AGENTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Colouring Agents</name>
+		<description languageCode="en">Natural or synthetic dyes used as coloring agents in processed foods.</description>
+	</code>
+	<code>
+		<value>COPPER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Copper</name>
+		<description languageCode="en">Copper</description>
+	</code>
+	<code>
+		<value>CORN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Corn</name>
+		<description languageCode="en">Corn is a grain as well as a vegetable. It grows within a tall grass-like stalk and produces large kernels on a cob.</description>
+	</code>
+	<code>
+		<value>CORN_SYRUP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Corn Syrup</name>
+		<description languageCode="en">Corn syrup.</description>
+	</code>
+	<code>
+		<value>CREAM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cream</name>
+		<description languageCode="en">Cream is a dairy product composed of the higher-fat layer skimmed from the top of milk before homogenization. Please refer to local regulations for full definition.</description>
+	</code>
+	<code>
+		<value>CRUSTACEAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Crustacean</name>
+		<description languageCode="en">The crustacean is an arthropod of the large, mainly aquatic group Crustacea, such as a crab, lobster, shrimp, or barnacle.</description>
+	</code>
+	<code>
+		<value>DAIRY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dairy</name>
+		<description languageCode="en">Milk or milk products including ingredients, processing aids and additives.</description>
+	</code>
+	<code>
+		<value>DARK_MEAT_TUNA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dark meat tuna</name>
+		<description languageCode="en">This tuna typically comes from either Skipjack or Yellowfin tuna.  The meat is darker in colour, more red and pink than light tan and tan-ish pink, than its "Light Meat" counterpart. </description>
+	</code>
+	<code>
+		<value>DEET</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">DEET</name>
+		<description languageCode="en">DEET, or N,N-diethyl-meta-toluamide, is a synthetic chemical in many insect repellents.</description>
+	</code>
+	<code>
+		<value>DETERGENT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Detergent</name>
+		<description languageCode="en">A cleansing agent, especially synthetic, used for cleaning fabrics, dishes, and other surfaces.</description>
+	</code>
+	<code>
+		<value>DIETARY_FIBRE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dietary Fibre</name>
+		<description languageCode="en">The USFDA definition for Dietary fibre that can be declared on the Nutrition Facts label includes certain naturally occurring fibres that are “intrinsic and intact” in plants, and added isolated or synthetic non-digestible soluble and insoluble carbohydrates that FDA has determined have beneficial physiological effects to human health. www.fda.gov</description>
+	</code>
+	<code>
+		<value>DRUG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Drug</name>
+		<description languageCode="en">A substance used for medical treatment, particularly one that affects the mind or body.</description>
+	</code>
+	<code>
+		<value>DYE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dye</name>
+		<description languageCode="en">A substance used to add colour to materials such as fabrics, hair, or food.</description>
+	</code>
+	<code>
+		<value>EGGS</value>
+		<name languageCode="en">Eggs</name>
+		<name languageCode="sv">Ägg</name>
+		<description languageCode="en">Eggs</description>
+	</code>
+	<code>
+		<value>ENERGY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Energy</name>
+		<description languageCode="en">Energy</description>
+	</code>
+	<code>
+		<value>ESSENTIAL_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Essential oil</name>
+		<description languageCode="en">An essential oil is a concentrated hydrophobic liquid containing volatile chemical compounds from plants. Essential oils are also known as volatile oils, ethereal oils, aetheroleum, or simply as the oil of the plant from which they were extracted, such as oil of clove.</description>
+	</code>
+	<code>
+		<value>ESTROGEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Estrogen</name>
+		<description languageCode="en">Primary female sex hormone which regulates the reproductive system and sexual characteristics.</description>
+	</code>
+	<code>
+		<value>FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fat</name>
+		<description languageCode="en">Fat</description>
+	</code>
+	<code>
+		<value>FIBRE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fibre</name>
+		<description languageCode="en">The undigestible material in the fruits, vegetables and whole grains.</description>
+	</code>
+	<code>
+		<value>FISH</value>
+		<name languageCode="en">Fish</name>
+		<name languageCode="sv">Fisk</name>
+		<description languageCode="en">A limbless cold-blooded vertebrate animal with gills and fins and living wholly in water.</description>
+	</code>
+	<code>
+		<value>FISHBONES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fishbones</name>
+		<description languageCode="en">Bones are bony, more tender parts of the skeleton of bony fish such as ribs and fin rays, but especially the connective tissue ossifications, which are inclined transversely backwards to the ribs between the muscle segments and have no contact with the spine.</description>
+	</code>
+	<code>
+		<value>FLAVOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Flavour</name>
+		<description languageCode="en">Flavours are defined as flavours found without any specific chemical synthesis, but not specified as natural flavours.</description>
+	</code>
+	<code>
+		<value>FLAVOUR_ENHANCERS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Flavour Enhancers</name>
+		<description languageCode="en">Flavour enhancers (e.g. monosodium glutamate, MSG).</description>
+	</code>
+	<code>
+		<value>FLAX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Flax</name>
+		<description languageCode="en">A flowering plant, Linum ustiatissimum, that is cultivated as a food and fibre crop.</description>
+	</code>
+	<code>
+		<value>FLUORIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fluoride</name>
+		<description languageCode="en">Fluoride</description>
+	</code>
+	<code>
+		<value>FOLATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Folate</name>
+		<description languageCode="en">Folate</description>
+	</code>
+	<code>
+		<value>FOLIC_ACID</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Folic Acid</name>
+		<description languageCode="en">Folic acid is a stable, artificial form of vitamin B9. It's not found naturally in food but often added to processed foods and used in multivitamin-mineral supplements. However, folic acid must be converted into active vitamin B9, known as 5-MTHF, before your body can use it.</description>
+	</code>
+	<code>
+		<value>FORMALDEHYDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Formaldehyde</name>
+		<description languageCode="en">Formaldehyde is a naturally occurring organic compound with the formula CH₂O. It is the simplest of the aldehydes. The common name of this substance comes from its similarity and relation to formic acid. Formaldehyde is an important precursor to many other materials and chemical compounds.</description>
+	</code>
+	<code>
+		<value>FORMALDEHYDE_RELEASING_CHEMICALS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Formaldehyde Releasing Chemicals</name>
+		<description languageCode="en">In personal care products, formaldehyde can be added directly, or more often, it can be released from preservatives such as quaternium-15, DMDM hydantoin, imidazolidinyl urea, diazolidinyl urea, polyoxymethylene urea, sodium hydroxymethylglycinate, bromopol and glyoxal.</description>
+	</code>
+	<code>
+		<value>FRAGRANCE</value>
+		<name languageCode="en">Fragrance/Perfume</name>
+		<name languageCode="sv">Doft/Parfym</name>
+		<description languageCode="en">Something (such as a perfume) compounded to give off a sweet or pleasant odor. </description>
+	</code>
+	<code>
+		<value>FRUCTOSE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fructose</name>
+		<description languageCode="en">Fructose.</description>
+	</code>
+	<code>
+		<value>FRUIT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fruit</name>
+		<description languageCode="en">Fruit is the sweet and fleshy product of a tree or other plant that contains seed and can be eaten as food.</description>
+	</code>
+	<code>
+		<value>FRUIT_JUICE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fruit Juice</name>
+		<description languageCode="en">Fruit juice.</description>
+	</code>
+	<code>
+		<value>FRUIT_JUICE_CONCENTRATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fruit juice concentrate</name>
+		<description languageCode="en">Fruit juice concentrate is where the water content from the fruit has been removed.</description>
+	</code>
+	<code>
+		<value>FRUIT_PUREE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fruit puree</name>
+		<description languageCode="en">Fruit puree is cooked fruits that has been ground, pressed, blended or sieved to the consistency of a creamy paste or liquid.</description>
+	</code>
+	<code>
+		<value>FRUIT_SYRUP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fruit Syrup</name>
+		<description languageCode="en">A syrup made from fruit and other ingredients such as sugar, corn syrup and water.</description>
+	</code>
+	<code>
+		<value>FULLY_HYDROGENATED_VEGETABLE_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fully hydrogenated vegetable oil</name>
+		<description languageCode="en">Fully hydrogenated vegetable oils are solid fats, produced from liquid, typically vegetable, oils by full hydrogenation. Full hydrogenation results in fats very high in saturated fatty acids (SAFA). Fully hydrogenated vegetable oils do not contain significant amounts of artificial trans fatty acids (TFA).</description>
+	</code>
+	<code>
+		<value>FUNGICIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Fungicide</name>
+		<description languageCode="en">A chemical substance used to kill fungus or prevent it from growing.</description>
+	</code>
+	<code>
+		<value>GELATINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Gelatine</name>
+		<description languageCode="en">Translucent, colourless, brittle (when dry), flavourless substance derived from collagen obtained from various animal raw materials (connective tissues (skin) and bones). It is commonly used as a gelling agent in food, pharmaceutical drugs, photography, and cosmetic manufacturing.</description>
+	</code>
+	<code>
+		<value>GIBLETS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Giblets</name>
+		<description languageCode="en">The liver, heart, gizzard, and the like, of a fowl.</description>
+	</code>
+	<code>
+		<value>GLUTEN</value>
+		<name languageCode="en">Gluten</name>
+		<name languageCode="sv">Gluten</name>
+		<description languageCode="en">Gluten.</description>
+	</code>
+	<code>
+		<value>GLYCAEMIC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Glycaemic</name>
+		<description languageCode="en">A glucose response after a meal.</description>
+	</code>
+	<code>
+		<value>GLYZYRRHIZIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Glyzyrrhizin</name>
+		<description languageCode="en">Glyzyrrhizin.</description>
+	</code>
+	<code>
+		<value>GMO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">GMO</name>
+		<description languageCode="en">GMOs (genetically modified organisms), are novel organisms created in a laboratory using genetic modification/engineering techniques. Scientists and consumer and environmental groups have cited many health and environmental risks with foods containing GMOs.</description>
+	</code>
+	<code>
+		<value>GRAINS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Grains</name>
+		<description languageCode="en">Wheat or any other cultivated cereal crop used as food.</description>
+	</code>
+	<code>
+		<value>GRASS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Grass</name>
+		<description languageCode="en">Vegetation consisting of short plants with long narrow leaves, growing wild or cultivated in lawns or pastures.</description>
+	</code>
+	<code>
+		<value>HAZELNUTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hazelnuts</name>
+		<description languageCode="en">A hazelnut is the nut of the hazel and is also known as cobnut or filbert nut according to species. A cob is roughly spherical to oval, about 15–25 mm long and 10–15 mm in diameter, with an outer fibrous husk surrounding a smooth shell. A filbert is more elongated, being about twice as long as it is round. The nut falls out of the husk when ripe, about seven to eight months after pollination. The kernel of the seed is edible and used raw or roasted, or ground into a paste. Hazelnuts are also used for livestock feed, as are chestnuts and acorns. The seed has a thin, dark brown skin, which is sometimes removed before cooking.</description>
+	</code>
+	<code>
+		<value>HERBICIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Herbicide</name>
+		<description languageCode="en">A chemical that is used to destroy plants, especially weeds.</description>
+	</code>
+	<code>
+		<value>HIGH_FRUCTOSE_CORN_SYRUP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">High Fructose Corn Syrup </name>
+		<description languageCode="en">High fructose corn syrup (HFCS) (also called glucose-fructose, isoglucose and glucose-fructose syrup) is a sweetener made from corn starch that has been processed by glucose isomerase to convert some of its glucose into fructose.</description>
+	</code>
+	<code>
+		<value>HONEY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Honey</name>
+		<description languageCode="en">Honey.</description>
+	</code>
+	<code>
+		<value>HORMONES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hormones</name>
+		<description languageCode="en">Hormones are used in the grown of livestock. Common hormones are rBST, rBGH, and others.</description>
+	</code>
+	<code>
+		<value>HYALURONIC_ACID</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hyaluronic acid</name>
+		<description languageCode="en">Hyaluronic acid is a moisture binder and belongs to the mucopolysaccharide. These are multiple sugars, i.e. long molecular chains, which are composed of disaccharide subunits (double sugars), which in turn consist of glucuronic acid and an amino sugar.</description>
+	</code>
+	<code>
+		<value>HYDROCARBON_PROPELLANT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydrocarbon Propellant</name>
+		<description languageCode="en">Propellants commonly used in pharmaceutical aerosols cover both liquefied gases (CFC, hydrocarbons, hydrochlorofluorocarbons (HCFC), and HFC) and compressed gases (nitrogen, nitrous oxide, and carbon dioxide) [1].</description>
+	</code>
+	<code>
+		<value>HYDROQUINONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydroquinone</name>
+		<description languageCode="en">A crystalline compound made by the reduction of benzoquinone.</description>
+	</code>
+	<code>
+		<value>ICE_CREAM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ice cream</name>
+		<description languageCode="en">Ice cream is a sweetened frozen food typically eaten as a snack or dessert. Please refer to local regulation how Ice Cream is defined in target markets.</description>
+	</code>
+	<code>
+		<value>INSECTICIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Insecticide</name>
+		<description languageCode="en">A chemical substance made and used for killing insects, especially those that eat plants.</description>
+	</code>
+	<code>
+		<value>INSOLUBLE_FIBRE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Insoluble Fibre</name>
+		<description languageCode="en">Insoluble fibre does not dissolve in water and passes through the gastrointestinal tract relatively intact and, therefore, is not a source of calories.</description>
+	</code>
+	<code>
+		<value>IODINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Iodine</name>
+		<description languageCode="en">Iodine</description>
+	</code>
+	<code>
+		<value>IRON</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Iron</name>
+		<description languageCode="en">Iron</description>
+	</code>
+	<code>
+		<value>JUICE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Juice</name>
+		<description languageCode="en">The liquid obtained from or present in fruit or vegetables.</description>
+	</code>
+	<code>
+		<value>KERATIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Keratin</name>
+		<description languageCode="en">Structural protein in the outer layer of human skin, hair, and nails, and animal hooves and horns.</description>
+	</code>
+	<code>
+		<value>KIDNEYS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Kidneys</name>
+		<description languageCode="en">A pair of organs in the abdominal cavity of mammals, birds, and reptiles, excreting urine.</description>
+	</code>
+	<code>
+		<value>LACTOSE</value>
+		<name languageCode="en">Lactose</name>
+		<name languageCode="sv">Laktos</name>
+		<description languageCode="en">Lactose.</description>
+	</code>
+	<code>
+		<value>LATEX</value>
+		<name languageCode="en">Latex</name>
+		<name languageCode="sv">Latex</name>
+		<description languageCode="en">A milky fluid found in many plants, such as poppies and spurges, which exudes when the plant is cut and coagulates on exposure to the air. The latex of the rubber tree is the chief source of natural rubber. Also, a synthetic product resembling latex, consisting of a dispersion in water of polymer particles, used to make paints, coatings, and other products.</description>
+	</code>
+	<code>
+		<value>LEAD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lead</name>
+		<description languageCode="en">A dense metallic element with the symbol Pb, often used in batteries, shielding, and various alloys.</description>
+	</code>
+	<code>
+		<value>LEGUME_PROTEIN</value>
+		<name languageCode="en">Legume Protein</name>
+		<name languageCode="sv">Baljväxtprotein</name>
+		<description languageCode="en">A seed, pod, or other edible part of a leguminous plant, used as food.</description>
+	</code>
+	<code>
+		<value>LIGHT_MEAT_TUNA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Light meat tuna</name>
+		<description languageCode="en">This tuna typically comes from either Skipjack or Yellowfin tuna.  The meat is darker in colour – somewhere between a light tan and tan-ish pink, than "White meat tuna". It has a soft texture and is more flavourful than white meat tuna. </description>
+	</code>
+	<code>
+		<value>LIQUORICE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Liquorice</name>
+		<description languageCode="en">Liquorice</description>
+	</code>
+	<code>
+		<value>LOBSTER_MEAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lobster meat</name>
+		<description languageCode="en">Lobster meat is typically harvested from the tail, legs, knuckles, and the large claws which can be done commercially after cooking.</description>
+	</code>
+	<code>
+		<value>LOTION</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lotion</name>
+		<description languageCode="en">Preparation with a creamy consistency, applied to the skin for moisturizing or medicinal purposes.</description>
+	</code>
+	<code>
+		<value>LOW_FAT_ICE_CREAM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low fat ice cream</name>
+		<description languageCode="en">Low fat or reduced fat ice cream contains a lesser percent of total fat than the referenced product (either an average of leading brands, or the company's own brand). Please refer to target market regulations for definition of 'low fat'.</description>
+	</code>
+	<code>
+		<value>LOW_FAT_MILK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low fat milk</name>
+		<description languageCode="en">Low fat milk is a reduction in fat and claim based on regulation what "Low fat" means.</description>
+	</code>
+	<code>
+		<value>LYE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lye</name>
+		<description languageCode="en">Strong alkaline substance, typically sodium hydroxide or potassium hydroxide.</description>
+	</code>
+	<code>
+		<value>MACADAMIA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Macadamia</name>
+		<description languageCode="en">Macadamia is a genus of four species of trees indigenous to Australia and constituting part of the plant family Proteaceae.[1][2] They grow naturally in north eastern New South Wales and central and south eastern Queensland. Common names include macadamia, macadamia nut, Queensland nut, bush nut, maroochi nut, queen of nuts and bauple nut; and from Indigenous Australians' languages bauple, gyndl, jindilli, and boombera. Previously, more species, with disjunct distributions, were named as members of this genus Macadamia.</description>
+	</code>
+	<code>
+		<value>MAGNESIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Magnesium</name>
+		<description languageCode="en">Magnesium</description>
+	</code>
+	<code>
+		<value>MALT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Malt</name>
+		<description languageCode="en">Malt</description>
+	</code>
+	<code>
+		<value>MANGANESE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Manganese</name>
+		<description languageCode="en">Manganese</description>
+	</code>
+	<code>
+		<value>MAPLE_SYRUP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Maple Syrup</name>
+		<description languageCode="en">Maple syrup is a syrup usually made from the xylem sap of sugar maple, red maple, or black maple trees, although it can also be made from other maple species.</description>
+	</code>
+	<code>
+		<value>MEAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Meat</name>
+		<description languageCode="en">Meat is animal flesh that is eaten as food.</description>
+	</code>
+	<code>
+		<value>MERCURY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mercury</name>
+		<description languageCode="en">A heavy, silvery d-block element, liquid at room temperature, used in thermometers and barometers.</description>
+	</code>
+	<code>
+		<value>MILK</value>
+		<name languageCode="en">Milk</name>
+		<name languageCode="sv">Mjölk</name>
+		<description languageCode="en">Milk is a nutrient-rich liquid food produced in the mammary glands of mammals.</description>
+	</code>
+	<code>
+		<value>MILK_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Milk Protein</name>
+		<description languageCode="en">Milk proteins.</description>
+	</code>
+	<code>
+		<value>MINERAL_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mineral Oil</name>
+		<description languageCode="en">Any of various colourless, odourless, light mixtures of higher alkanes from a mineral source, particularly a distillate of petroleum, as distinct from usually edible vegetable oils.</description>
+	</code>
+	<code>
+		<value>MISSING_PARTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Missing parts</name>
+		<description languageCode="en">A product that has parts missing. Example: Poultry missing a leg.</description>
+	</code>
+	<code>
+		<value>MOLASSES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Molasses</name>
+		<description languageCode="en">Molasses is a viscous by-product of refining sugarcane or sugar beets into sugar.</description>
+	</code>
+	<code>
+		<value>MOLLUSCS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Molluscs</name>
+		<description languageCode="en">The mollusc is an invertebrate of a large phylum that includes snails, slugs, mussels, and octopuses. They have a soft, unsegmented body and live in aquatic or damp habitats, and most kinds have an external calcareous shell. </description>
+	</code>
+	<code>
+		<value>MOLYBDENUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Molybdenum</name>
+		<description languageCode="en">Molybdenum</description>
+	</code>
+	<code>
+		<value>MONO_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mono protein</name>
+		<description languageCode="en">Mono-protein is particularly effective for treating allergies and intolerances. Most of the allergens are generated by proteins, so the single source protein foods can help limit the exposure to potential allergens. A single source protein food can be used as a diagnostic method or as a long-term treatment.</description>
+	</code>
+	<code>
+		<value>MONO_UNSATURATED_FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mono  Unsaturated Fat</name>
+		<description languageCode="en">Monounsaturated Fat</description>
+	</code>
+	<code>
+		<value>MSG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Monosodium Glutamate </name>
+		<description languageCode="en">Monosodium glutamate (MSG, also known as sodium glutamate) is the sodium salt of glutamic acid, one of the most abundant naturally occurring non-essential amino acids. Monosodium glutamate is found naturally in tomatoes, cheese and other foods.
+MSG is used in the food industry as a flavour enhancer with an umami taste that intensifies the meaty, savoury flavour of food, as naturally occurring glutamate does in foods such as stews and meat soups.</description>
+	</code>
+	<code>
+		<value>MULTIGRAIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Multigrain</name>
+		<description languageCode="en">More than one type of grain. Could be several whole grains, several refined grains or a combination of both.</description>
+	</code>
+	<code>
+		<value>MUSTARD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mustard</name>
+		<description languageCode="en">Mustard is a pungent-tasting yellow or brown paste made from the crushed seeds of certain plants, typically eaten with meat or used as a cooking ingredient.  The yellow-flowered Eurasian plant of the cabbage family whose seeds are used to make this paste.</description>
+	</code>
+	<code>
+		<value>NANOPARTICLE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Nanoparticle</name>
+		<description languageCode="en">A particle between 1 and 100 nanometres in size.</description>
+	</code>
+	<code>
+		<value>NATURAL_COLOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Natural colour</name>
+		<description languageCode="en">Indicates a colour additive that has been derived from a natural source to be added to a product for the primary reason of modifying the colour of the product.</description>
+	</code>
+	<code>
+		<value>NATURAL_FLAVOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Natural Flavour</name>
+		<description languageCode="en">Flavouring substances obtained from plant or animal raw materials, by physical, microbiological or enzymatic processes.</description>
+	</code>
+	<code>
+		<value>NATURAL_GLUTEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Natural Gluten</name>
+		<description languageCode="en">Gluten is a group of proteins, termed prolamins and glutelins,[1] stored with starch in the endosperm of various cereal (grass) grains.</description>
+	</code>
+	<code>
+		<value>NATURALLY_OCCURING_SUGARS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Naturally Occuring Sugars</name>
+		<description languageCode="en">Naturally Occuring Sugars</description>
+	</code>
+	<code>
+		<value>NIACIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Niacin</name>
+		<description languageCode="en">Niacin, also known as nicotinic acid, is an organic compound and a form of vitamin B3, an essential human nutrient. It has the formula C6H5NO2 and belongs to the group of the pyridinecarboxylic acid.</description>
+	</code>
+	<code>
+		<value>NITRATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Nitrate</name>
+		<description languageCode="en">The chemical formula is NO3.</description>
+	</code>
+	<code>
+		<value>NON_CALORIC_SWEETENERS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Non-Caloric Sweeteners</name>
+		<description languageCode="en">Non-Caloric Sweeteners are sugar substitutes that do not contribute any caloric value.</description>
+	</code>
+	<code>
+		<value>NONYLPHENOL_ETHOXYLATES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Nonylphenol Ethoxylates (NPEs)</name>
+		<description languageCode="en">NP/NPEs, also known as nonylphenols and nonylphenol ethoxylates, are nonionic surfactants, or detergent-like substances, with uses that lead to widespread release into aquatic environments.</description>
+	</code>
+	<code>
+		<value>NUTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Nuts</name>
+		<description languageCode="en">Nuts</description>
+	</code>
+	<code>
+		<value>OAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oat</name>
+		<description languageCode="en">The oat is a cereal plant cultivated chiefly in cool climates and widely used for animal feed as well as human consumption.  The grain yielded by this, used as food. </description>
+	</code>
+	<code>
+		<value>OCTINOXATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Octinoxate</name>
+		<description languageCode="en">Octyl methoxycinnamate or ethylhexyl methoxycinnamate or octinoxate is an organic compound that is an ingredient in some sunscreens and lip balms. It is an ester formed from methoxycinnamic acid and 2-ethylhexanol.</description>
+	</code>
+	<code>
+		<value>OCTOCRYLENE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Octocrylene</name>
+		<description languageCode="en">Octocrylene is an organic compound used as an ingredient in sunscreens and cosmetics. It is an ester formed by the reaction of 3,3-diphenylcyanoacrylate with 2-ethylhexanol.</description>
+	</code>
+	<code>
+		<value>ODOR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Odor</name>
+		<description languageCode="en">A distinctive smell, often detected by the sense of olfaction.</description>
+	</code>
+	<code>
+		<value>OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oil</name>
+		<description languageCode="en">Oil is a viscous liquid derived from petroleum, plant, animal fat or synthetic fat.</description>
+	</code>
+	<code>
+		<value>OLIVE_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Olive oil </name>
+		<description languageCode="en">Olive oil is a liquid fat obtained from olives, a traditional tree crop of the Mediterranean Basin, produced by pressing whole olives and extracting the oil. It is commonly used in cooking or as a salad dressing.</description>
+	</code>
+	<code>
+		<value>OMEGA_3_FATTY_ACIDS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Omega 3 Fatty Acids</name>
+		<description languageCode="en">Omega-3 Fatty Acids</description>
+	</code>
+	<code>
+		<value>OMEGA_6</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Omega-6</name>
+		<description languageCode="en">A class of fatty acids, double bond on 6th carbon from the methyl end of the fatty acid (most common linoleic acid and arachidonic acid).</description>
+	</code>
+	<code>
+		<value>OPTICAL_BRIGHTENERS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Optical Brighteners</name>
+		<description languageCode="en">Synthetic chemicals added to liquid and powder laundry detergents to make clothing appear whiter and brighter, and thus cleaner.</description>
+	</code>
+	<code>
+		<value>ORGANOTIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Organotin</name>
+		<description languageCode="en">Organotin substances (organotins) are tin compounds having 1, 2, 3 or 4 organic groups attached and are designated as mono-, di-, tri- or tetra-organotin depending on the number of tin-carbon bonds in the molecule. E.g., tributyltin, dibutyltin.</description>
+	</code>
+	<code>
+		<value>OXYBENZONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oxybenzone</name>
+		<description languageCode="en">Oxybenzone is a benzophenone derivative used as a sunscreen agent. Oxybenzone absorbs UVB and UVA II rays, resulting in a photochemical excitation and absorption of energy.</description>
+	</code>
+	<code>
+		<value>PABA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Paba</name>
+		<description languageCode="en">Para-aminobenzoic acid, a chemical compound often used in sunscreen formulations.</description>
+	</code>
+	<code>
+		<value>PALM_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Palm Oil</name>
+		<description languageCode="en">Palm oil is a yellow oil which comes from the fruit of certain palm trees and is used in making soap and sometimes as a fat in cooking.</description>
+	</code>
+	<code>
+		<value>PALM_OIL_DERIVATIVES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Palm Oil derivatives</name>
+		<description languageCode="en">Substances derived from palm oil such as fatty acids, fatty alcohols and glycerol and their fractions such as olein and stearin. It is used in pharmaceuticals, oleochemical production, fuel, paint and plastics manufacturing and food production.</description>
+	</code>
+	<code>
+		<value>PANTOTHENIC_ACID</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pantothenic Acid</name>
+		<description languageCode="en">Pantothenic acid, also called vitamin B5 (a B vitamin), is a water-soluble vitamin. Pantothenic acid is an essential nutrient. Animals require pantothenic acid in order to synthesize coenzyme-A (CoA), as well as to synthesize and metabolize proteins, carbohydrates, and fats. The anion is called pantothenate. Not to be confused with pantethine.</description>
+	</code>
+	<code>
+		<value>PARABEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Paraben</name>
+		<description languageCode="en">Any of a group of compounds used as preservatives in pharmaceutical and cosmetic products and in the food industry.</description>
+	</code>
+	<code>
+		<value>PARAFFIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Paraffin</name>
+		<description languageCode="en">Paraffin refers to a mixture of acyclic alkanes (saturated hydrocarbons) with the general total formula CnH2n+2.</description>
+	</code>
+	<code>
+		<value>PARTIALLY_HYDROGENATED_VEGETABLE_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Partially Hydrogenated Vegetable Oil</name>
+		<description languageCode="en">Partially Hydrogenated Vegetable Oils (PHOs are the most common source of artificial trans fats within processed foods. The US FDA has revoked PHOs GRAS status and food manufacturers must remove PHOs from products.</description>
+	</code>
+	<code>
+		<value>PEA_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pea protein</name>
+		<description languageCode="en">It is a source of protein derived and extracted in powder form from the yellow and green split peas (Pisum sativum).</description>
+	</code>
+	<code>
+		<value>PEANUTS</value>
+		<name languageCode="en">Peanuts</name>
+		<name languageCode="sv">Jordnötter</name>
+		<description languageCode="en">A claim that a food is free from peanuts. Note the amount that determines containment or lack of containment is based on target market regulations.</description>
+	</code>
+	<code>
+		<value>PECANS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pecans</name>
+		<description languageCode="en">A  species of hickory, native to south-central North America, in Mexico from Coahuila south to Jalisco and Veracruz,[1][2] in the United States in Alabama, Arkansas, Florida, Georgia, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Mississippi, Missouri, Oklahoma, South Carolina, Tennessee, and Texas.</description>
+	</code>
+	<code>
+		<value>PEEL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Peel</name>
+		<description languageCode="en">The peel is the outer covering, mostly solid, of a fruit, nut or shellfish.</description>
+	</code>
+	<code>
+		<value>PEG_EMULSIFIERS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">PEG emulsifiers</name>
+		<description languageCode="en">Polyethylene glycols (PEG) are a humectant (which help retain or preserve moisture) or emulsifiers that can be found in many cosmetic products.</description>
+	</code>
+	<code>
+		<value>PERFUME</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Perfume</name>
+		<description languageCode="en">A fragrant liquid made from essential oils and aroma compounds used to provide a pleasant scent.</description>
+	</code>
+	<code>
+		<value>PEROXIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Peroxide</name>
+		<description languageCode="en">Peroxides are a group of compounds with the structure R−O−O−R. The O−O group in a peroxide is called the peroxide group or peroxo group. In contrast to oxide ions, the oxygen atoms in the peroxide ion have an oxidation state of −1. The most common peroxide is hydrogen peroxide, colloquially known simply as "peroxide".</description>
+	</code>
+	<code>
+		<value>PESTICIDE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pesticide</name>
+		<description languageCode="en">Pesticides are substances that are meant to control pests, including weeds. The term pesticide includes all of the following: herbicide, insecticides (which may include insect growth regulators, termiticides, etc.) nematicide, molluscicide, piscicide, avicide, rodenticide, bactericide, insect repellent, animal repellent, antimicrobial, and fungicide.</description>
+	</code>
+	<code>
+		<value>PESTICIDE_RESIDUES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pesticide residues</name>
+		<description languageCode="en">Pesticide residue refers to the pesticides that may remain on or in food after they are applied to food crops. The maximum allowable levels of these residues in foods are often stipulated by regulatory bodies in many countries. Regulations such as pre-harvest intervals also often prevent harvest of crop or livestock products if recently treated in order to allow residue concentrations to decrease over time to safe levels before harvest. Exposure of the general population to these residues most commonly occurs through consumption of treated food sources, or being in close contact to areas treated with pesticides such as farms or lawns.</description>
+	</code>
+	<code>
+		<value>PETROLATUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Petrolatum</name>
+		<description languageCode="en">Semi-solid mixture of hydrocarbons, commonly used for its moisturizing properties.</description>
+	</code>
+	<code>
+		<value>PFAS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Per- and polyfluoroalkyl substances (PFAS)</name>
+		<description languageCode="en">Per- and polyfluoroalkyl substances (PFAS) are a group of man-made chemicals that includes PFOA, PFOS, GenX, and many other chemicals.</description>
+	</code>
+	<code>
+		<value>PHENOXYETHANOL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Phenoxyethanol</name>
+		<description languageCode="en">Germicidal and germistatic glycol ether, phenol ether, and aromatic alcohol often used together with quaternary ammonium compounds.</description>
+	</code>
+	<code>
+		<value>PHENYLALANINE</value>
+		<name languageCode="en">Phenylalanine</name>
+		<name languageCode="sv">Fenylalanin</name>
+		<description languageCode="en">A essential amino acid.</description>
+	</code>
+	<code>
+		<value>PHOSPHATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Phosphate</name>
+		<description languageCode="en">The chemical formula is PO3−4.</description>
+	</code>
+	<code>
+		<value>PHOSPHORUS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Phosphorus</name>
+		<description languageCode="en">Phosphorus</description>
+	</code>
+	<code>
+		<value>PHTHALATE</value>
+		<name languageCode="en">Phthalate</name>
+		<name languageCode="sv">Ftalat</name>
+		<description languageCode="en">Phthalates or phthalate esters, are esters of phthalic acid. They are mainly used as plasticizers, i.e., substances added to plastics to increase their flexibility, transparency, durability, and longevity. </description>
+		<description languageCode="sv">Ftalater eller ftalatestrar är estrar av ftalsyra. De används främst som mjukgörare, dvs. ämnen som tillsätts i plast för att öka dess flexibilitet, transparens, hållbarhet och livslängd.</description>
+	</code>
+	<code>
+		<value>PINENUTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pinenuts</name>
+		<description languageCode="en">The  edible seed of various pine trees.</description>
+	</code>
+	<code>
+		<value>PISTACHIOS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pistachios</name>
+		<description languageCode="en">The pistachio is the edible pale green seed of an Asian tree.
+The pistachio is the evergreen tree of the cashew family that produces this nut, with small brownish-green flowers and reddish wrinkled fruit borne in heavy clusters. It is widely cultivated, especially in the US and around the Mediterranean. </description>
+	</code>
+	<code>
+		<value>PLANT_STEROLS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Plant sterols</name>
+		<description languageCode="en">Plant sterols are defined as cholesterol‐like substances that occur naturally at low levels in many fruits, vegetables, nuts and cereals. Plant sterols can help to improve cholesterol levels. </description>
+	</code>
+	<code>
+		<value>PLANT_BASED_ALTERNATIVE_TO_MEAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Plant based alternative to meat</name>
+		<description languageCode="en">A product whose structure and protein content mimic that of a type of meat. Also known as meat replacement in some markets. The determination of this is made by the supplier and is subject to target market regulations or trade organisation guidelines."</description>
+	</code>
+	<code>
+		<value>PLANT_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Plant protein</name>
+		<description languageCode="en">The protein is derived from plant-based sources. There may be one or more sources of protein. Examples of vegetable protein sources are soy, oats or broad bean. </description>
+	</code>
+	<code>
+		<value>POLYETHYLENE_MICROBEADS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Polyethylene Microbeads</name>
+		<description languageCode="en">Microbeads are really tiny plastic particles usually smaller than two millimeters. The composition of microbeads can vary and often include polyethylene (PE).</description>
+	</code>
+	<code>
+		<value>POLYPHOSPHATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Polyphosphate</name>
+		<description languageCode="en">A chemical compound that contains phosphorus.</description>
+	</code>
+	<code>
+		<value>POLYUNSATURATED_FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Polyunsaturated Fat</name>
+		<description languageCode="en">Polyunsaturated Fat</description>
+	</code>
+	<code>
+		<value>PORK_GELATINE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pork Gelatine</name>
+		<description languageCode="en">Translucent, colourless, brittle (when dry), flavourless substance derived from collagen obtained from various pork raw materials (connective tissues (skin) and bones). It is commonly used as a gelling agent in food, pharmaceutical drugs, photography, and cosmetic manufacturing.</description>
+	</code>
+	<code>
+		<value>POTASSIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Potassium</name>
+		<description languageCode="en">Potassium</description>
+	</code>
+	<code>
+		<value>POTATO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Potato</name>
+		<description languageCode="en">Widely cultivated edible, starchy root vegetable of the nightshade family (solanum tuberosum). </description>
+	</code>
+	<code>
+		<value>POULTRY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Poultry</name>
+		<description languageCode="en">Domesticated birds kept by humans for their eggs, their meat or their feathers.</description>
+	</code>
+	<code>
+		<value>POWDER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Powder</name>
+		<description languageCode="en">Fine, dry particles produced by the grinding, crushing, or disintegration of a solid substance.</description>
+	</code>
+	<code>
+		<value>PREBIOTICS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Prebiotics</name>
+		<description languageCode="en">Compounds in food that induce the growth or activity of beneficial microorganisms such as bacteria and fungi.</description>
+	</code>
+	<code>
+		<value>PRESERVATIVES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Preservatives</name>
+		<description languageCode="en">A preservative is a natural or synthetic substance or chemical that is added to products to prevent decomposition by microbial growth or by undesirable chemical changes.</description>
+	</code>
+	<code>
+		<value>PROBIOTICS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Probiotics</name>
+		<description languageCode="en">Probiotics.</description>
+	</code>
+	<code>
+		<value>PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Protein</name>
+		<description languageCode="en">Protein</description>
+	</code>
+	<code>
+		<value>PULP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pulp</name>
+		<description languageCode="en">Pulp is the juicy, soft part inside of fruits. Many consumers would like to avoid fruit pulp in fruit juices for personal reasons.</description>
+	</code>
+	<code>
+		<value>PVC</value>
+		<name languageCode="en">PVC (polyvinyl chloride)</name>
+		<name languageCode="sv">PVC</name>
+		<description languageCode="en">Polyvinyl Chloride (PVC) is a common, strong but lightweight plastic used in construction. It is made softer and more flexible by the addition of plasticizers.</description>
+	</code>
+	<code>
+		<value>PVC_WITH_PHTHALATES</value>
+		<name languageCode="en">PVC (polyvinyl chloride) with Phthalates</name>
+		<name languageCode="sv">PVC med ftalater</name>
+		<description languageCode="en">Polyvinyl Chloride (PVC) with Phthalates is a common, strong but lightweight plastic used in construction. It is made softer and more flexible by the addition of Phthalates, used to plasticise PVC.</description>
+	</code>
+	<code>
+		<value>PVC_WITHOUT_PHTHALATES</value>
+		<name languageCode="en">PVC (polyvinyl chloride) without Phthalates</name>
+		<name languageCode="sv">PVC utan ftalater</name>
+		<description languageCode="en">Polyvinyle Chloride (PVC) with Phthalates is a common, strong but lightweight plastic used in construction. It is made softer and more flexible by without the addition of Phthalates as plasticizers.</description>
+	</code>
+	<code>
+		<value>QUININE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Quinine</name>
+		<description languageCode="en">A bitter crystalline compound present in cinchona bark.</description>
+	</code>
+	<code>
+		<value>RAISINS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Raisins</name>
+		<description languageCode="en">Raisins are dried grapes. The term "raisins" is both the generic term for all dried raisins and the specific term for the dried fruit of a particular grape variety.</description>
+	</code>
+	<code>
+		<value>RASPBERRIES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Raspberries
+  </name>
+		<description languageCode="en">The raspberry is the edible fruit of a multitude of plant species in the genus Rubus of the rose family, most of which are in the subgenus Idaeobatus.</description>
+	</code>
+	<code>
+		<value>RAW_BEET_SUGAR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Raw  Beet Sugar</name>
+		<description languageCode="en">Raw sugar derived from the sugar beet.</description>
+	</code>
+	<code>
+		<value>RECYCLED_MATERIAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Recycled material</name>
+		<description languageCode="en">A recycled material refers to any substance that has undergone a process of reprocessing or reclamation to be used again in the manufacturing of new products. Recycled materials can encompass a wide range of items, including paper, glass, metal, plastics, textiles, and more.</description>
+	</code>
+	<code>
+		<value>RECYCLED_MATERIAL_MASS_BALANCE</value>
+		<name languageCode="en">Recycled material, Mass balance</name>
+		<name languageCode="sv">Återvunnet material, Massbalans</name>
+		<description languageCode="en">Recycled material and feedstock are combined with virgin raw materials in the production process, resulting in a final product that contains both virgin and recycled content. Mass balance involves mixing fossil and recycled/renewable materials to meet this objective. It's important to note that individual trade items may not necessarily include recycled material, but the plastic material producer is certified for mass balance and incorporates a specific percentage of recycled materials in their feedstock. Refer to local regulations.</description>
+		<description languageCode="sv">Återvunnet material och råmaterial kombineras med jungfruliga råvaror i produktionsprocessen, vilket resulterar i en slutprodukt som innehåller både jungfruligt och återvunnet innehåll. Massbalans innebär att man blandar fossila och återvunna/förnybara material för att uppnå detta mål. Det är viktigt att notera att enskilda varor inte nödvändigtvis inkluderar återvunnet material, men plastmaterialtillverkaren är certifierad för massbalans och innehåller en viss procentandel av återvunnet material i sitt råmaterial. Se lokala föreskrifter.</description>
+	</code>
+	<code>
+		<value>RENEWABLE_MATERIAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Renewable material</name>
+		<description languageCode="en">A renewable material is a material made of natural resources that can be replenished, generation after generation.</description>
+	</code>
+	<code>
+		<value>RENEWABLE_MATERIAL_MASS_BALANCE</value>
+		<name languageCode="en">Renewable material, Mass balance</name>
+		<name languageCode="sv">Förnybart material, Massbalans</name>
+		<description languageCode="en">Renewable material and renewable feedstock (raw material used in industrial process or as fuel) with virgin raw materials in the production process. This creates a final product that is a mixture of virgin and renewable content. Mass balance is about mixing fossil and renewable/recycled materials.  It's important to note that individual trade items may not necessarily include renewable material, but the plastic material producer is certified for mass balance and incorporates a specific percentage of renewable materials in their feedstock. Refer to local regulations.</description>
+		<description languageCode="sv">Förnybart material och förnybart råmaterial (råvara som används i industriell process eller som bränsle) med jungfruliga råvaror i produktionsprocessen. Detta skapar en slutprodukt som är en blandning av jungfruligt och förnybart innehåll. Massbalans handlar om att blanda fossila och förnybara/återvunna material. Det är viktigt att notera att enskilda handelsvaror inte nödvändigtvis inkluderar förnybart material, men plastmaterialtillverkaren är certifierad för massbalans och införlivar en viss procentandel av förnybara material i sitt råmaterial. Se lokala föreskrifter.</description>
+	</code>
+	<code>
+		<value>RETINYL_PALMITATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Retinyl Palmitate</name>
+		<description languageCode="en">Retinyl Palmitate (Vitamin A Palmitate) is an ingredient composed of palmitic acid and retinol (Vitamin A).</description>
+	</code>
+	<code>
+		<value>RIBOFLAVIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Riboflavin</name>
+		<description languageCode="en">Vitamin B2, corresponding to riboflavin, or lactoflavin, is a water-soluble vitamin necessary for the synthesis of flavine adenine dinucleotide and flavine mononucleotide, two essential cofactors for flavoproteins.
+Vitamin B2 plays an important role in converting simple foods (carbohydrates, fats and proteins) into energy. It is involved in muscle repair metabolism.</description>
+	</code>
+	<code>
+		<value>RYE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Rye</name>
+		<description languageCode="en">A wheat like cereal plant that tolerates poor soils and low temperatures.</description>
+	</code>
+	<code>
+		<value>SATURATED_FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Saturated Fat</name>
+		<description languageCode="en">A claim that a food is low in saturated fat, and any claim likely to have the same meaning for the consumer, may only be made where the product contains no more than 1.5g of saturates per 100g for solids or, 0.75g of saturates per 100ml for liquids and in either case saturated fat must not provide more than 10% of energy. In the case of foods naturally low in saturated fat, the term "naturally" may be used as a prefix to this claim.</description>
+	</code>
+	<code>
+		<value>SAUCE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sauce</name>
+		<description languageCode="en">A liquid or semiliquid mixture that is added to a food as it cooks or that is served with it. Sauces provide flavour, moisture, and a contrast in texture and colour. They may also serve as a medium in which food is contained.</description>
+	</code>
+	<code>
+		<value>SEEDS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Seeds</name>
+		<description languageCode="en">A seed is a plant's unit of reproduction, capable of developing into another such plant.</description>
+	</code>
+	<code>
+		<value>SELENIUM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Selenium</name>
+		<description languageCode="en">Selenium</description>
+	</code>
+	<code>
+		<value>SESAME</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sesame</name>
+		<description languageCode="en">The edible seeds of the sesame plant, which are used whole or have the oil extracted.</description>
+	</code>
+	<code>
+		<value>SHEA_BUTTER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Shea butter</name>
+		<description languageCode="en">A fatty substance obtained from the nuts of the shea tree. E.g., used in cosmetics, food.</description>
+	</code>
+	<code>
+		<value>SILICONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Silicone</name>
+		<description languageCode="en">Silicones, also known as polysiloxanes, are polymers that include any synthetic compound made up of repeating units of siloxane, which is a chain of alternating silicon atoms and oxygen atoms, combined with carbon, hydrogen, and sometimes other elements.</description>
+	</code>
+	<code>
+		<value>SKIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Skin</name>
+		<description languageCode="en">The layer of tissue forming the natural outer covering of the body of an animal, fish or plant.</description>
+	</code>
+	<code>
+		<value>SMOKE_FLAVOUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Smoke Flavour</name>
+		<description languageCode="en">Smoke flavourings are produced by thermal degradation of wood. As an alternative to traditional smoking, they can be added to a range of different foods to give a “smoked” flavour.</description>
+	</code>
+	<code>
+		<value>SOAP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Soap</name>
+		<description languageCode="en">Cleansing agent, made from fats and oils and an alkali, used for washing and personal hygiene.</description>
+	</code>
+	<code>
+		<value>SODIUM_LAURYL_SULFATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sodium lauryl sulfate</name>
+		<description languageCode="en">Surfactant and detergent commonly found in personal care products and cleaning agents.</description>
+	</code>
+	<code>
+		<value>SODIUM_NITRITE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sodium Nitrite</name>
+		<description languageCode="en">The chemical formula is NaNO2</description>
+	</code>
+	<code>
+		<value>SODIUM_SALT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sodium Salt</name>
+		<description languageCode="en">Sodium or salt.</description>
+	</code>
+	<code>
+		<value>SOLUBLE_FIBRE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Soluble Fibre</name>
+		<description languageCode="en">Soluble fibre dissolves in water to form a thick gel-like substance in the stomach. It is broken down by bacteria in the large intestine and provides some calories.</description>
+	</code>
+	<code>
+		<value>SORBITOL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sorbitol</name>
+		<description languageCode="en">A sugar substitute with a sweet taste which the human body metabolizes slowly.</description>
+	</code>
+	<code>
+		<value>SOY</value>
+		<name languageCode="en">Soy/Soya</name>
+		<name languageCode="sv">Soja</name>
+		<description languageCode="en">Soybean (or soyabean); protein derived from soybeans, used as a replacement for animal protein in certain foods.</description>
+	</code>
+	<code>
+		<value>SOYBEAN_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Soybean oil</name>
+		<description languageCode="en">Soybean oil is extracted from the seeds of the soybean. It is one of the most widely consumed cooking oils and the second most consumed vegetable oil.</description>
+	</code>
+	<code>
+		<value>STEROID</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Steroid</name>
+		<description languageCode="en">Organic compound with a molecular structure containing four rings, used to treat inflammation.</description>
+	</code>
+	<code>
+		<value>STEVIA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Stevia</name>
+		<description languageCode="en">Stevia is a high-potency sweetener extracted from the leaves of the plant species stevia rebaudiana.</description>
+	</code>
+	<code>
+		<value>SULPHITES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sulphites</name>
+		<description languageCode="en">Sulphites or sulfites are substances that are naturally found in some foods. They are used as an additive to maintain food colour, shelf-life and prevent the growth of fungi or bacteria.</description>
+	</code>
+	<code>
+		<value>SUGARS</value>
+		<name languageCode="en">Sugars</name>
+		<name languageCode="sv">Sockerarter</name>
+		<description languageCode="en">Includes sugars that are present naturally in the food such as lactose in milk and fructose in fruit, sucrose in fruits and vegetables, as well as sugars added to the food during processing, such as sugar / sucrose, corn syrup, honey, high fructose corn syrup, fruit juice concentrates and dextrose."</description>
+	</code>
+	<code>
+		<value>SULFATE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sulfate</name>
+		<description languageCode="en">A salt or ester of sulfuric acid, containing the anion SO42− or the divalent group —OSO2O—.</description>
+	</code>
+	<code>
+		<value>SUNFLOWER_OIL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sunflower oil</name>
+		<description languageCode="en">Sunflower oil is the non-volatile oil pressed from the seeds of sunflower. Sunflower oil is commonly used in food as a frying oil or cooking.</description>
+	</code>
+	<code>
+		<value>SWEETENERS</value>
+		<name languageCode="en">Sweeteners</name>
+		<name languageCode="sv">Sötningsmedel</name>
+		<description languageCode="en">Any substance that sweetens such as sugar or a low-calorie synthetic product used instead of sugar.</description>
+	</code>
+	<code>
+		<value>TALC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Talc</name>
+		<description languageCode="en">Mineral composed of hydrated magnesium silicate, used for its soft and absorbent properties.</description>
+	</code>
+	<code>
+		<value>TASTE_AVERSIVE_AGENT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Taste aversive agent</name>
+		<description languageCode="en">A taste aversive or bittering agent is a chemical substance that is added to a product to help deter inappropriate ingestion and prevent poisonings from occurring. Denatonium benzoate, commonly sold under brand names like Bitrex® or Denatrol®, is one of the most widely used substances.</description>
+	</code>
+	<code>
+		<value>THC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">THC (Tetrahydrocannabinol)</name>
+		<description languageCode="en">Tetrahydrocannabinol (THC) is a chemical found in cannabis and is the principal psychoactive constituent.</description>
+	</code>
+	<code>
+		<value>THIAMIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Thiamin</name>
+		<description languageCode="en">Thiamin, or vitamin B1, is involved in the transformation of glucose into energy and in the metabolism of amino acids. It is essential to the functioning of the nervous system and seems indispensable for memory and intellectual faculties.</description>
+	</code>
+	<code>
+		<value>TOLUENE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Toluene</name>
+		<description languageCode="en">Clear liquid aromatic hydrocarbon, used as an industrial solvent and in paint, varnish, adhesive.</description>
+	</code>
+	<code>
+		<value>TRANS_FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Trans fat</name>
+		<description languageCode="en">Trans fatty acids</description>
+	</code>
+	<code>
+		<value>TREE_NUTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Tree nuts</name>
+		<description languageCode="en">Tree nuts include, but are not limited to, walnut, almond, hazelnut, cashew, pistachio, and Brazil nuts.</description>
+	</code>
+	<code>
+		<value>TRICLOCARBAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Triclocarban</name>
+		<description languageCode="en">Triclocarban is an antibacterial agent common in personal care products like soaps and lotions as well as in the medical field, for which it was originally developed. Studies on its antibacterial qualities and mechanisms are growing.</description>
+	</code>
+	<code>
+		<value>TRICLOSAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Triclosan</name>
+		<description languageCode="en">Triclosan (sometimes abbreviated as TCS) is an antibacterial and antifungal agent present in some consumer products, including toothpaste, soaps, detergents, toys, and surgical cleaning treatments.</description>
+	</code>
+	<code>
+		<value>TRITICALE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Triticale</name>
+		<description languageCode="en">Triticale is a hybrid grain produced by crossing wheat and rye, grown as a fodder crop.</description>
+	</code>
+	<code>
+		<value>ULTRA_FILTERED_NONFAT_MILK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ultra-filtered nonfat milk</name>
+		<description languageCode="en">Ultrafiltered nonfat or skimmed milk, also known as diafiltered, is a subclassification of milk protein concentrate that is produced by passing nonfat or skim milk under pressure through a thin, porous membrane to separate the components of milk according to their size. Please refer to target market regulations for definition of 'nonfat' or 'skimmed' and the allowable percentage of fat to be contained.</description>
+	</code>
+	<code>
+		<value>UNSATURATED_FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Unsaturated Fat</name>
+		<description languageCode="en">Unsaturated Fat</description>
+	</code>
+	<code>
+		<value>UREA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Urea</name>
+		<description languageCode="en">Urea, also known as carbamide, is an organic compound with chemical formula CO(NH2)2.</description>
+	</code>
+	<code>
+		<value>VEGETABLES</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vegetables</name>
+		<description languageCode="en">Vegetables are parts of plants that are consumed by humans or other animals as food.</description>
+	</code>
+	<code>
+		<value>VITAMIN_A</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin A</name>
+		<description languageCode="en">Vitamin A is also known as retinol.</description>
+	</code>
+	<code>
+		<value>VITAMIN_B12</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin B12</name>
+		<description languageCode="en">Vitamin B12</description>
+	</code>
+	<code>
+		<value>VITAMIN_B6</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin B6</name>
+		<description languageCode="en">Vitamin B6</description>
+	</code>
+	<code>
+		<value>VITAMIN_C</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin C</name>
+		<description languageCode="en">Vitamin C</description>
+	</code>
+	<code>
+		<value>VITAMIN_D</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin D</name>
+		<description languageCode="en">Vitamin D</description>
+	</code><code>
+		<value>VITAMIN_D2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin D2</name>
+		<description languageCode="en">Vitamin D2 also known as ergocalciferol.</description>
+	</code>
+	<code>
+		<value>VITAMIN_D3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin D3</name>
+		<description languageCode="en">Vitamin D3 also known as cholecalciferol.</description>
+	</code>
+	<code>
+		<value>VITAMIN_E</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin E</name>
+		<description languageCode="en">Vitamin E is also known as tocopherol.</description>
+	</code>
+	<code>
+		<value>VITAMIN_K</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamin K</name>
+		<description languageCode="en">Vitamin K</description>
+	</code>
+	<code>
+		<value>VITAMINS_AND_OR_MINERALS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vitamins and or Minerals</name>
+		<description languageCode="en">Vitamins and/or minerals.</description>
+	</code>
+	<code>
+		<value>VOC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Volatile organic compound (VOC)</name>
+		<description languageCode="en">An organic compound that has a high vapor pressure at room temperature and low water solubility.</description>
+	</code>
+	<code>
+		<value>WALNUTS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Walnuts</name>
+		<description languageCode="en">A large wrinkled edible seed of a deciduous tree, consisting of two halves contained within a hard shell that is enclosed in a green fruit.</description>
+	</code>
+	<code>
+		<value>WATER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Water</name>
+		<description languageCode="en">Water is a chemical substance with the chemical formula H2O. Water is an inorganic, transparent, tasteless, odorless, and nearly colourless substance and it is used in food preparation.</description>
+	</code>
+	<code>
+		<value>WHEAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Wheat</name>
+		<description languageCode="en">Wheat</description>
+	</code>
+	<code>
+		<value>WHITE_MEAT_TUNA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">White meat tuna</name>
+		<description languageCode="en">The only species of fish that can be called “White Tuna” is Albacore, refers to the relatively white-coloured flesh versus other tuna species, which have light tan or hint of pink flesh.</description>
+	</code>
+	<code>
+		<value>WHITE_SUGAR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">White Sugar</name>
+		<description languageCode="en">White or granulated sugar is refined sugar (pure white crystalline sucrose) ground to granules or grains.</description>
+	</code>
+	<code>
+		<value>WHOLE_GRAIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Whole grain</name>
+		<description languageCode="en">The intact grain or the dehulled, ground, milled, cracked or flaked grain where the constituents – endosperm, germ and bran – are present in such proportions that represent the typical ratio of those fractions occurring in the whole cereal.</description>
+	</code>
+	<code>
+		<value>WHOLE_WHEAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Whole wheat</name>
+		<description languageCode="en">Whole wheat refers to wheat which contains all constituents of the wheat grain.</description>
+	</code>
+	<code>
+		<value>WIND_POWER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Wind power</name>
+		<description languageCode="en">Wind power or wind energy is mostly the use of wind turbines to generate electricity. Wind power is a popular, sustainable, renewable energy source that has a much smaller impact on the environment than burning fossil fuels.</description>
+	</code>
+	<code>
+		<value>YEAST</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Yeast</name>
+		<description languageCode="en">A microscopic fungus consisting of single oval cells that reproduce by budding, and capable of converting sugar into alcohol and carbon dioxide.</description>
+	</code>
+	<code>
+		<value>ZEOLITE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Zeolite</name>
+		<description languageCode="en">Zeolite is a group of porous minerals composed of aluminum silicates. Zeolites are used in industry for applications such as filtration, odour removal, molecular sieves, and water softening.</description>
+	</code>
+	<code>
+		<value>ZINC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Zinc</name>
+		<description languageCode="en">Zinc</description>
+	</code>
+</codeList>

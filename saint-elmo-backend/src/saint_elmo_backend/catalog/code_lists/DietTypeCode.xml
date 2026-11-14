@@ -1,0 +1,232 @@
+<codeList term="T4066" SDDversion="10" SDDupdated="2026-06-12" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:DietTypeCode</urn>
+	<listName languageCode="en">Diet type code</listName>
+	<listName languageCode="sv">Diettyp</listName>
+	<GDDversion>6</GDDversion>
+	<GDDupdated>2026-08-22</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>COELIAC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coeliac</name>
+		<description languageCode="en">Denotes a product that can be safely consumed by a person with coeliac disease. Coeliac disease is caused by a reaction to gladin (a gluten protein found in wheat) and similar proteins found in other crops.</description>
+	</code>
+	<code>
+		<value>DIABETIC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Diabetic</name>
+		<description languageCode="en">Denotes a product that intends to decrease the need for insulin or oral diabetic agents by adjusting caloric and carbohydrate intake.</description>
+	</code>
+	<code>
+		<value>DIETETIC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dietetic</name>
+		<description languageCode="en">Denotes a product that is specially prepared or processed for people on restrictive diets.</description>
+	</code>
+	<code>
+		<value>FODMAP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low FODMAP diet</name>
+		<description languageCode="en">The low Fermentable Oligosaccharides Disaccharides Monosaccharides And Polyols (FODMAP) diet is a specialized dietary plan designed to help individuals manage symptoms of irritable bowel syndrome (IBS) and other functional gastrointestinal disorders. FODMAP are poorly absorbable short-chain carbohydrates and sugar alcohols that can be found in various everyday food products (such as various fruits and vegetables, honey, milk, and sweeteners).</description>
+	</code>
+	<code>
+		<value>FREE_FROM_GLUTEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Free From Gluten</name>
+		<description languageCode="en">Denotes a product that can be used in a gluten free diet, as specified by the appropriate authority within a target market.</description>
+	</code>
+	<code>
+		<value>GRAIN_FREE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Grain free</name>
+		<description languageCode="en">Indicates that the product is suitable for a grain-free diet that eliminates all grains, including wheat, spelt, barley, rye, dried corn, millet, rice, and oats, as well as foods — and sometimes even ingredients — derived from them.</description>
+	</code>
+	<code>
+		<value>HALAL</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Halal</name>
+		<name languageCode="sv">Halal</name>
+		<description languageCode="en">Denotes selling or serving food ritually fit according to Islamic dietary laws.</description>
+		<description languageCode="sv">Anger att produkten är tillåten enligt islamiska matlagar</description>
+	</code>
+	<code>
+		<value>HIGH_CARB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">High Carb</name>
+		<description languageCode="en">High Carb is not a fast diet but much more a complete diet. "High Carb" means that most of the calories in your daily diet come from carbohydrates. At the same time, it is also a low fat diet because the fat content in the diet is relatively low.</description>
+	</code>
+	<code>
+		<value>HIGH_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">High Protein</name>
+		<description languageCode="en">Indicates that the product is suitable for a protein-defined diet in which protein foods are dominant, calories are low, carbohydrates are largely avoided and fat is avoided to a limited extent.</description>
+	</code>
+	<code>
+		<value>INFANT_FORMULA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Infant Formula</name>
+		<description languageCode="en">Infant formulas come in powder, liquid concentrate, and ready-to-feed forms. Infant formulas come in a variety of types: Cow's milk formula is the most commonly used type. The milk has been altered to resemble breast milk. Soy protein based formulas are frequently used for infants allergic to cow's milk or lactose.</description>
+	</code>
+	<code>
+		<value>KETO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Keto</name>
+		<description languageCode="en">A ketogenic diet is a form of low carb diet. It is characterized by an extremely low carbohydrate and very high-fat diet. Due to the lack of carbohydrates, the metabolism changes and gets into the so-called "ketosis".</description>
+	</code>
+	<code>
+		<value>KOSHER</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Kosher</name>
+		<name languageCode="sv">Kosher</name>
+		<description languageCode="en">Denotes selling or serving food ritually fit according to Jewish dietary laws.</description>
+		<description languageCode="sv">Anger att produkten är tillåten enligt judiska matlagar.</description>
+	</code>
+	<code>
+		<value>LACTASE_ENZYME</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lactase Enzyme</name>
+		<description languageCode="en">This product is an enzyme supplement used to help people who have trouble digesting milk and other dairy products (lactose intolerance). Lactase enzyme is normally produced by the body to help break down (digest) lactose.</description>
+	</code>
+	<code>
+		<value>LACTOSE_FREE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lactose free</name>
+		<description languageCode="en">Indicates that the product is suitable for a those with an intolerance to lactose as the product does not contain the lactose sugar that is normally found in a dairy product.</description>
+	</code>
+	<code>
+		<value>LOW_CALORIE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low calorie</name>
+		<description languageCode="en">Indicates that the product is suitable for a calorie-defined diet in which the calorie intake is restricted.</description>
+	</code>
+	<code>
+		<value>LOW_CARB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low Carb</name>
+		<description languageCode="en">Low-carb diets restrict carbohydrate consumption. Foods high in carbohydrates (e.g., sugar, bread, pasta) are limited or replaced with foods containing a higher percentage of fats and moderate protein (e.g., meat, poultry, fish, shellfish, eggs, cheese, nuts, and seeds) and other foods low in carbohydrates (e.g., most salad vegetables such as spinach, kale, chard, and collards), although other vegetables and fruits (especially berries) are often allowed. </description>
+	</code>
+	<code>
+		<value>LOW_FAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low Fat</name>
+		<description languageCode="en">A low-fat diet is one that restricts fat and often saturated fat and cholesterol as well. Low-fat diets are intended to reduce the occurence of conditions such as heart disease and obesity.</description>
+	</code>
+	<code>
+		<value>LOW_PROTEIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low protein</name>
+		<description languageCode="en">Indicates that the product is suitable for a protein-defined diet in which the protein intake with food is restricted.</description>
+	</code>
+	<code>
+		<value>LOW_SALT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Low salt</name>
+		<description languageCode="en">Indicates that the product is suitable for a salt-defined diet in which the salt intake with food is restricted.</description>
+	</code>
+	<code>
+		<value>MEAL_REPLACEMENT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Meal Replacement</name>
+		<description languageCode="en">A calorie-controlled, pre-packaged product in the form of a bar or a beverage (ready-to-drink or powder) that is used to replace a meal.</description>
+	</code>
+	<code>
+		<value>MOTHERS_MILK_SUBSTITUTE</value>
+		<name languageCode="en">Mothers Milk Substitute</name>
+		<name languageCode="sv">Modersmjölksersättning</name>
+		<description languageCode="en">The item is approved as substitute mother's milk by the appropriate authority of the target market.</description>
+		<description languageCode="sv">Produkten är godkänd som modersmjölksersättning.</description>
+	</code><code>
+		<value>NO_SPECIAL_DIET_CODE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">No special diet code</name>
+		<name languageCode="sv"></name>
+		<description languageCode="en">Indicates that the product does not relate to any special diet program or dietary needs.</description>
+		<description languageCode="sv"></description>
+	</code>
+	<code>
+		<value>NUTRITION_SUPPLEMENT</value>
+		<name languageCode="en">Nutrition Supplement</name>
+		<name languageCode="sv">Kosttillägg</name>
+		<description languageCode="en">Nutritional supplements are any dietary supplement that is intended to provide nutrients that may otherwise not be consumed in sufficient quantities; for example, vitamins, minerals, proteins, amino acids or other nutritional substances.</description>
+		<description languageCode="sv">Kosttillskott är alla tillskott som är avsedda att komplettera näringsämnen som annars kanske inte konsumeras i tillräckliga mängder, till exempel vitaminer, mineraler, proteiner, aminosyror eller andra näringsämnen.</description>
+	</code>
+	<code>
+		<value>ORGANIC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Organic</name>
+		<description languageCode="en">Denotes a food product that was produced with the use of feed or fertiliser of plant or animal origin, without employment of chemically formulated fertilisers, growth stimulants, antibiotics or pesticides.</description>
+	</code>
+	<code>
+		<value>PALEO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Paleo</name>
+		<description languageCode="en">Paleo diet is a fad diet type requiring the sole or predominant eating of foods presumed to have been available to humans during the Paleolithic era.</description>
+	</code>
+	<code>
+		<value>PESCATARIAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pescatarian</name>
+		<description languageCode="en">A pescatarian diet excludes meat and poultry but includes fish or seafood (and may include dairy products and eggs).</description>
+	</code>
+	<code>
+		<value>PLANT_BASED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Plant based</name>
+		<description languageCode="en">A plant-based diet is a way of eating that focuses on vegetables fruits, whole grains, legumes (beans, peas, and lentils), nuts and seeds. (i.e. foods that come from plants. It is not a vegan/vegetarian diet that avoids animal products, but it de-emphasizes animal products and its contribution to our meals).</description>
+	</code>
+	<code>
+		<value>POLLOTARIAN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pollotarian</name>
+		<description languageCode="en">A pollotarian diet, also known as a pollo-vegetarian diet, incorporates poultry, including turkey and duck, as the only source of meat in an otherwise vegetarian diet.</description>
+	</code>
+	<code>
+		<value>PROBIOTICS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Probiotics</name>
+		<description languageCode="en">Probiotics are live bacteria and yeasts that are good for you, especially your digestive system.</description>
+	</code>
+	<code>
+		<value>RAW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Raw food diet</name>
+		<description languageCode="en">A dietary practice of eating food that is uncooked and unprocessed. Also known as Raw foodism, rawism.</description>
+	</code>
+	<code>
+		<value>TOTAL_DIET_REPLACEMENT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Total Diet Supplement</name>
+		<description languageCode="en">Dietary supplements include vitamins, minserals, herbs, botanicals, enzymes, amino acids, or other dietary ingredients. You take these products by mouth in pill, capsule, tablet, or liquid form to replace your diet.</description>
+	</code>
+	<code>
+		<value>VEGAN</value>
+		<name languageCode="en">Vegan</name>
+		<name languageCode="sv">Vegan</name>
+		<description languageCode="en">Products that are not of animal origin and at no stage of production and processing has use been made of, or the product been supplemented with ingredients or processing aids or substances that are of animal origin. The product has not been tested on animals. Local regulations, where they exist, prevail since the term may be a combination or all of the above statements.</description>
+		<description languageCode="sv">Produkten är vegansk</description>
+	</code>
+	<code>
+		<value>VEGETARIAN</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Vegetarian</name>
+		<name languageCode="sv">Vegetarisk</name>
+		<description languageCode="en">Denotes a product that contains no meat or other animal products but depending upon the local market regulations may also contain milk, eggs, products from bees (and in some markets also fish), and their components. Please refer to local regulations.</description>
+		<description languageCode="sv">Produkten är vegetarisk</description>
+	</code>
+	<code>
+		<value>WITHOUT_BEEF</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Without beef</name>
+		<name languageCode="sv">Utan nötkött</name>
+		<description languageCode="en">Denotes a product that contains no beef or beef-products. Beef is considered to be a taboo food product by some religions most notably Hinduism, Buddhism and Jainism.</description>
+		<description languageCode="sv">Anger att produkten inte innehåller något nötkött</description>
+	</code>
+	<code>
+		<value>WITHOUT_PORK</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Without pork</name>
+		<name languageCode="sv">Utan griskött</name>
+		<description languageCode="en">Denotes a product that contains no pork meat.</description>
+		<description languageCode="sv">Anger att produkten inte innehåller något fläskkött</description>
+	</code>
+</codeList>

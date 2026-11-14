@@ -4,19 +4,29 @@ from typing import Any
 from loguru import logger
 
 from sqlalchemy import Table, insert, select, text
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from saint_elmo_backend.catalog import source
 from saint_elmo_backend.catalog.models import (
+    ActivityType,
+    Allergen,
     Brand,
     Category,
+    ClaimElement,
+    ClaimType,
+    Diet,
     FishCatchMethod,
     IngredientOrigin,
+    Label,
+    MeasurementUnit,
+    Nutrient,
     Producer,
     Product,
     ProductAllergen,
     ProductClaim,
     ProductDeposit,
+    ProductDiet,
     ProductFishSpecies,
     ProductIngredient,
     ProductLabel,
@@ -46,6 +56,7 @@ _LOADED_TABLES = [
         ProductDeposit,
         ProductAllergen,
         ProductClaim,
+        ProductDiet,
         ProductLabel,
         ProductNutrient,
         ProductMedia,
@@ -64,6 +75,28 @@ _LOADED_TABLES = [
 async def _insert(session: AsyncSession, model: type, rows: list[dict[str, Any]]) -> None:
     if rows:
         await session.execute(insert(model), rows)
+
+
+async def _ensure_codes(session: AsyncSession, model: type, codes: set[str]) -> int:
+    """
+    Add codes the data uses that the GS1 code list lacks, so product rows can
+    reference them. Returns how many were missing.
+    """
+    codes.discard("")
+    if not codes:
+        return 0
+
+    result = await session.execute(
+        pg_insert(model)
+        .values([{"code": code, "is_standard": False} for code in sorted(codes)])
+        .on_conflict_do_nothing(index_elements=["code"])
+        .returning(model.code)  # type: ignore[attr-defined]
+    )
+    missing = list(result.scalars())
+    if missing:
+        table = model.__tablename__  # type: ignore[attr-defined]
+        logger.warning(f"Codes not in the {table} code list: {', '.join(missing)}")
+    return len(missing)
 
 
 async def _insert_returning_ids(
@@ -164,6 +197,7 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
     deposits: list[dict[str, Any]] = []
     allergens: list[dict[str, Any]] = []
     claims: list[dict[str, Any]] = []
+    diets: list[dict[str, Any]] = []
     labels: list[dict[str, Any]] = []
     nutrients: list[dict[str, Any]] = []
     media: list[dict[str, Any]] = []
@@ -223,8 +257,16 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
             for code, containment in source.collect_allergens(synkka).items()
         ]
         claims += [
-            {"product_id": product_id, "claim_code": code}
-            for code in sorted(source.collect_codes(synkka, "nutritionalClaim"))
+            {
+                "product_id": product_id,
+                "claim_type_code": claim_type,
+                "claim_element_code": element,
+            }
+            for claim_type, element in sorted(source.collect_claims(synkka))
+        ]
+        diets += [
+            {"product_id": product_id, "diet_code": code}
+            for code in sorted(source.collect_diets(synkka))
         ]
         labels += [
             {"product_id": product_id, "label_code": code}
@@ -280,12 +322,34 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
             for sd in synkka.safety_data
         ]
 
+    non_standard = 0
+    for model, codes in (
+        (Allergen, {r["allergen_code"] for r in allergens}),
+        (ClaimType, {r["claim_type_code"] for r in claims}),
+        (ClaimElement, {r["claim_element_code"] for r in claims}),
+        (Diet, {r["diet_code"] for r in diets}),
+        (Label, {r["label_code"] for r in labels}),
+        (Nutrient, {r["nutrient_code"] for r in nutrients}),
+        (
+            MeasurementUnit,
+            {
+                r[column]
+                for r in nutrients
+                for column in ("unit", "basis_unit", "serving_size_unit")
+                if r[column]
+            },
+        ),
+        (ActivityType, {o.type for _, i in ingredients for o in i.origins}),
+    ):
+        non_standard += await _ensure_codes(session, model, codes)
+
     await _insert(session, ProductTranslation, translations)
     await _insert(session, ProductUnit, units)
     await _insert(session, ProductPackagingLevel, packaging_levels)
     await _insert(session, ProductDeposit, deposits)
     await _insert(session, ProductAllergen, allergens)
     await _insert(session, ProductClaim, claims)
+    await _insert(session, ProductDiet, diets)
     await _insert(session, ProductLabel, labels)
     await _insert(session, ProductNutrient, nutrients)
     await _insert(session, ProductMedia, media)
@@ -350,7 +414,8 @@ async def seed_catalog(session: AsyncSession, data_dir: Path) -> None:
     logger.info(
         f"Catalogue loaded: {len(products)} products, {len(category_ids)} categories,"
         f" {len(vendor_ids)} vendors, {len(brand_ids)} brands,"
-        f" {len(producer_ids)} producers, {len(nutrients)} nutrient values"
+        f" {len(producer_ids)} producers, {len(nutrients)} nutrient values,"
+        f" {non_standard} codes outside the GS1 lists"
         f" (skipped {skipped_substitutions} invalid substitution rules,"
         f" {skipped_units} zero-size units)"
     )

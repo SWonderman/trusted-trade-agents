@@ -161,3 +161,29 @@ def test_normalize_statement_type():
         source.normalize_statement_type("PrecautionaryStatement")
         == SafetyStatementType.PRECAUTIONARY
     )
+
+
+def test_claims_split_into_gs1_type_and_element_and_diets_apart():
+    synkka = _synkka(
+        classifications=[
+            {
+                "name": "nutritionalClaim",
+                "type": "ENUM",
+                "values": [
+                    {"id": "FREE_FROM_LACTOSE", "unit": "FREE_FROM", "synkkaId": "LACTOSE"},
+                    {"id": "HIGH_FIBRE", "unit": "HIGH", "synkkaId": "FIBRE"},
+                    # The same Synkka id as a claim and as a diet type
+                    {"id": "FREE_FROM_GLUTEN", "unit": "FREE_FROM", "synkkaId": "GLUTEN"},
+                    {"id": "FREE_FROM_GLUTEN", "unit": "DIET", "synkkaId": "FREE_FROM_GLUTEN"},
+                    {"id": "VEGAN", "unit": "DIET", "synkkaId": "VEGAN"},
+                ],
+            }
+        ]
+    )
+
+    assert source.collect_claims(synkka) == {
+        ("FREE_FROM", "LACTOSE"),
+        ("HIGH", "FIBRE"),
+        ("FREE_FROM", "GLUTEN"),
+    }
+    assert source.collect_diets(synkka) == {"FREE_FROM_GLUTEN", "VEGAN"}

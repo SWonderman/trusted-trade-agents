@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<codeList term="T4230" SDDversion="5" SDDupdated="2023-08-19" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:CatchMethodCode</urn>
+	<listName languageCode="en">Catch method code</listName>
+	<listName languageCode="sv">Fångstredskap för fiskeri- och vattenbruks-produkter</listName>
+	<GDDversion>3</GDDversion>
+	<GDDupdated>2023-08-19</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>01</value>
+		<name languageCode="en">Surrounding Nets</name>
+		<name languageCode="sv">Snörpvad</name>
+		<description languageCode="en">Surrounding Nets</description>
+		<description languageCode="sv">Snörpvad</description>
+	</code>
+	<code>
+		<value>02</value>
+		<name languageCode="en">Seine nets</name>
+		<name languageCode="sv">Vad</name>
+		<description languageCode="en">Seine nets</description>
+		<description languageCode="sv">Vad</description>
+	</code>
+	<code>
+		<value>03</value>
+		<name languageCode="en">Trawls</name>
+		<name languageCode="sv">Trålar</name>
+		<description languageCode="en">Trawls</description>
+		<description languageCode="sv">Trålar</description>
+	</code>
+	<code>
+		<value>04</value>
+		<name languageCode="en">Dredges</name>
+		<name languageCode="sv">Skrapredskap</name>
+		<description languageCode="en">Dredges</description>
+		<description languageCode="sv">Skrapredskap</description>
+	</code>
+	<code>
+		<value>05</value>
+		<name languageCode="en">Lift nets</name>
+		<name languageCode="sv">Sänkhåvar</name>
+		<description languageCode="en">Lift nets</description>
+		<description languageCode="sv">Sänkhåvar</description>
+	</code>
+	<code>
+		<value>07</value>
+		<name languageCode="en">Gillnets and Entangling Nets</name>
+		<name languageCode="sv">Botten- och insnärjningsgarn</name>
+		<description languageCode="en">Gillnets and Entangling Nets</description>
+		<description languageCode="sv">Botten- och insnärjningsgarn</description>
+	</code>
+	<code>
+		<value>08</value>
+		<name languageCode="en">Traps</name>
+		<name languageCode="sv">Fällor</name>
+		<description languageCode="en">Traps</description>
+		<description languageCode="sv">Fällor</description>
+	</code>
+	<code>
+		<value>09</value>
+		<name languageCode="en">Hooks and lines</name>
+		<name languageCode="sv">Krokar och revar</name>
+		<description languageCode="en">Hooks and lines</description>
+		<description languageCode="sv">Krokar och revar</description>
+	</code>	
+	<code>
+		<value>DRB</value>
+		<name languageCode="en">Boat dredges</name>
+		<name languageCode="sv">Skrapredskap från båt</name>
+		<description languageCode="en">Boat dredges</description>
+		<description languageCode="sv">Skrapredskap från båt</description>
+	</code>
+	<code>
+		<value>DRH</value>
+		<name languageCode="en">Hand dredges</name>
+		<name languageCode="sv">Handhållna skrapredskap</name>
+		<description languageCode="en">Boat dredges</description>
+		<description languageCode="sv">Handhållna skrapredskap</description>
+	</code>
+	<code>
+		<value>DX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dredges (not specified) (GS1 Code)</name>
+		<name languageCode="sv">Skrapredskap (ej specificerade GS1 Code) - används ej i Sverige</name>
+		<description languageCode="en">Dredges (not specified) (GS1 Code)</description>
+		<description languageCode="sv">Skrapredskap (ej specificerade GS1 Code) - används ej i Sverige</description>
+	</code>
+	<code>
+		<value>FAR</value>
+		<name languageCode="en">Traps: Aerial traps</name>
+		<name languageCode="sv">Redskap för fångst av hoppande fisk</name>
+		<description languageCode="en">Traps: Aerial traps</description>
+		<description languageCode="sv">Redskap för fångst av hoppande fisk</description>
+	</code>
+	<code>
+		<value>FCN</value>
+		<name languageCode="en">Cast nets</name>
+		<name languageCode="sv">Kastnät</name>
+		<description languageCode="en">Cast nets</description>
+		<description languageCode="sv">Kastnät</description>
+	</code>
+	<code>
+		<value>FG</value>
+		<name languageCode="en">Falling gear (not specified)</name>
+		<name languageCode="sv">Fallnät (ej specificerade)</name>
+		<description languageCode="en">Falling gear (not specified)</description>
+		<description languageCode="sv">Fallnät (ej specificerade)</description>
+	</code>
+	<code>
+		<value>FIX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Traps (not specified)</name>
+		<name languageCode="sv">Fällor (ospecificerade) - används ej i Sverige</name>
+		<description languageCode="en">Traps (not specified)</description>
+		<description languageCode="sv">Fällor (ospecificerade) - används ej i Sverige</description>
+	</code>
+	<code>
+		<value>FPN</value>
+		<name languageCode="en">Traps: Stationary uncovered pound nets</name>
+		<name languageCode="sv">Fasta ej täckta bottengarn</name>
+		<description languageCode="en">Traps: Stationary uncovered pound nets</description>
+		<description languageCode="sv">Fasta ej täckta bottengarn</description>
+	</code>
+	<code>
+		<value>FPO</value>
+		<name languageCode="en">Traps: Pots</name>
+		<name languageCode="sv">Tinor</name>
+		<description languageCode="en">Traps: Pots</description>
+		<description languageCode="sv">Tinor</description>
+	</code>
+	<code>
+		<value>FSN</value>
+		<name languageCode="en">Traps: Stow nets</name>
+		<name languageCode="sv">Fasta hommor</name>
+		<description languageCode="en">Traps: Stow nets</description>
+		<description languageCode="sv">Fasta hommor</description>
+	</code>
+	<code>
+		<value>FWR</value>
+		<name languageCode="en">Traps: Barriers, fences, weirs, etc.</name>
+		<name languageCode="sv">Spännät, fasta fällor, bottengarn, etc.</name>
+		<description languageCode="en">Traps: Barriers, fences, weirs, etc.</description>
+		<description languageCode="sv">Spännät, fasta fällor, bottengarn, etc.</description>
+	</code>
+	<code>
+		<value>FYK</value>
+		<name languageCode="en">Traps: Fyke nets</name>
+		<name languageCode="sv">Ryssjor</name>
+		<description languageCode="en">Traps: Fyke nets</description>
+		<description languageCode="sv">Ryssjor</description>
+	</code>
+	<code>
+		<value>GDS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Gillnets: Set (anchored) gillnets: demersal gillnets</name>
+		<description languageCode="en">Gillnets: Set (anchored) gillnets: demersal gillnets. WWF (World Wide Fund For Nature) accepted designation for wild catch fishing gear.</description>
+	</code>
+	<code>
+		<value>GSP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Gillnets: Set (anchored) gillnets: pelagic gillnets</name>
+		<description languageCode="en">Gillnets: Set (anchored) gillnets: pelagic gillnets. WWF (World Wide Fund For Nature) accepted designation for wild catch fishing gear.</description>
+	</code>
+	<code>
+		<value>GEN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Gillnets and entangling nets (not specified)</name>
+		<name languageCode="sv">Botten- och insnärjningsgarn (ej specificerade) - används ej i Sverige</name>
+		<description languageCode="en">Gillnets and entangling nets (not specified)</description>
+		<description languageCode="sv">Botten- och insnärjningsgarn (ej specificerade) - används ej i Sverige</description>
+	</code>
+	<code>
+		<value>GN</value>
+		<name languageCode="en">Gillnets (not specified)</name>
+		<name languageCode="sv">Nät (ej specificerade)</name>
+		<description languageCode="en">Gillnets (not specified)</description>
+		<description languageCode="sv">Nät (ej specificerade)</description>
+	</code>
+	<code>
+		<value>GNC</value>
+		<name languageCode="en">Encircling gillnets</name>
+		<name languageCode="sv">Nät (cirkelnät)</name>
+		<description languageCode="en">Encircling gillnets</description>
+		<description languageCode="sv">Nät (cirkelnät)</description>
+	</code>
+	<code>
+		<value>GND</value>
+		<name languageCode="en">Driftnets</name>
+		<name languageCode="sv">Nät (drivande)</name>
+		<description languageCode="en">Driftnets</description>
+		<description languageCode="sv">Nät (drivande)</description>
+	</code>
+	<code>
+		<value>GNF</value>
+		<name languageCode="en">Fixed gillnets (on stakes)</name>
+		<name languageCode="sv">Fasta bottengarn (fastgjorda vid pålar)</name>
+		<description languageCode="en">Fixed gillnets (on stakes)</description>
+		<description languageCode="sv">Fasta bottengarn (fastgjorda vid pålar)</description>
+	</code>
+	<code>
+		<value>GNS</value>
+		<name languageCode="en">Set gillnets (anchored)</name>
+		<name languageCode="sv">Förankrade nät</name>
+		<description languageCode="en">Set gillnets (anchored)</description>
+		<description languageCode="sv">Förankrade nät</description>
+	</code>
+	<code>
+		<value>GTN</value>
+		<name languageCode="en">Combined gillnets-trammel nets</name>
+		<name languageCode="sv">Kombinerade botten- och grimgarn</name>
+		<description languageCode="en">Combined gillnets-trammel nets</description>
+		<description languageCode="sv">Kombinerade botten- och grimgarn</description>
+	</code>
+	<code>
+		<value>GTR</value>
+		<name languageCode="en">Trammel nets</name>
+		<name languageCode="sv">Grimgarn</name>
+		<description languageCode="en">Trammel nets</description>
+		<description languageCode="sv">Grimgarn</description>
+	</code>
+	<code>
+		<value>HAR</value>
+		<name languageCode="en">Harpoons</name>
+		<name languageCode="sv">Harpuner</name>
+		<description languageCode="en">Harpoons</description>
+		<description languageCode="sv">Harpuner</description>
+	</code>
+	<code>
+		<value>HMD</value>
+		<name languageCode="en">Mechanized dredges</name>
+		<name languageCode="sv">Mekaniska skrapredskap</name>
+		<description languageCode="en">Mechanized dredges</description>
+		<description languageCode="sv">Mekaniska skrapredskap</description>
+	</code>
+	<code>
+		<value>HMP</value>
+		<name languageCode="en">Pumps</name>
+		<name languageCode="sv">Pumpar</name>
+		<description languageCode="en">Pumps</description>
+		<description languageCode="sv">Pumpar</description>
+	</code>
+	<code>
+		<value>HMX</value>
+		<name languageCode="en">Harvesting machines (not specified)</name>
+		<name languageCode="sv">Maskiner (ej specificerade)</name>
+		<description languageCode="en">Harvesting machines (not specified)</description>
+		<description languageCode="sv">Maskiner (ej specificerade)</description>
+	</code>
+	<code>
+		<value>LA</value>
+		<name languageCode="en">Surrounding Nets-  without purse lines (lampara)</name>
+		<name languageCode="sv">Utan snörplinor (lampara)</name>
+		<description languageCode="en">Surrounding Nets-  without purse lines (lampara)</description>
+		<description languageCode="sv">Utan snörplinor (lampara)</description>
+	</code>
+	<code>
+		<value>LHM</value>
+		<name languageCode="en">Handlines and pole-lines (mechanized)</name>
+		<name languageCode="sv">Pilk- och angelgarn (mekaniska)</name>
+		<description languageCode="en">Handlines and pole-lines (mechanized)</description>
+		<description languageCode="sv">Pilk- och angelgarn (mekaniska)</description>
+	</code>
+	<code>
+		<value>LHP</value>
+		<name languageCode="en">Handlines and pole-lines (hand-operated)</name>
+		<name languageCode="sv">Pilk- och angelgarn (handstyrda)</name>
+		<description languageCode="en">Handlines and pole-lines (hand-operated)</description>
+		<description languageCode="sv">Pilk- och angelgarn (handstyrda)</description>
+	</code>
+	<code>
+		<value>LL</value>
+		<name languageCode="en">Longlines (not specified)</name>
+		<name languageCode="sv">Långrevar (ej specificerade)</name>
+		<description languageCode="en">Longlines (not specified)</description>
+		<description languageCode="sv">Långrevar (ej specificerade)</description>
+	</code>
+	<code>
+		<value>LLD</value>
+		<name languageCode="en">Drifting longlines</name>
+		<name languageCode="sv">Drivande backor/långrevar</name>
+		<description languageCode="en">Drifting longlines</description>
+		<description languageCode="sv">Drivande backor/långrevar</description>
+	</code>
+	<code>
+		<value>LLS</value>
+		<name languageCode="en">Set longlines</name>
+		<name languageCode="sv">Förankrade backor/långrevar</name>
+		<description languageCode="en">Set longlines</description>
+		<description languageCode="sv">Förankrade backor/långrevar</description>
+	</code>
+	<code>
+		<value>LN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lift nets (not specified)</name>
+		<name languageCode="sv">Sänkhåvar (ej specificerade) - används ej i Sverige</name>
+		<description languageCode="en">Lift nets (not specified)</description>
+		<description languageCode="sv">Sänkhåvar (ej specificerade) - används ej i Sverige</description>
+	</code>
+	<code>
+		<value>LNB</value>
+		<name languageCode="en">Boat-operated lift nets</name>
+		<name languageCode="sv">Sänkhåvar som används från båtar</name>
+		<description languageCode="en">Boat-operated lift nets</description>
+		<description languageCode="sv">Sänkhåvar som används från båtar</description>
+	</code>
+	<code>
+		<value>LNP</value>
+		<name languageCode="en">Portable lift nets</name>
+		<name languageCode="sv">Bärbara sänkhåvar</name>
+		<description languageCode="en">Portable lift nets</description>
+		<description languageCode="sv">Bärbara sänkhåvar</description>
+	</code>
+	<code>
+		<value>LNS</value>
+		<name languageCode="en">Shore-operated stationary lift nets</name>
+		<name languageCode="sv">Sänkhåvar som används från stranden</name>
+		<description languageCode="en">Shore-operated stationary lift nets</description>
+		<description languageCode="sv">Sänkhåvar som används från stranden</description>
+	</code>
+	<code>
+		<value>LTL</value>
+		<name languageCode="en">Trolling lines</name>
+		<name languageCode="sv">Dörjlinor</name>
+		<description languageCode="en">Trolling lines</description>
+		<description languageCode="sv">Dörjlinor</description>
+	</code>
+	<code>
+		<value>LX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hooks and lines (not specified)3</name>
+		<name languageCode="sv">Krokar och revar (ej specificerade) - används ej i Sverige</name>
+		<description languageCode="en">Hooks and lines (not specified)3</description>
+		<description languageCode="sv">Krokar och revar (ej specificerade) - används ej i Sverige</description>
+	</code>
+	<code>
+		<value>LY</value>
+		<name languageCode="en">Surrounding nets and lift nets (not specified) (GS1 Code)</name>
+		<name languageCode="sv">Snörpvad och sänkhåvar (ej specificerade GS1 Code)</name>
+		<description languageCode="en">Surrounding nets and lift nets (not specified) (GS1 Code)</description>
+		<description languageCode="sv">Snörpvad och sänkhåvar (ej specificerade GS1 Code)</description>
+	</code>
+	<code>
+		<value>MHI</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hand implements</name>
+		<description languageCode="en">Hand implements (Wrenching gear, clamps, tongs, rakes, spears).</description>
+	</code>
+	<code>
+		<value>MIS</value>
+		<name languageCode="en">Miscellaneous Gear</name>
+		<name languageCode="sv">Diverse övriga redskap</name>
+		<description languageCode="en">Miscellaneous Gear</description>
+		<description languageCode="sv">Diverse övriga redskap</description>
+	</code>
+	<code>
+		<value>NK</value>
+		<name languageCode="en">Gear Not Known or Not Specified</name>
+		<name languageCode="sv">Okända eller ej specificerade redskap</name>
+		<description languageCode="en">Gear Not Known or Not Specified</description>
+		<description languageCode="sv">Okända eller ej specificerade redskap</description>
+	</code>
+	<code>
+		<value>OT</value>
+		<name languageCode="en">Midwater trawls: Otter trawls (not specified)</name>
+		<name languageCode="sv">Trålar som används med trålbord (ej specificerade)</name>
+		<description languageCode="en">Midwater trawls: Otter trawls (not specified)</description>
+		<description languageCode="sv">Trålar som används med trålbord (ej specificerade)</description>
+	</code>
+	<code>
+		<value>OTB</value>
+		<name languageCode="en">Bottom trawls - otter trawls</name>
+		<name languageCode="sv">Trål med trålbord</name>
+		<description languageCode="en">Bottom trawls - otter trawls</description>
+		<description languageCode="sv">Trål med trålbord</description>
+	</code>
+	<code>
+		<value>OTM</value>
+		<name languageCode="en">Midwater trawls- otter trawls</name>
+		<name languageCode="sv">Flyttrål</name>
+		<description languageCode="en">Midwater trawls- otter trawls</description>
+		<description languageCode="sv">Flyttrål</description>
+	</code>
+	<code>
+		<value>OTT</value>
+		<name languageCode="en">Midwater trawls: Otter twin trawls</name>
+		<name languageCode="sv">Dubbeltrålar som används med trålbord</name>
+		<description languageCode="en">Midwater trawls: Otter twin trawls</description>
+		<description languageCode="sv">Dubbeltrålar som används med trålbord</description>
+	</code>
+	<code>
+		<value>PS</value>
+		<name languageCode="en">Surrounding Nets with purse lines (purse seines)</name>
+		<name languageCode="sv">Ringnot</name>
+		<description languageCode="en">Surrounding Nets with purse lines (purse seines)</description>
+		<description languageCode="sv">Ringnot</description>
+	</code>
+	<code>
+		<value>PS1</value>
+		<name languageCode="en">Surrounding Nets - one boat operated purse seines</name>
+		<name languageCode="sv">Snörpvad som styrs från ett fartyg</name>
+		<description languageCode="en">Surrounding Nets - one boat operated purse seines</description>
+		<description languageCode="sv">Snörpvad som styrs från ett fartyg</description>
+	</code>
+	<code>
+		<value>PS2</value>
+		<name languageCode="en">Surrounding Nets - two boats operated purse seines</name>
+		<name languageCode="sv">Snörpvad som styrs från två fartyg</name>
+		<description languageCode="en">Surrounding Nets - two boats operated purse seines</description>
+		<description languageCode="sv">Snörpvad som styrs från två fartyg</description>
+	</code>
+	<code>
+		<value>PT</value>
+		<name languageCode="en">Midwater trawls: Pair trawls (not specified)</name>
+		<name languageCode="sv">Partrål (två fartyg) (ej specificerade)</name>
+		<description languageCode="en">Midwater trawls: Pair trawls (not specified)</description>
+		<description languageCode="sv">Partrål (två fartyg) (ej specificerade)</description>
+	</code>
+	<code>
+		<value>PTB</value>
+		<name languageCode="en">Bottom trawls - pair trawls</name>
+		<name languageCode="sv">Bottentrål för partrålning</name>
+		<description languageCode="en">Bottom trawls - pair trawls</description>
+		<description languageCode="sv">Bottentrål för partrålning</description>
+	</code>
+	<code>
+		<value>PTM</value>
+		<name languageCode="en">Midwater trawls- pair trawls</name>
+		<name languageCode="sv">Parflyttrål</name>
+		<description languageCode="en">Midwater trawls- pair trawls</description>
+		<description languageCode="sv">Parflyttrål</description>
+	</code>
+	<code>
+		<value>RG</value>
+		<name languageCode="en">Recreational Fishing Gear</name>
+		<name languageCode="sv">Fiskeredskap för sportfiske</name>
+		<description languageCode="en">Recreational Fishing Gear</description>
+		<description languageCode="sv">Fiskeredskap för sportfiske</description>
+	</code>
+	<code>
+		<value>SB</value>
+		<name languageCode="en">Seine Nets: Beach seines</name>
+		<name languageCode="sv">Landvad</name>
+		<description languageCode="en">Seine Nets: Beach seines</description>
+		<description languageCode="sv">Landvad</description>
+	</code>
+	<code>
+		<value>SDN</value>
+		<name languageCode="en">Seine Nets - Danish seines</name>
+		<name languageCode="sv">Snurrevad</name>
+		<description languageCode="en">Seine Nets - Danish seines</description>
+		<description languageCode="sv">Snurrevad</description>
+	</code>
+	<code>
+		<value>SPW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Seine Nets: Purse seines - without FADs</name>
+		<description languageCode="en">Purse seines without FADs (Fish Aggregation Devices). WWF (World Wide Fund For Nature) accepted designation for wild catch fishing gear.</description>
+	</code>
+	<code>
+		<value>SPWF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Seine Nets: Purse seines - with FADs</name>
+		<description languageCode="en">Purse seines with FADs (Fish Aggregation Devices). WWF (World Wide Fund For Nature) accepted designation for wild catch fishing gear.</description>
+	</code>
+	<code>
+		<value>SPR</value>
+		<name languageCode="en">Seine Nets - pair seines</name>
+		<name languageCode="sv">Vad som dras av två fartyg (fly dragging)</name>
+		<description languageCode="en">Seine Nets - pair seines</description>
+		<description languageCode="sv">Vad som dras av två fartyg (fly dragging)</description>
+	</code>
+	<code>
+		<value>SSC</value>
+		<name languageCode="en">Seine Nets - Scottish seines</name>
+		<name languageCode="sv">Skotsk snurrevad (fly dragging)</name>
+		<description languageCode="en">Seine Nets - Scottish seines</description>
+		<description languageCode="sv">Skotsk snurrevad (fly dragging)</description>
+	</code>
+	<code>
+		<value>SV</value>
+		<name languageCode="en">Seine Nets: Boat or vessel seines</name>
+		<name languageCode="sv">Notar som används från båtar eller fartyg</name>
+		<description languageCode="en">Seine Nets: Boat or vessel seines</description>
+		<description languageCode="sv">Notar som används från båtar eller fartyg</description>
+	</code>
+	<code>
+		<value>SX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Seine nets (not specified)</name>
+		<name languageCode="sv">Notar (ej specificerade) - används ej i Sverige</name>
+		<description languageCode="en">Seine nets (not specified)</description>
+		<description languageCode="sv">Notar (ej specificerade) - används ej i Sverige</description>
+	</code>
+	<code>
+		<value>TB</value>
+		<name languageCode="en">Bottom trawls - bottom trawls (not specified)</name>
+		<name languageCode="sv">Bottentrålar (ej specificerade)</name>
+		<description languageCode="en">Bottom trawls - bottom trawls (not specified)</description>
+		<description languageCode="sv">Bottentrålar (ej specificerade)</description>
+	</code>
+	<code>
+		<value>TBB</value>
+		<name languageCode="en">Bottom trawls - beam trawls</name>
+		<name languageCode="sv">Bomtrålar</name>
+		<description languageCode="en">Bottom trawls - beam trawls</description>
+		<description languageCode="sv">Bomtrålar</description>
+	</code>
+	<code>
+		<value>TBN</value>
+		<name languageCode="en">Bottom trawls - nephrops trawls</name>
+		<name languageCode="sv">Trålar för havskräftor</name>
+		<description languageCode="en">Bottom trawls - nephrops trawls</description>
+		<description languageCode="sv">Trålar för havskräftor</description>
+	</code>
+	<code>
+		<value>TBS</value>
+		<name languageCode="en">Bottom trawls - shrimp trawls</name>
+		<name languageCode="sv">Räktrålar</name>
+		<description languageCode="en">Bottom trawls - shrimp trawls</description>
+		<description languageCode="sv">Räktrålar</description>
+	</code>
+	<code>
+		<value>TM</value>
+		<name languageCode="en">Midwater trawls- midwater trawls (not specified)</name>
+		<name languageCode="sv">Flyttrålar (ej specificerade)</name>
+		<description languageCode="en">Midwater trawls- midwater trawls (not specified)</description>
+		<description languageCode="sv">Flyttrålar (ej specificerade)</description>
+	</code>
+	<code>
+		<value>TMS</value>
+		<name languageCode="en">Midwater trawls- shrimp trawls</name>
+		<name languageCode="sv">Räktrål</name>
+		<description languageCode="en">Midwater trawls- shrimp trawls</description>
+		<description languageCode="sv">Räktrål</description>
+	</code>
+	<code>
+		<value>TSP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pulse trawls</name>
+		<description languageCode="en">Pulse trawls. WWF (World Wide Fund For Nature) accepted designation for wild catch fishing gear.</description>
+	</code>
+	<code>
+		<value>TX</value>
+		<name languageCode="en">Midwater trawls: Other trawls (not specified)</name>
+		<name languageCode="sv">Andra trålar (ej specificerade)</name>
+		<description languageCode="en">Midwater trawls: Other trawls (not specified)</description>
+		<description languageCode="sv">Andra trålar (ej specificerade)</description>
+	</code>
+</codeList>

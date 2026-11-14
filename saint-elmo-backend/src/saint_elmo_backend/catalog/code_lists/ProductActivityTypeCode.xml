@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeList term="T4235" SDDversion="6" SDDupdated="2025-09-19" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:ProductActivityTypeCode</urn>
+	<listName languageCode="en">Product activity type code</listName>
+	<listName languageCode="sv">Typ av artikelaktivitet</listName>
+	<GDDversion>4</GDDversion>
+	<GDDupdated>2025-11-15</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>ASSEMBLY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Assembly</name>
+		<name languageCode="sv"/>
+		<description languageCode="en">Country where product is assembled.</description>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>BIRTH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Birth</name>
+		<name languageCode="sv"/>
+		<description languageCode="en"/>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>BOTTLING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bottling</name>
+		<name languageCode="sv"/>
+		<description languageCode="en">The place in which the beverage is bottled.</description>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>CATCH_ZONE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Catch zone</name>
+		<description languageCode="en">The sea zone in which the seafood in the trade item was caught.</description>
+	</code>
+	<code>
+		<value>CUTTER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cutter</name>
+		<description languageCode="en">The place where the cutting operation on the carcass or group of carcasses is performed. e.g. approval number of the cutting hall acc. to Regulation EC No 1760/2000 of the European Parliament. Note: The animal is not killed at this location.</description>
+	</code>
+	<code>
+		<value>DYEING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dyeing</name>
+		<description languageCode="en">The place where the product is coloured using dyes.</description>
+	</code>
+	<code>
+		<value>FARMING</value>
+		<name languageCode="en">Farming</name>
+		<name languageCode="sv">Jordbruk</name>
+		<description languageCode="en">The cultivation of animals, plants, fungi, and other life forms.</description>
+		<description languageCode="sv">Jordbruk inom odling och boskap.</description>
+	</code>
+	<code>
+		<value>FINISHING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Finishing</name>
+		<description languageCode="en">The place where the product undergoes final treatments to enhance its quality, appearance, or performance.</description>
+	</code>
+	<code>
+		<value>GARMENT_MAKING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Garment making</name>
+		<description languageCode="en">The place where the product is cut, assembled, and sewn into its final form.</description>
+	</code>
+	<code>
+		<value>HUNTED_GATHERED</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hunted/Gathered</name>
+		<description languageCode="en">The place where wild animals may be hunted/trapped/caught or where wild vegetation may be gathered/harvested/picked.</description>
+	</code>
+	<code>
+		<value>IMPORTATION</value>
+		<name languageCode="en">Importation</name>
+		<name languageCode="sv">Importering</name>
+		<description languageCode="en">The country from where the trade item has been purchased by the importer. This is different from the "Last Processing" if the product is somehow altered, prepared, or assembled before it is imported. Example: A case of 12 bottles of wine is made in France (Country of Origin: France), and a Canadian company purchased/imported the same case from Italy (Country of Import: Italy).</description>
+		<description languageCode="sv">Typen av artikelaktivitet är importering</description>
+	</code>
+	<code>
+		<value>LAST_PROCESSING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Last processing</name>
+		<name languageCode="sv"/>
+		<description languageCode="en">The ISO 3166-1 code that identifies the country in which the trade item was last processed and tested before importation.</description>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>MILKING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Milking</name>
+		<name languageCode="sv"/>
+		<description languageCode="en">Milking is the act of removing milk from mammary glands of various animal types.</description>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>MOUNTING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mounting</name>
+		<description languageCode="en">The place where components, embellishments, or accessories are attached to the product during production.</description>
+	</code>
+	<code>
+		<value>PRINTING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Printing</name>
+		<description languageCode="en">The place where patterns, graphics, or text are applied to the product.</description>
+	</code>
+	<code>
+		<value>REARING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Rearing</name>
+		<name languageCode="sv"/>
+		<description languageCode="en">The place the animal was raised after birth to the end of the animals’ life. The place may be a country, region (land or sea), city, etc.  The actual rearing place(s) of a particular animal would be transactional. Guidance: If the animal was raised in multiple locations, one instance of the attribute should be populated (e.g. reared in Spain and Portugal). If the animal may have been raised in a single location but for a particular animal it is transactional, it is suggested to populate the attribute for each possibility of location an animal may have come from (e.g. Instance 1 - reared in Spain, instance 2 - Reared in Portugal). Note: the term animal includes but is not limited to mammals, birds, fish and crustaceans</description>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>SLAUGHTER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Slaughter</name>
+		<name languageCode="sv"/>
+		<description languageCode="en">The place the animal was killed to be processed for food or other purposes. The place may be a country, region (land or sea), city, etc. The actual slaughter place of a particular animal would be transactional. Note: the term animal includes but is not limited to mammals, birds, fish and crustaceans.</description>
+		<description languageCode="sv"/>
+	</code>
+	<code>
+		<value>STITCHING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Stitching</name>
+		<description languageCode="en">The place where parts of the product are joined using stitching or sewing techniques.</description>
+	</code>
+	<code>
+		<value>WEAVING_KNITTING</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Weaving/Knitting</name>
+		<description languageCode="en">The place where the product is formed through weaving or knitting processes.</description>
+	</code>
+</codeList>

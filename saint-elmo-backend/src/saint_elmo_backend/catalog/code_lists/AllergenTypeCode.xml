@@ -1,0 +1,1691 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<codeList term="T4078" SDDversion="14" SDDupdated="2025-09-19" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:AllergenTypeCode</urn>
+	<listName languageCode="en">Allergen type code</listName>
+	<listName languageCode="sv">Allergentyp</listName>
+	<GDDversion>7</GDDversion>
+	<GDDupdated>2025-11-15</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>AA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Amylcinnamyl alcohol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Amylcinnamyl Alcohol in the product. - CAS Registry Number: 101-85-9 - Also known as: alpha-Amylcinnamyl alcohol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Alpha-terpinene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Alpha-Terpinene in the product. - CAS Registry Number: 99-86-5 - Also known as: Terpinolene, 1-Methyl-4-(1-methylethyl)-1,3-cyclohexadiene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Tuna and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Tuna and its derivatives in the product. - Family/Genus/Species: Scombridae subfamily Scombrinae/(various) - Also known as: Albacore, Bigeye Tuna, Black Skipjack, Blackfin Tuna, Bluefin Tuna, Bullet Tuna, Buri, Dogtooth Tuna, Escolar, Frigate Tuna, Kawakawa, Little Tuna, Longtail Tuna, Pacific Bluefin Tuna, Skipjack Tuna, Slender Tuna, Southern Bluefin Tuna, Spotted Tunny, Tuna, Yellowfin Tuna - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Walleye and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Walleye and its derivatives in the product. - Family/Genus/Species: Percidae/Sander/S. vitreus - Also known as: Walleye, Yellow Pike, Yellow Pickerel - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Barnacle and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Barnacles and its derivatives in the product. - Family/Genus/Species: (various) - Also known as: Barnacle, Goose Barnacle, Leaf Barnacle, Pico - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Crab and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Crab and its derivatives in the product. - Family/Genus/Species: Brachyura (various) - Also known as: (various) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Crawfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Crawfish and its derivatives in the product. - Family/Genus/Species: Astacidae or Cambaridae or Cambaroididae or Parastacidae/(various) - Also known as: Caribbean Spiny Lobster, Crawdad, Crawdaddy, Crawfish, Craydid, Crayfish, Freshwater Crayfish, Freshwater Lobsters, Marron, Mountain Lobsters, Mudbugs, Murray River Crayfish, Red Claw Crayfish, Red Swamp Crayfish, Rock Lobsters, Royal Spiny Lobster, White River Crayfish, Yabbie Crayfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABI</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Krill and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Krill and its derivatives in the product. - Family/Genus/Species: 	Euphausiacea (various) - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABJ</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lobster and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lobster and its derivatives in the product. - Family/Genus/Species: Nephropidae/(various) - Also known as: American Lobster, Blue Spiny Lobster, Blunt Slipper Lobster, Brazilian Slipper Lobster, California Spiny Lobster, Cape Spiny Lobster, Caribbean Lobsterette, Caribbean Spiny Lobster, Colorado Langostino, Common Spiny Lobster, Eastern Spiny Lobster, European Lobster, Flathead Locust Lobster, Florida Lobsterette, Gilchrist Spiny Lobster, Green Spiny Lobster, Hawaiian Spiny Lobster, Japanese Fan Lobster, Japanese Spiny Lobster, Lobsterette, Mud Spiny Lobster, Natal Spiny Lobster, Norway Lobster, Ornate Spiny Lobster, Painted Spiny Lobster, Pelagic Crab, Pink Spiny Lobster, Pronghorn Spiny Lobster, Red-banded Lobster, Ridged Slipper Lobster, Royal Spiny Lobster, Scalloped Spiny Lobster, Smoothtail Spiny Lobster, Southern Rock Lobster, Spanish Slipper Lobster, St. Paul Spiny Lobster, Swarming Squat Lobster, Urugavian Lobster, Western Red Lobster - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Prawns and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Prawns and its derivatives in the product. Prawn is a common name for small aquatic crustaceans with an exoskeleton and ten legs (which is a member of the order decapoda), some of which can be eaten. The terms shrimp and prawn are common names, not scientific names. They are vernacular or colloquial terms which lack the formal definition of scientific terms. They are not taxa, but are terms of convenience with little circumscriptional significance. There is no reason to avoid using the terms shrimp or prawn when convenient, but it is important not to confuse them with the names or relationships of actual taxa. - Family/Genus/Species: (various) - Also known as: Banana Prawn, Brown Tiger Prawn, Caramote Prawn, Common Prawn, Eastern King Prawn, Giant Freshwater Prawn, Giant Gamba Prawn, Giant Tiger Prawn, Green Tiger Prawn, Indian Prawn, Jack-knife Prawn, Kuruma Prawn, Redtail Prawn, Roshna Prawn, Western King Prawn, Prawn - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Shrimp and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Shrimp and its derivatives in the product. The terms shrimp and prawn are common names, not scientific names. They are vernacular or colloquial terms which lack the formal definition of scientific terms. They are not taxa, but are terms of convenience with little circumscriptional significance. There is no reason to avoid using the terms shrimp or prawn when convenient, but it is important not to confuse them with the names or relationships of actual taxa. - Family/Genus/Species: (various) - Also known as: Akiami Paste Shrimp, Argentine Red Shrimp, Atlantic Seabob, Bigclaw River Shrimp, Blue Shrimp, Brown Rock Shrimp, Brown Shrimp, California Shrimp, Chinese White Shrimp, Cinnamon River Shrimp, Common Shrimp, Coonstriped Shrimp, Deep-water Rose Shrimp, Deep-water Rose Shrimp, Endeavour Shrimp, Golden Shrimp, Greasyback Shrimp, Humpy Shrimp, Jinga Shrimp, Kadal Shrimp, Kiddi Shrimp, Knife Shrimp, Kolibri Shrimp, Marsh Grass Shrimp, Northern Shrimp, Ocean Shrimp, Ohio Shrimp, Pink Shrimp, Pinkspotted Shrimp, Rainbow Shrimp, Royal Red Shrimp, Sakura Shrimp, Seven-spine Bay Shrimp, Sidestriped Shrimp, Smooth Nylon Shrimp, Southern Brown Shrimp, Southern White Shrimp, Speckled Shrimp, Spot Shrimp, Spot-tail Mantis Shrimp, Titi Shrimp, Western White Shrimp, White Shrimp, Whiteleg Shrimp, Tiger Shrimp, Shrimp - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ABN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Abalone and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Abalone and its derivates in the product. - Family/Genus/Species: Haliotidae/Haliotis/(various) - Also known as: Abalone, Ear Shells, Sea Ears, Muttonfish, Muttonshells, Ormer, Perlemoen, Pāua, Australian Abalone, Blackfoot Abalone, Blacklip Abalone, Flat Abalone, Giant Abalone, Green Abalone, Greenlip Abalone, Pink Abalone, Pinto Abalone, Pourtale Abalone, Red Abalone, Roe's Abalone, Threaded Abalone, Tube Abalone - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AC</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Crustaceans and its derivatives</name>
+		<name languageCode="sv">Kräftdjur</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Crustaceans and its derivates in the product - Family/Genus/Species: (Subphylum: Crustacea)/(various) - Also known as: (various) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av kräftdjur och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>ACP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Carp and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Carp and its derivatives in the product. - Family/Genus/Species: Cyprinidae /Cyprinus/(various) - Also known as: Banded Carpet Shell, Bighead Carp, Black Carp, Blue Morwong, Carp, Common Carp, Crucian Carp, Giant Barb, Golden Carpet Shell, Grass Carp, Grooved Carpet Shell, Large Razorbelly Minnow, Mola Carplet, Mottled Grouper, Mrigal, Mud Carp, Quillback, Reba Carp, River Carpsucker, Rockfish, Rudd, Silver Carp, Small Scaled Mud Carp, Smooth Nylon Shrimp, Ziege - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">3-Amino-2,4-dichlorophenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 3-Amino-2,4-dichlorophenol in the product. - CAS Registry Number: 61693-42-3 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bass and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Bass and its derivatives in the product. - Family/Genus/Species: Percichthyidae Macquaria novemaculeata/Serranidae Centropristis striata/Nototheniidae Dissostichus eleginoides/Polyprionidae Stereolepis gigas - Also known as: Akamutsu, Antarctic Toothfish, Argentine Sea Bass, Atlantic Creolefish, Bank Sea Bass, Barred Sand Bass, Black Crappie, Black Sea Bass, Blackfin Seabass, Blackmouth Bass, Blacktip Grouper, Choctaw Bass, Common Name, European Sea Bass, European Seabass, Giant Perch, Giant Sea Bass, Guadalupe Bass, Hapuka, Himalayan Glassy Perchlet, Japanese SeabassLargemouth Bass, Japanese Seaperch, Kelp Bass, Largemouth Bass, Longtail Bass, Meagre, Murray Cod, Northern Rockfish, Oscar, Ozark Bass, Pacific Creolefish, Palmetto Bass, Patagonian Toothfish, Peacock Cichlid, Peruvian Sea Bass, Red Drum, Roanoke Bass, Rock Bass, Rock Sea Bass, Sea Bass, Shortfin Corvina, Smallmouth Bass, Splittail Bass, Spotted Bass, Spotted Grouper, Spotted Sand Bass, Striped Bass, Sunshine Bass, Suwannee Bass, Tripletail, Warmouth, White Bass, White Crappie, White Seabass, Wreckfish, Yellow Bass - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Anchovy and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Anchovies and its derivatives in the product. - Family/Genus/Species: Engraulidae/(various) - Also known as: Anchoveta, Anchovy, Bay Anchovy, Deepbody Anchovy, Dusky Anchovy, European Anchovy, Flat Anchovy, Japanese Anchovy, Key Anchovy, Moustached Thryssa, New Jersey Anchovy, Northern Anchovy, Ramcarat Grenadier Anchovy, Round Headed Anchovy, Silver Anchovy, Slough Anchovy, Southern Anchovy, Striped Anchovy, Teri Anchovy - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Catfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Catfish and its derivatives in the product. - Family/Genus/Species: (various) - Also known as: Asian Redtail Catfish, Atlantic Wolffish, Bagrid Catfish, Bagrid Catfishes, Black Bullhead, Blue Catfish, Broadhead Catfish, Brown Bullhead, Catfish, Channel Catfish, Couma Sea Catfish, Crucifix Sea Catfish, Flathead Catfish, Flatwhiskered Catfish, Gafftopsail Catfish, Giant Catfish, Giant River Catfish, Gilded Catfish, Gillbacker Sea Catfish, Glass Catfishes, Hardhead Catfish, Hardhead Sea Catfish, Highwaterman Catfish, Hybrid Clarias Catfish, Large Spotted Dogfish, Long Whiskered Catfish, Mekong Giant Catfish, Northern Wolffish, Pabdah Catfish, Pemecou Sea Catfish, Sharptooth Catfish, Spotted Stargazer, Spotted Wolffish, Stinging Catfish, Striped Dwarf Catfish, Sucker Catfishes, Sutchi Catfish, Tiger Sorubim, Walking Catfish, Wels Catfish, White Catfish, Yaqui Catfish, Yellowtail Catfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cod and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cod and its derivatives in the product. - Family/Genus/Species: Gadidae/Gadus/(various) - Also known as: Arctic Cod, Atlantic Cod, Blue Antimora, Common Mora, Greenland Cod, Longfin Codling, Maori Cod, Northern Bastard Codling, Pacific Cod, Polar Cod, Red Cod, Rock Cod, Saffron Cod, Tadpole Mora, Toothed Cod - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Flounder and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Flounder and its derivatives in the product. - Family/Genus/Species: Achiropsettidae or Bothidae or Pleuronectidae or Paralichthyidae or Samaridae/(various) - Also known as: Arctic Flounder, Arrowtooth Flounder, Bering Flounder, Bigmouth Flounder, Black Flounder, Blackback, Brill, Broad Flounder, California Flounder, Common Dab, Cortez Halibut, European Flounder, Eyed Flounder, Fivespot Flounder, Fluke, Fourspot Flounder, Fourspot Megrim, Greenback Flounder, Gulf Flounder, Indian Ocean Spiny Halibut, Kamchatka Flounder, Largetoothed Flounder, Longhead Dab, Megrim, Mexican Flounder, New Zealand Brill, Olive Flounder, Panther Flounder, Patagonian Flounder, Peacock Flounder, Pelican Flounder, Sand Flounder, Slime Flounder, Smalleye Flounder, Smalltoothed Flounder, Sohachi Flounder, Southern Flounder, Speckled Flounder, Starry Flounder, Summer Flounder, Three-eye Flounder, Threespot Righteye Flounder, Tropical Flounder, Windowpane, Winter Flounder, Witch, Witch Flounder, Yellowbelly Flounder, Yellowtail Flounder - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Grouper and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Grouper and its derivatives in the product. - Family/Genus/Species: Serranidae subfamily Epinephelina/(various) - Also known as: Banded Grouper, Black Grouper, Blacktip Grouper, Bridled Grouper, Broomtail Grouper, Brownspotted Rockcod, Camouflage Grouper, Chevron Tailed Grouper, Comb Grouper, Comet Grouper, Coney, Coral Hind, Dot-dash Grouper, Dusky Grouper, Dusty Tail Grouper, Gag, Giant Grouper, Goliath, Graysby, Greasy Rockcod, Grouper, Gulf Coney, Gulf Grouper, Halfmoon Grouper, Hawaiian Grouper, Highfin Grouper, Hong Kong Grouper, Leopard Coralgrouper, Longspine Grouper, Malabar Grouper, Marbled Grouper, Misty Grouper, Mottled Grouper, Nassau Grouper, Netfin Grouper, Oblique-banded Grouper, Orange-spotted Grouper, Persian Grouper, Purplespotted Grouper, Red Grouper, Red Hind, Redmouth Grouper, Sabah Grouper, Sand Perch, Scamp, Sixbar Grouper, Slender Grouper, Snowy Grouper, Snubnose Grouper, Speckled Blue Grouper, Speckled Dwarf Grouper, Spinycheek Grouper, Spotted Grouper, Squaretail Coralgrouper, Starspotted Grouper, Star-studded grouper, Strawberry Hind, Striped Grouper, Tiger Grouper, Tomato Hind, Warsaw Grouper, Wavy Lined Grouper, White Grouper, White-blotched Grouper, Yellowedge Grouper, Yellow-edged Lyretail, Yellowfin Grouper, Yellowmouth Grouper - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADI</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Haddock and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Haddock and its derivatives in the product. - Family/Genus/Species: Gadidae/Melanogrammus/Melanogrammus aeglefinus - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADJ</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hake and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hake and its derivatives in the product. - Family/Genus/Species: Merlucciidae or Phycidae or Gadidae subfamily Phycinae/(various) - Also known as: Argentine hake, Benguela hake, Brazilian Hake, Carolina Hake, Deep-water hake, European hake, Gayi hake, Gulf Hake, Longfin Hake, North Pacific hake, Offshore hake, Panama hake, Red Hake, Senegalese hake, Shallow-water hake, Silver hake, Southern Hake, Southern hake, Spotted Hake, White Hake - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Halibut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Halibut and its derivatives in the product. - FFamily/Genus/Species: Pleuronectidae/Hippoglossus/Hippoglossus hippoglossus or Hippoglossus stenolepis or Reinhardtius hippoglossoides - Also known as: Atlantic Halibut, Pacific Halibut, Greenland Halibut - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Herring and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Herring and its derivatives in the product. - Family/Genus/Species: Clupeidae/Clupea/(various) - Also known as: African Ilisha, Araucanian herring, Atlantic Herring, Atlantic Thread Herring, Bigeye Ilisha, Blackstripe herring, Blueback Herring, Day's round herring, Deepbody Thread Herring, Denticle herring, Dogtooth herring, Dwarf round herring, Flatiron Herring, Galapagos thread herring, Gilchrist's round herring, Graceful herring, Indian Ilisha, Indian Pellona, Javan Ilisha, Little-eye round herring, Middling thread herring, Pacific Flatiron herring, Pacific Herring, Pacific thread herring, Panamanian Ilisha, Pugnose Ilisha, Red-eye round herring, Round Herring, Sanaga pygmy herring, Silver Darlings, Silver-stripe round herring, Skipjack Herring, Slender thread herring, Striped herring, Tardoore, Toothed river herring, Two-finned round herring, Venezuelan herring, West African pygmy herring, Whitehead's round herring - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mahi mahi and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mahi Mahi and its derivatives in the product. - Family/Genus/Species: Coryphaenidae/Coryphaena/C. hippurus - Also known as: Mahi, Mahi-Mahi, Common Dolphinfish, Dorado, Pompano Dolphin - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pike and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pike and its derivatives in the product. - Family/Genus/Species: Esocidae/Esox/(various) - Also known as: Pike, Pickerel, American Pickerel, Amur Pike, Aquitanian Pike, Chain Pickerel, Muskellunge, Northern Pike, Southern Pike, Grass Pike - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADQ</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pollock and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pollock and its derivatives in the product. - Family/Genus/Species: Gadidae/Pollachius/Pollachius pollachius or Pollachius virens - Also known as: Atlantic pollock, European pollock, Lieu Jaune, Lythe, Boston Blue, Silver Bill, Saithem Pollock, Pollack, Coley, Coalfish, Walleye Pollock - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Salmon and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Salmon and its derivatives in the product. - Family/Genus/Species: Salmonidae subfamily Salmoninae/(various) - Also known as: Atlantic salmon, Chinook salmon, Chum salmon, Coho salmon, Masu salmon, Pacific Salmon, Pink salmon, Sockeye salmon - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Snapper and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Snapper and its derivatives in the product. - Family/Genus/Species: Lutjanidae/(various) - Also known as: African Forktail Snapper, Amarillo Snapper, Black and White Snapper, Black Snapper, Blackfin Snapper, Blacktail Snapper, Bloodred Snapper, Blubberlip Snapper, Bluestriped Snapper, Cardinal Snapper, Caribbean Red Snapper, Chinamanfish, Colorado Snapper, Crimson Jobfish, Crimson Snapper, Cubera Snapper, Cunera Snapper, Dog Snapper, Emperor Snapper, Five-lined Snapper, Goldbanded Jobfish, Golden Snapper, Goldeneye Jobfish, Gold-striped Snapper, Gray Snapper, Green Jobfish, Humpback Snapper, John's Snapper, Lane Snapper, Lavender Jobfish, Mahogany Snapper, Malabar Snapper, Mangrove Red Snapper, Midnight Snapper, Mullet Snapper, Mutton Snapper, Oblique-banded Snapper, Onespot Snapper, Pacific Dog Snapper, Pacific Snapper, Pinjalo, Pink Snapper, Queen Snapper, Red Snapper, Rose Snapper, Ruby Snapper, Rufous Snapper, Rusty Jobfish, Saddleback Snapper, Sailfin Snapper, Sharptooth Jobfish, Silk Snapper, Smalltooth Jobfish, Snapper, Twinspot Snapper, Vermilion Snapper, Wenchman, Yellowstripe Snapper, Yellowtail Blue Snapper, Yellowtail Snapper - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sole and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sole and its derivatives in the product. - Family/Genus/Species: Soleidae or Achiridae or Cynoglossidae or Pleuronectidae/(various) - Also known as: American Sole, Butter Sole, C-O Sole, Curlfin Sole, Deepsea Sole, Double-lined Tonguesole, Dover Sole, English Sole, Fantail Sole, Flathead Sole, Hogchoker, Lemon Sole, Milky Spotted Sole, Mud Sole, Naked Sole, Narrowbanded Sole, New Zealand Lemon Sole, Northern Rock Sole, Oriental Sole, Pacific Dover, Petrale Sole, Rex Sole, Roughscale Sole, Sand Sole, Scrawled Sole, Senegalese Sole, Slender Sole, Sole, Solenette, Southern Rock Sole, Thickback Sole, Toungue Sole, Tounguefish, West Coast Sole, Yellowfin Sole - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADU</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Swordfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Swordfish and its derivatives in the product. - FFamily/Genus/Species: Xiphiidae/Xiphias/X. gladius - Also known as: Swordfish, Broadbill - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADV</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Tilapia and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Tilapia and its derivatives in the product. - Family/Genus/Species: Cichlidae/Talapia or Coptodon or Oreochormis or Sarotherodon/(various) - Also known as: Talapia, Mozambique Talapia, Nile Talapia, Blue Talapia - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ADW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Trout and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Trout and its derivatives in the product. - Family/Genus/Species: Salmonida subfamily Salmoninae/Oncorhynchus or Salmo or Salvelinus- Also known as: Adriatic Trout, Alvord Cutthroat Trout, Apache Trout, Aurora Trout, Baja California Rainbow Trout, Beardslee Trout, Biwa Trout, Bonneville Cutthroat Trout, Brook Trout, Brown Trout, Bull Trout, Coastal Cutthroat Trout, Coastal Rainbow Trout (steelhead), Colorado River Cutthroat Trout, Columbia River Redband Trout, Crescenti Trout, Cutthroat Trout, Dolly Varden, Dolly Varden Trout, Eagle Lake Trout, Flathead Trout, Genus Oncorhynchus, Gila Trout, Golden Trout, Great Basin Redband Trout, Greenback Cutthroat Trout, Humboldt Cutthroat Trout, Inconnu, Kamchatkan Rainbow Trout, Kamloops Rainbow Trout, Kern River Rainbow Trout, Lacustrine Trout, Lahontan Cutthroat Trout, Lake Trout, Little Kern Golden Trout, Marble Trout, McCloud River Redband Trout, Mexican Golden Trout, Nelson's Trout, Ohrid Trout, Paiute Cutthroat Trout, Rainbow Trout, Rio Grande Cutthroat Trout, River Trout, Sacramento Golden Trout, San Pedro Martir Trout, Sea Trout, Sevan Trout, Sheepheaven Creek Redband Trout, Silver Trout, Snake River Fine-spotted Cutthroat Trout, Soca River Trout, Soča Trout, Speckled Lake (Splake) Trout, Tiger Trout, Trout, Westslope Cutthroat Trout, Whitehorse Basin Cutthroat Trout, Yellowstone Cutthroat Trout - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AE</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Eggs and its derivatives</name>
+		<name languageCode="sv">Ägg</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of eggs and its derivates in the product - Family/Genus/Species: - Also known as: Ovum - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av ägg och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>AF</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Fish and its derivatives</name>
+		<name languageCode="sv">Fisk</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Fish and its derivates in the product. - Family/Genus/Species: (various) - Also known as: (various) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av fisk och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>AH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Anise Alcohol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Anise Alcohol in the product. - CAS Registry Number: 105-13-5 - Also known as: anisyl alcohol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AI</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Alpha-Isomethyl Ionone</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Alpha-Isomethyl Ionone in the product. - CAS Registry Number: 127-51-5 - Also known as: 3 Methyl-4-(2,6,6-trimethyl-2-cyclohexen-1-yl)-3-buten-2-on - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AJF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Amberjack fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Amberjack and its Derivatives in the product. - Family/Genus/Species: Carangidae/Seriola/(various) - Also known as: Amberjack, Buri, Greater amberjack, Lesser amberjack, Almaco jack, Yellowtail, Banded rudderfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Amyl cinnamal </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Amyl Cinnamal in the product. - CAS Registry Number: 122-40-7 - Also known as: alpha-amyl cinnamic aldehyde - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ALS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Amyl salicylate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Amyl Salicylate in the product. - CAS Registry Number: 2050-08-0 - Also known as: Pentyl Salicylate, Salicylic Acid Pentyl Ester - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AM</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Milk and its derivatives</name>
+		<name languageCode="sv">Mjölk</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of milk and its derivatives in the product, as listed in in the product. - Family/Genus/Species: - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av mjölk och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>AN</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Tree nuts (Nuts) and its derivatives</name>
+		<name languageCode="sv">Nötter (eng: tree nuts)</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Tree nuts or nuts and its derivatives in the product. - Family/Genus/Species: Fagales. - Also known as: Nuts - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av nötter och produkter därav i produkten. Nötter kan exempelvis vara mandel, hasselnötter, valnötter, cashewnötter osv.</description>
+	</code>
+	<code>
+		<value>ANE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Anethole</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Anethole in the product. - CAS Registry Number: 104-46-1 - Also known as: Trans-Anethole, P-Propenylanisole - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ANO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Perch and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Perch and its derivatives in the product. - Family/Genus/Species: Percidae subfamily Percinae/Perca/(various) - Also known as: Acadian Redfish, Argentinian Sandperch, Barred Surfperch, Black Surfperch, Blue Cod, Calico Surfperch, Chilean Sandperch, Climbing Perch, Deepwater Redfish, Eurasian Perch, Golden Perch, Golden Redfish, Grass Goby, Namorado Sandperch, Nile Perch, Norway Redfish, Pacific Ocean Perch, Painted Comber, Pile Perch, Redtail Surfperch, Rockfish, Rubberlip Seaperch, Sandperch, Sauger, Shiner Surfperch, Silver Perch, Striped Surfperch, Thicktail Cardinalfish, Volga Pikeperch, Walleye Surfperch, White Perch, Yellow Perch, Zander, Zebra Perch - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AP</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Peanuts and its derivatives</name>
+		<name languageCode="sv">Jordnötter</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Peanuts and its derivatives in the product. - Family/Genus/Species: Arachis hypogaea. - Also known as: Groundnut, Goober, Pindar, Monkey nut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av jordnötter och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>APL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Apple and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Apple and its derivatives in the product. - Family/Genus/Species: Malus domestica. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AS</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Sesame Seeds and its derivatives</name>
+		<name languageCode="sv">Sesamfrön</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sesame seeds or its derivatives in the product, as listed in in the product - Family/Genus/Species: Sesamum. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av sesamfrön och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>ASD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Aspartame and aspartame-acesulfame salt and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Aspartame and Aspartame-acesulfame salt in the product. - CAS Registry Number: 22839-47-0 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AU</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Sulfur Dioxide and Sulfits</name>
+		<name languageCode="sv">Svaveldioxid eller sulfit</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of sulfur dioxide and sulfits in the product. - CAS Registry Number: 7446-09-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av svaveldioxid och sulfits och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>AW</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Cereals and its derivatives</name>
+		<name languageCode="sv">Spannmål som innehåller gluten</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of cereal grains containing gluten (protein) and their derivatives in the product. Includes wheat grains, grains that have been demonstrated capable of triggering celiac disease (such as common wheat, durum, spelt, khorasan, emmer and einkorn), barley, rye and oats as well as any cross hybrids of these grains (such as triticale). -Family/Genus/Species: Poaceae/Gramineae. - Also known as: Grasses, Grains. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av spannmål som innehåller gluten och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>AWF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Whitefish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Whitefish and its derivatives in the product. - Family/Genus/Species: (various) - Also known as: Humpback Whitefish, Lake Whitefish, Round Whitefish, Whitefish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>AY</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Soybean and its derivatives</name>
+		<name languageCode="sv">Sojabönor</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Soybean and its derivatives in the product, as listed in in the product. - Family/Genus/Species: Glycine max. - Also known as: Soya bean - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av sojabönor och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>AYC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Acetyl cedrene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Acetyl Cedrene in the product. - CAS Registry Number: 32388-55-9 - Also known as: 2-acetyl-1,2,3,4,5,6,7,8-octahydro-1,1,6,7-tetramethyl naphthalene, Cedryl Acetate - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Benzyl Alcohol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Benzyl Alcohol in the product. - CAS Registry Number: 100-51-6 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BAS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Basa and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Basa and its derivates in the product. - Family/Genus/Species: Pangasiidae/Pangasius/P. bocourti - Also known as: Basa, Basa Fish, Bocourti, Pangasius, Panga, Pacific Dory, River Cobbler, Swai - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Benzyl Benzoate </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Benzyl Benzoate in the product. - CAS Registry Number: 120-51-4 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BC</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Celery and its derivatives</name>
+		<name languageCode="sv">Selleri</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of celery or its derivatives in the product, as listed in in the product. - Family/Genus/Species: Apium graveolens. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av selleri och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>BCP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Beta-caryophyllene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Beta-Caryophyllene in the product. - CAS Registry Number: 87-44-5 - Also known as: (1R,4E,9S)-4,11,11-Trimethyl-8-methylenebicyclo[7.2.0]undec-4-ene, Caryophyllene, (-)-beta-Caryophyllene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">2 (4-tert-Butylbenzyl)</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 2 (4-tert-Butylbenzyl) in the product. - CAS Registry Number: 80-54-6 - Also known as: Butylphenyl Methylpropional - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BEZ</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Benzaldehyde</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Benzaldehyde in the product. - CAS Registry Number: 100-52-7 - Also known as: Benzenecarbaldehyde, Benzeneformaldehyde - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Beef and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of beef and its derivative in the product, in the product - Family/Genus/Species: Bos taurus Linnaeus - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Butterfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Butterfish and its Derivatives in the product. - Family/Genus/Species: Stromateidae/Pampus or Peprilus or Stromateus/(various) - Also known as: Black Butterfish, Greenbone, Silver Pomfret, White Pomfret, Gulf Butterfish, Harvestfish, Pacific Pompano, Butterfish, Southwest Atlantic ButterfishCommon Name - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BFH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bonito fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Bonito and its Derivatives in the product. - Family/Genus/Species: Scombridae subfamily: Scombrinae/Cybiosarda or Gymnosarda Gill or Orcynopsis Gill or Sarda/(various) - Also known as: Australian Bonito, Dogtooth Tuna, Leaping Bonito, Pacific Bonito, Plain Bonito, Striped Bonito - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BI</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Benzyl Cinnamate </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Benzyl Cinnamate in the product. - CAS Registry Number: 103-41-3 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BLF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bluefish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Bluefish and its derivates in the product. - Family/Genus/Species: Pomatomidae/Pomatomus/P. saltatrix - Also known as: Bluefish, Elf, Shad, Tailor, Black Sea Bass, Shortfin Corvina, Opaleye, Rudderfish, Pollock - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BM</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Mustard and its derivatives</name>
+		<name languageCode="sv">Senap</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mustard or its derivatives in the product, as listed in in the product. - Family/Genus/Species: Brassicaceae. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av senap och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>BN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Isoeugenol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Isoeugenol in the product - CAS Registry Number: 97-54-1 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BND</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Banana and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Banana and its derivatives in the product. - Family/Genus/Species: Musa. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">d-Limonene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of d-Limonene in the product - CAS Registry Number: 5989-27-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Linalool</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Linalool in the product - CAS Registry Number: 78-70-6 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BPN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bee pollen</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of bee pollen and its derivatives in the product. - Family/Genus/Species: Pollen - Also known as: Bee bread, ambrosia or perga - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BQ</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Methyl 2-Octynoate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Methyl 2-octynoate in the product - CAS Registry Number: 111-12-6 - Also known as: 2-Octynoic acid, methyl ester, Folione, Vert de violette, Methyl 2-octynate, Methyl pentylacetylenecarboxylate, NSC 72098, Methyl Heptin Carbonate, Methyl oct-2-ynoate - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">1,3-Bis-(2,4-diaminophenoxy) propane </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 1,3-Bis-(2,4-diaminophenoxy)propane in the product. - CAS Registry Number: 81892-72-0 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BRC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Barracuda and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Barracuda and its Derivatives in the product. - Family/Genus/Species: Sphyraenidae/Sphyraena/(various) - Also known as: Pacific Barracuda, California Barracuda, Cuda, Barracouta, Barracuda, Great Barracuda, Short Barracuda, Picuda, Japanese Barracuda, Pickhandle Barracuda - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BRM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bream and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Bream and its derivates in the product. - Family/Genus/Species: Cyprinidae sub. Leuciscinae/(various) - Also known as: Antarctic Butterfish, Black Sweetlips, Bloodred Snapper, Bluegill, Blue-lined Large-eye Bream, Bogue, Bream, Bronze Bream, Carp Bream, Common Bream, Common Pandora, Delagoa Threadfin Bream, Fork-tailed Threadfin Bream, Freshwater Bream, Gilthead Bream, Golden Redfish, Golden Tai, Golden Threadfin Bream, Humpnose Big-eye Bream, Japanese Threadfin Bream, Longfin Tilapia, Long-spined Red Bream, Lowfinned Drummer, Madai, Malabar Snapper, Margate, Mauvelip Threadfin Bream, Mozambique Large-eye Bream, Pacific Pomfret, Pinfish, Pumpkinseed, Puntazzo, Red Bream, Red Porgy, Redbreast Tilapia, Redear Sunfish, River Bream, Rock Flagtail, Sea Bream, Southern Rays Bream, Squirefish, Taiwan Tai, Tarakihi, Threadfin Bream, Warmouth, Western Australian Gizzard Shad - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Benzyl Salicylate </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Benzyl Salicylate in the product. - CAS Registry Number: 118-58-1 - Also known as: benzyl 2-hydroxybenzoate - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>BWD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Buckwheat and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of buckwheat and its derivatives in the product. - Family/Genus/Species: Fagopyrum. - Also known as: Common buckwheat, Tartary buckwheat, Green buckwheat and Bitter buckwheat. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cinnamyl Alcohol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cinnamyl Alcohol in the product. - CAS Registry Number: 104-54-1 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CAE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cedrus atlantica oil/extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cedrus Atlantica Oil/Extract in the product. - CAS Registry Number: 8000-27-9 - Also known as: Cedarwood Oil, Atlas Cedarwood Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CAF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citrus aurantium flower oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citrus Aurantium Flower Oil in the product. - CAS Registry Number: 8008-52-0 - Also known as: Neroli Oil, Orange Blossom Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CAP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citrus aurantium peel oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citrus Aurantium Peel Oil in the product. - CAS Registry Number: 8008-57-9 - Also known as: Bitter Orange Oil, Seville Orange Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CBP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citrus aurantium bergamia peel oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citrus Aurantium Bergamia Peel Oil in the product. - CAS Registry Number: 89957-91-5 - Also known as: Bergamot Oil, Bergamot Orange Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CCL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cinnamomum cassia leaf oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cinnamomum Cassia Leaf Oil in the product. - CAS Registry Number: 8007-80-5 - Also known as: Cassia Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cutlassfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cutlassfish and its Derivatives in the product. - Family/Genus/Species: Trichiuridae/(various) - Also known as: Black Scabbardfish, Silver Scabbardfish, Smallhead Hairtail, Atlantic Cutlassfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CFH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Croaker fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Croaker and its Derivatives in the product. - Family/Genus/Species: Sciaenidae/(various) - Also known as: Argentine Croaker, Atlantic Croaker, Bearded Jewfish, Belanger's Croaker, Bigtooth Corvina, Black Croaker, Blackmouth Croaker, Blackspotted Croaker, Blue Croaker, Bronze Croaker, Captainfish, Cob, Croceine Croaker, Donkey Croaker, Flathead Captainfish, Giant Captainfish, Gulf Corvina, Japanese Croaker, Meagre, Miiuy Croaker, Pama Croaker, Peruvian Croaker, Redlip Croaker, Reef Croaker, Shortfin Corvina, Shortfin Weakfish, Silver Croaker, Silver Croaker, Smalleye Croaker, Spotfin Croaker, Striped Croaker, Tigertooth Croaker, White Croaker, Whitemouth Drummer, Yellowfin Croaker, Donkey Croaker, Flathead Captainfish, Giant Captainfish, Gulf Corvina, Japanese Croaker, Meagre, Miiuy Croaker, Pama Croaker, Peruvian Croaker, Redlip Croaker, Reef Croaker, Shortfin Corvina, Shortfin Weakfish, Silver Croaker, Silver Croaker, Smalleye Croaker, Spotfin Croaker, Striped Croaker, Tigertooth Croaker, White Croaker, Whitemouth Drummer, Yellowfin Croaker - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CHB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chub and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Chub and its derivates in the product. - Family/Genus/Species: Cyprinidae or Kyphosidae/(various) - Also known as: Atlantic Chub Mackerel, Bermuda Chub, Bigeye chub, Chum Salmon, Creek Chub, European chub, Fallfish, Flame chub, Flathead chub, Hornyhead chub, Kiyi, Lake chub, Largemouth Bass, Least chub, Leatherside chub, Oregon chub, Pacific Chub Mackerel, Ponto-Caspian chub, Rudderfish, Sea Chub, Slender chub, Spotted Chub Mackerel, Western chub, Yellow Chub - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CHR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Char and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Char and its derivates in the product. - Family/Genus/Species: Salmonidae/Salmoninae/Salvelinus - Also known as: Char, Charr, Artic Char, Lake Char, Golden Char, Cole's Char, Coomsaharn Char, Gray's Char, Blunt-snouted Irish Char, Bear Island Char, Alsatian Char, Angayukaksurak Char, Boganida Char, Cherskii's Char, Chukot Char, Dryagin's Char, Kirikuchi Char, Lake Yessey Char, Long-finned Char, Sakhalinian Char, Small-mouth Char, Southern Dolly Varden Char, Taranets Char, White Char, Whitespotted Char, Yakutian Char - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CIT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Casein and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of casein in the product. - Family/Genus/Species: - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CKF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cusk fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cusk and its Derivatives in the product. - Family/Genus/Species: Lotidae/Brosme/brosme - Also known as: Cusk, Tusk, Torsk, European Cusk, Brosmius - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cinnamal </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cinnamal in the product. - CAS Registry Number: 104-55-2 - Also known as: cinnamaldehyde - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CLP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citrus limon peel oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citrus Limon Peel Oil in the product. - CAS Registry Number: 8008-56-8 - Also known as: Lemon Oil, Citrus Medica Limonum Peel Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CLM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Clam and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Clam and its derivates in the product. - Family/Genus/Species: (various) - Also known as: Alaska Razor, Arctic Surfclam, Asian Clam, Atlantic Geoduck, Atlantic Jackknife, Atlantic Razor, Atlantic Sanguin, Atlantic Surfclam, Banded Carpet Shell, Bent Surfclam, Bentnose Macoma, Butter Clam, Calico Clam, California Surfclam, California Tagelus, California Venus, Caribbean Winged Surfclam, Dish Surfclam, Fat Gaper, Flat Surfclam, Fragile Surfclam, Freshwater Clam, Frilled Venus, Golden Carpet Shell, Grand Razor Shell, Green Jackknife, Grooved Carpet Shell, Grooved Razor, Hard Clam, Hardshell Clam, Hatchet Surfclam, Hemphill Surfclam, Hen Clam, Hooked Surfclam, Jackknife Clam, Japanese Littleneck Clam, Littleneck Clam, Lyrate Hard Clam, Mogai Clam, New Zealand Wedge Clam, Northern Razor, Pacific Gaper, Pacific Geoduck, Pacific Littleneck Clam, Pipi Clam, Pismo Clam, Pod Razor, Razor Shell Clam, Rosy Jackknife, Shortneck Clam, Smooth Venus, Softshell Clam, Solid Sanguin Clam, Stout Tagelus, Sunray Venus, Sword Razor, Thin-shell Littleneck Clam, Washington Clam - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chicken Meat and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of chicken meat and its derivative in the product, in the product - Family/Genus/Species: Gallus domesticus - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citronellol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citronellol in the product. - Family/Genus/Species: - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CNK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cola nut/kola nut</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of cola nut and its derivatives in the product. - Family/Genus/Species: Sterculiaceae - Also known as: Kola nut, cola acuminata and cola nitida - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coumarin </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Coumarin in the product. - Family/Genus/Species: - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>COE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cananga odorata oil/extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cananga Odorata Oil/Extract in the product. - CAS Registry Number: 8006-81-3 - Also known as: Ylang Ylang Oil, Cananga Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>COK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cockle and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cockle and its derivates in the product. - Family/Genus/Species: Cardiidae/(various) - Also known as: Atlantic Giant Cockle, Bittersweet, Blood Cockle, California Cockle, Common Cockle, Decussate Bittersweet, Dock Cockle, Greenland Cockle, Knotted Cockle, New Zealand Cockle, Spiny Cockle, Violet Bittersweet - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CON</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Conch and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Conch and its derivates in the product. - Family/Genus/Species: Strombidae/(various) - Also known as: Conch, Florida Fighting Conch, Horse Conch, Milk Conch, Queen Conch, Spider Conch, West Indian Fighting Conch - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CPR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Camphor</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Camphor in the product. - CAS Registry Number: 76-22-2 - Also known as: 2-Bornanone, 1,7,7-Trimethylbicyclo[2.2.1]heptan-2-one - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CRV</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Carvone</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Carvone in the product. - CAS Registry Number: 99-49-0 - Also known as: 2-Methyl-5-(1-methylethenyl)-2-cyclohexen-1-one - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cotton Seeds and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cotton Seeds or its derivatives in the product in the product - Family/Genus/Species: Gossypium. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CSC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cisco and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cisco and its derivates in the product. - Family/Genus/Species: Salmonidae/Coregonus/(various) - Also known as: Arctic Cisco, Bering Cisco, Blackfin Cisco, Bloater, Cisco, Deepwater Cisco, European Cisco, Irish pollan, Kiyi, Lake Cisco, Lake Herring, Least Cisco, Longjaw Cisco, Northern Cisco, Peled, Sardine Cisco, Shortjaw Cisco, Shortnose Cisco, Stechlin Cisco - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citral </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citral in the product. - CAS Registry Number: 5392-40-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CTA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Citric acid</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Citric Acid in the product. - CAS Registry Number: 77-92-9 - Also known as: Aciletten, anhydrous citric acid, beta-hydroxytricarballylic acid, 2-hydroxy-1,2,3-propanetricarboxylic acid, 3-carboxy-3-hydroxypentane-1,5-dioic acid, kyselina citronova - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>CZK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cinnamomum zeylanicum bark oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cinnamomum Zeylanicum Bark Oil in the product. - CAS Registry Number: 84649-98-9 - Also known as: Ceylon Cinnamon Leaf Oil, True Cinnamon Bark Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>DA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">2,6-Dimethoxy-3,5-pyridinediamine HCl </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 2,6-Dimethoxy-3,5-pyridine diamine HCl in the product. - CAS Registry Number: 56216-28-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>DMF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Drum fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Drum and its Derivatives in the product. - Family/Genus/Species: Sciaenidae/(various) - Also known as: Banded Drum, Black Drum, Corb, Cubbyu, Freshwater Drum, Queenfish, Red Drum, Sand Drum, Spotted Drum, Star Drum, Totoaba - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>DP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Diaminophenols </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Diaminophenol in the product. - CAS Registry Number: - Also known as: 137-09-7 - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>DPA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dimethyl phenethyl acetate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Dimethyl Phenethyl Acetate in the product. - CAS Registry Number: 10245-44-8 - Also known as: Phenethyl Dimethyl Acetate, 1-Acetyl-2,3-dimethylbenzene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>DYF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Dory fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Dory and its Derivatives in the product. - Family/Genus/Species: (various) - Also known as: Black Oreo Dory, Buckler Dory, John Dory, Mirror Dory, Oreo, Silver Dory, Smooth Oreo Dory - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ECO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eugenia caryophyllus oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Eugenia Caryophyllus Oil in the product. - CAS Registry Number: 8000-34-8 - Also known as: Clove Oil, Eugenol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EEL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eel and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Eel and its derivates in the product. - Family/Genus/Species: (various) - Also known as: American Eel, Bandtooth Conger, Blackedge Cusk-eel, Blacktail Moray, Blacktail Pike-conger, Broadbanded Moray, Brown Moray, Conger Eel, Daggertooth Pike Conger, European Eel, Fangtooth Moray, Fawn Cusk-eel, Freckled Pike-conger, Giant Moray, Giant Snake Eel, Goldentail Moray, Green Moray, Hardtail Conger, Honey Comb Moray, Japanese Eel, Lesser Spiny Eel, Longfin Conger, Long-finned Eel, Manytooth Conger, Margintail Conger, Mottled Cusk-eel, Murray, Pebbletooth Moray, Reticulate Moray, Sea Eel, Short-finned Eel, Spiny Eel, Spotjaw Moray, Spotted Pike-conger, Stout Moray, Tiretrack Eel, Whiptail Conger, White Eel, Yellow Conger - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eugenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Eugenol in the product. - CAS Registry Number: 97-53-0 - Also known as: clove oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EGA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eugenyl acetate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Eugenyl Acetate in the product. - CAS Registry Number: 93-28-7 - Also known as: 0 - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EGO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eucalyptus globulus oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Eucalyptus Globulus oil in the product. - CAS Registry Number: 8000-48-4 - Also known as: Blue Gum Oil, Eucalyptus Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EOD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Escolar and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Escolar and its Derivatives in the product. - Family/Genus/Species: Gempylidae/Lepidocybium/flavobrunneum - Also known as: Escolar - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oak Moss Extract and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Oakmoss extract in the product. - Family/Genus/Species: Evernia prunastri. - CAS Registry Number: 90028-68-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>EV</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Treemoss Extract and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Treemoss extract in the product - Family/Genus/Species: Evernia Furfuracea - CAS Registry Number: 90028-67-4 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>FA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Farnesol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Farnesol in the product. - CAS Registry Number: 4602-84-0 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>FH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">4-Hydroxy-propylamino-3-nitrophenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 4-Hydroxy-propyl amino-3-nitrophenol in the product. - CAS Registry Number: 92952-81-3 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>FT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">4-Amino-3-nitrophenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 4-Amino-3-nitrophenol in the product. - CAS Registry Number: 610-81-1 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GAT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Geranyl acetate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Geranyl Acetate in the product. - CAS Registry Number: 105-87-3 - Also known as: Geraniol Acetate, (E)-3,7-Dimethyl-2,6-octadienyl acetate - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Barley and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of barley and its derivatives in the product. - Family/Genus/Species: Hordeum vulgare. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Geraniol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Geraniol in the product. - CAS Registry Number: 106-24-1 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Khorasan wheat and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of khorasan wheat and its derivatives in the product. - Family/Genus/Species: Triticum turanicum. - Also known as: Kamut, Oriental wheat. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Glutamate and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Glutamate and its derivatives in the product. - Family/Genus/Species: - Also known as: Glutamic acid. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oats and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Oat and its derivatives in the product. - Family/Genus/Species: Avena sativa. - Also known as: Common oat. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GOM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Goat Milk</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Goat milk and its derivatives in the product, as listed in in the product. - Family/Genus/Species: Capra - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Spelt and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Spelt and its derivatives in the product. - Family/Genus/Species: Pooideae/Triticum/T. spelta - Also known as: Spelt, Dinkel Wheat, Hulled Wheat - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>GTD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Gelatine and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Gelatine in the product. - CAS Registry Number: 9000-70-8 - Also known as: Gelatin - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">HC Blue No 12 </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of HC Blue No 12 in the product. - CAS Registry Number: 132885-85-9 - Also known as: 1-(alpha-hydroxyethyl)amino-2-nitro-4,N-ethyl-N-(alpha-​hydroxyethyl)aminobenzene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydroxyisohexyl 3-Cyclohexene Carboxaldehyde</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hydroxyisohexyl 3-Cyclohexene Carboxaldehyde in the product. - CAS Registry Number: 31906-04-4 - Also known as: Hydroxy-methylpentylcyclohexenecarboxaldehyde - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">HC Blue No 11 </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of HC Blue No 11 in the product. - CAS Registry Number: 23920-15-2 - Also known as: 2,2'-((4-((2-methoxyethyl)amino)-3-nitrophenyl)imino)diethanol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydroxybenzomorpholine </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hydroxybenzomorpholine in the product. - CAS Registry Number: 26021-57-8 - Also known as: 6-Hydroxybenzomorpholine - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydroxypropyl bis(N-hydroxyethyl-p-phenyldiamine) HCl </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hydroxypropyl bis(N-hydroxyethyl-p-phenylenediamine) HCl in the product. - CAS Registry Number: 128729-28-2 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydroxyethyl-2-nitro-p-toluidine </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hydroxyethyl-2-nitro-p-toluidine in the product. - CAS Registry Number: 100418-33-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">2-Hydroxyethyl-picramic Acid </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 2-Hydroxyethyl-picramic acid in the product. - CAS Registry Number: 99610-72-7 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HTP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hexamethylindanopyran</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hexamethylindanopyran in the product. - CAS Registry Number: 937-05-1 - Also known as: Phantolid, 3,3,6,6,9,9-Hexamethyl-1,2,3,4,5,6-hexahydro-1,4-methanoindene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hexyl Cinnamaldehyde </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hexyl Cinnamaldehyde in the product. - CAS Registry Number: 101-86-0 - Also known as: hexyl cinnamal - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HXL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hexadecanolactone</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hexadecanolactone in the product. - CAS Registry Number: 18268-47-2 - Also known as: Ambrettolide, Hexadecanolide - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>HY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hydroxycitronellal </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hydroxycitronellal in the product. - CAS Registry Number: 107-75-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>IGA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Isoeugenyl acetate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Isoeugenyl acetate in the product. - CAS Registry Number: 17460-41-6 - Also known as: 4-Allyl-2-methoxyphenol acetate, Isoeugenol Acetate - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>JCH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Japanese horse chestnut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Japanese horse chestnuts and its derivatives in the product. - Family/Genus/Species: Aesculus turbinata. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>JFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Jack fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Jack and its Derivatives in the product. - Family/Genus/Species: (various) - Also known as: (Mix of fish in the "jack" families) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>JOE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Jasmine oil/extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Jasmine Oil/Extract in the product. - CAS Registry Number: 8022-96-6 - Also known as: Jasminum grandiflorum Extract, Jasminum officinale Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>JVO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Juniperus virginiana oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Juniperus Virginiana Oil  in the product. - CAS Registry Number: 8006-90-4 - Also known as: Red Cedarwood Oil, Eastern Red Cedar Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>KWD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Kiwi and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Kiwi and its derivatives in the product. - Family/Genus/Species: Actinidia. - Also known as: Chinese Gooseberry. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LCA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lippia citriodora absolute</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lippia citriodora absolute in the product. - CAS Registry Number:  - Also known as: Lemon Verbena Absolute - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LDO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lavandula oil/extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lavandula Oil/Extract  in the product. - CAS Registry Number: 8000-28-0 - Also known as: Lavender Oil, Lavandula angustifolia Extract - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LGD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lingcod and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lingcod and its Derivatives in the product. - Family/Genus/Species: Hexagrammidae/Ophiodon/elongatus - Also known as: Lingcod, Ling Cod, Buffalo cod, Cultus cod - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LGO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lemongrass oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lemongrass Oil in the product. - CAS Registry Number: 8007-02-1 - Also known as: Cymbopogon citratus Oil, Lemongrass Essential Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LMT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Limpets and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Limpets and its derivates in the product. - Family/Genus/Species: Patellogastropoda (various) - Also known as: Hoof Snail, Keyhole Limpet, Keyhole Limpte, Lake Limpet, Limpet, Limpets, Owl Limpet, Plant Limpet, Purple Keyhole Limpet, Rayed Mediterranean Limpet, Rough Keyhole Limpet, Rver Limpet, Slipper Snail, Slit Limpet, Umbrella Slugs - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LNL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Laurus nobilis leaf oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Laurus Nobilis Leaf Oil in the product. - CAS Registry Number: 8000-48-4 - Also known as: Bay Laurel Oil, Laurel Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LSN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Land and sea snails (Escargot) and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Land and sea snails (Escargot) and its derivates in the product. - Family/Genus/Species: Gastropoda (various) - Also known as: (various) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Latex</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of latex in the product. - CAS Registry Number: 9006-04-6 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>LYA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Linalyl acetate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Linalyl Acetate in the product. - CAS Registry Number: 115-95-7 - Also known as: 3,7-Dimethyl-1,6-octadien-3-yl acetate, Linalool acetate - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MAC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mackerel and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mackerel and its derivates in the product. - Family/Genus/Species: Acanthocybium or Grammatorcynus or Rastrelliger or Scombridae or Scomberomorus/(various) - Also known as: Atka Mackerel, Atlantic Mackerel, Atlantic Sierra, Atlantic Spanish Mackerel, Australian Spotted Mackerel, Blue Mackerel, Broadbarred King Mackerel, Butterfly Mackerel, Cero, Cero Mackerel, Chinese Mackerel, Double-lined Mackerel, Gulf Sierra, Indian Mackerel, Indo-Pacific king Mackerel, Island Mackerel, Japanese Seer, Japanese Spanish Mackerel, King Mackerel, Korean Mackerel, Monterey Spanish Mackerel, Narrow-barred Mackerel, Narrow-barred Spanish Mackerel, Pacific Sierra, Papuan Spanish Mackerel, Queen Mackerel, Queensland School Mackerel, Serra Spanish Mackerel, Shark Mackerel, Short Mackerel, Spanish Mackerel, Spotted Seerfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MAL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Marlin and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Marlin and its derivates in the product. - Family/Genus/Species: Istiophoridae/(various) - Also known as: Atlantic Blue Marlin, Atlantic Sailfish, Black Marlin, Indo-Pacific Blue Marlin, Indo-Pacific Sailfish, Longbill Spearfish, Mediterranean Spearfish, Roundscale Spearfish, Shortbill Spearfish, Striped Marlin, White Marlin - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Milkfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Milkfish and its Derivatives in the product. - Family/Genus/Species: Chanidae/Chanos/chanos - Also known as: False Trevalliesm Milkfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">2-Methyl-5-hydroxyethylaminophenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 2-Methyl-5-hydroxyethylaminophenol in the product. - CAS Registry Number: 55302-96-0 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MKF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Monkfish (Anglerfish, Lotte) and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Monkfish (Anglerfish, Lotte) and its derivates in the product. - Family/Genus/Species: Lophiidae/Lophius/(various) - Also known as: American Angler, Angler, Anglerfish, Blackbellied Angelr, Blackfin Goosefish, Blackfin Monkfish, Devil Angelfish, Fishing-Frogs, Frog-Fish, Goosefish, Monkfish, Sea-Devils, Shortspine African Angelr, Yellow Goosefish, Yellow Goosfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ML</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lactose </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of lactose in the product. - Family/Genus/Species: - Also known as: Milk sugar, Lactobiose, 4-O-β-D-Galactopyranosyl-D-glucose - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MLC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">6-Methyl coumarin</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 6-Methylcoumarin in the product. - CAS Registry Number: 92-48-8 - Also known as: 6-Methyl-2H-chromen-2-one, 6-Methyl-2-oxo-2H-chromene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Melatonin</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Melatonin, a hormone secreted by the pineal gland that inhibits melanin formation and is thought to be concerned with regulating the reproductive cycle. - CAS Registry Number: 73-31-4 - Also known as: N-acetyl-5-methoxy tryptamine - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MMD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Matsutake mushroom and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Matsutake mushroom and its derivatives in the product. - Family/Genus/Species: Tricholoma matsutake. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MOD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mango and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mango and its derivatives in the product. - Family/Genus/Species: Mangifera. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MPO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Myroxylon pereirae oil/extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Myroxylon Pereirae Oil/Extract in the product. - CAS Registry Number: 8007-00-9 - Also known as: Balsam of Peru, Peruvian Balsam - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations</description>
+	</code>
+	<code>
+		<value>MPP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mentha piperita oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mentha Piperita Oil in the product. - CAS Registry Number: 8006-90-4 - Also known as: Peppermint Oil, Mentha balsamea Wild Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MSS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mussels and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mussels and its derivates in the product. - Family/Genus/Species: (various) - Also known as: American Angler, Bearded Horse Mussel, Blue Mussel, California Mussel, Chilean Mussel, Cholga Mussel, Mediterranean Mussel, Mussel, New Zealand Green Mussel, Northern Horse Mussel - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MSY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Methyl salicylate</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Methyl Salicylate in the product. - CAS Registry Number: 119-36-8 - Also known as: Oil of Wintergreen, Betula Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MTH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Menthol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Menthol in the product. - CAS Registry Number: 2216-51-5 - Also known as: (1R,2S,5R)-2-Isopropyl-5-methylcyclohexanol, (−)-Menthol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>MVL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mentha viridis leaf oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Mentha Viridis Leaf Oil in the product. - CAS Registry Number: 68917-18-0 - Also known as: Spearmint Oil, Mentha spicata Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cocoa and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of cocoa and its derivatives in the product, as listed in in the product. - Family/Genus/Species: Theobroma cacao. - Also known as: Cacao. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Peas and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Peas and its derivatives in the product. - Family/Genus/Species: Pisum sativum. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coriander and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of coriander and its derivatives in the product, as listed in in the product. - Family/Genus/Species: Coriandrum sativum. - Also known as: Chinese parsley, Dhania and Cilantro. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NL</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Lupine and its derivatives</name>
+		<name languageCode="sv">Lupin</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lupine and its derivatives in the product, as listed in in the product. - Family/Genus/Species: Lupinus. - Also known as: Lupin and Bluebonnet. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av lupin och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>NM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Corn and Its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of corn and its derivatives in the product. - Family/Genus/Species: Zea mays. - Also known as: Maize. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pod Fruits and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pod fruits and its derivates in the product. - Family/Genus/Species: Fabaceae - Also known as: Legume. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Rye and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Rye and its derivatives in the product. - Family/Genus/Species: Secale cereale. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NRE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Narcissus extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Narcissus Extract in the product. - CAS Registry Number:  - Also known as: Narcissus Oil, Narcissus absolute - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>NW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Carrots and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of carrot and its derivates in the product. - Family/Genus/Species: Daucus carota subsp. sativus. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>OCT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Octopus and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Octopus and its derivates in the product. - Family/Genus/Species: Octopus - Also known as: Octopus, Giant Octopus, Veined Octopus, Common Octopus - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>OFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oilfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Oilfish and its Derivatives in the product. - Family/Genus/Species: Gempylidae/Ruvettus/pretiosus - Also known as: Oilfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>OGD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Orange and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Orange and its derivatives in the product. - Family/Genus/Species: Rutaceae. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ON</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">1-Naphthol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 1-Naphthol in the product. - CAS Registry Number: 90-15-3 - Also known as: α-naphthol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ORR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Orange roughy and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Orange roughy and its derivates in the product. - Family/Genus/Species: Trachichthyidae/Hoplostethus/H. atlanticus - Also known as: Orange Roughy, Red Roughy, Alimehead, Deep Sea Perch - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>OYS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oysters and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence Oysters and its derivates in the product. - Family/Genus/Species: Ostreidae or Pteriidae/(various) - Also known as: Chilean Oyster, Eastern Oyster, Edible Oyster, European Flat Oyster, Kumamoto Oyster, New Zealand Dredge Oyster, New Zealand Rock Oyster, Olympia Oyster, Pacific Oyster, Portuguese Oyster, Sydney Rock Oyster, Tautog - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PCO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pogostemon cablin oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pogostemon Cablin Oil in the product. - CAS Registry Number: 8014-09-3 - Also known as: Patchouli Oil, Pogostemon Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PER</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Periwinkle and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Periwinkle and its derivates in the product. - Family/Genus/Species: Littorina. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Puffer fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Puffer and its Derivatives in the product. - Family/Genus/Species: Tetraodontidae/(various) - Also known as: Balloonfish, Bandtail Puffer, Blowfish, Blowies, Blunthead Puffer, Bubblefish, Bullseye Puffer, Checkered Puffer, Common Puffers, Globefish, Honey toads, Least Puffer, Longnose Puffer, Marbled Puffer, Moontail Blassop, Northern Puffer, Oceanic Puffer, Pufferfish, Puffers, Sea squab, Sharpnosed Puffers, Smooth Puffer, Southern Puffer, Sugar toads, Swellfish, Toadfish, Toadies - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PGF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pelargonium graveolens flower oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pelargonium Graveolens Flower Oil in the product. - CAS Registry Number: 8000-46-2 - Also known as: Geranium Oil, Rose Geranium Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PGT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Patagonian Toothfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Patagonian Toothfish and its Derivatives in the product. - Family/Genus/Species: Nototheniidae/Dissostichus/eleginoides - Also known as: Patagonian Toothfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PHD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Peach and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Peach and its derivatives in the product. - Family/Genus/Species: Prunus persica. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PIN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pinene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pinene in the product. - CAS Registry Number: 18172-67-3 - Also known as: α-Pinene, 2-Pinene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PLC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Plaice and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Plaice and its derivates in the product. - Family/Genus/Species: Pleuronectidae/(various) - Also known as: American Plaice, Alaskan Plaice, European Plaice, Scale-eye Plaice, Summer Plaice - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">p-Methylaminophenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of p-Methylaminophenol in the product. - CAS Registry Number: 55-55-0 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PMN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Palm nut</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of palm nut and its derivatives in the product. - Family/Genus/Species: Arecaceae/Elaeis - Also known as: Palmae - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pine nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pine nuts and its derivatives in the product. - Family/Genus/Species: Pinus. - Also known as: Pine seeds. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pork and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pork and its derivative in the product, in the product - Family/Genus/Species: - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>POM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pompano and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pompano and its derivates in the product. - Family/Genus/Species: Carangidae subfamily Trachinotinae/Trachinotus/(various) - Also known as: African Pompano, Blackblotch Pompano, Cayenne Pompano, Derbio, Florida Pompano, Florida Pompano, Gafftopsail Pompano, Gafftopsail Pompano, Guinean Pompano, Indian Pompano, Largespotted Dart, Longfin Pompano, Marquesas Dart, Oyster Pompano, Paloma Pompano, Paloma Pompano, Palometa, Palometa, Palometta Permit, Permit, Permit, Plata Pompano, Pompano, Shortfin Pompano, Smallspotted Dart, Snubnose Pompano, Snubnose Pompano, Southern Pompano, Steel Pompano, Swallowtail Dart - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">p-Phenylenediamine</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of p-Phenylenediamine in the product in the product. - CAS Registry Number: 106-50-3 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PPA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pinus pumila</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pinus Pumila in the product. - CAS Registry Number:  - Also known as: Pumilio Pine Oil, Balkan Pine Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PRG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Porgy and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Porgy and its derivates in the product. - Family/Genus/Species: Sparidae/(various) - Also known as: Dentex, Grass Porgy, Longspine Porgy, Madai, Panga, Pinfish, Porgy, Puntazzo, Red Porgy, River Bream, Scup, Sea Bream, Sheepshead, Silver Porgy, Spotted Pinfish, Squirefish, Whitebone Porgy - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PRS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Propolis</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of propolis and its derivatives in the product. - Family/Genus/Species: None - Also known as: Bee glue - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Poppy Seeds and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Poppy seeds or its derivatives in the product in the product. - Family/Genus/Species: Papaver somniferum. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PSM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pinus mugo</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pinus Mugo in the product. - CAS Registry Number:  - Also known as: Dwarf Pine Oil, Mugo Pine Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>PYP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">3-Propylidenephthalide</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 3-Propylidenephthalide in the product. - CAS Registry Number: 6445-09-6 - Also known as: 3-n-Propylidene-phthalide - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>QUA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Quahaugs and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Quahaugs and its derivates in the product. - Family/Genus/Species: Veneridae/Mercenaria/M. mercenaria - Also known as: Cherrystones, Chowder Clams, Countnecks, Quahog, Quahaug, Hard-shell Clam, Ocean Quahog, Peanut Clam, Round Clam, Topnecks, Southern Quahog - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>RFO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Rose flower oil/extract</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Rose Flower Oil/Extract in the product. - CAS Registry Number: 8007-01-0 - Also known as: Rosa damascena Oil, Rose Otto - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>RJY</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Royal jelly</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of royal jelly and its derivatives in the product. - Family/Genus/Species: Honey bee - Also known as: Bee saliva, bee spit, gelée royale, honey bee milk, honey bee's milk, jalea real, lait des abeilles, or royal bee jelly - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ROF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Rockfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Rockfish and its derivates in the product. Rockfish is a common term for several species of fish, referring to their tendency to hide among rocks. - Family/Genus/Species: (various) - Also known as: Aurora Rockfish, Bank Rockfish, Black and Yellow Rockfish, Black Rockfish, Blackgill Rockfish, Blue Rockfish, Bocaccio, Bronzespotted Rockfish, Brown Rockfish, Calico Rockfish, Canary Rockfish, Chameleon Rockfish, Chilipepper (Fish), China Rockfish, Copper Rockfish, Cowcod, Darkblotched Rockfish, Dusky Rockfish, Dwarf-red Rockfish, Flag Rockfish, Freckled Rockfish, Gopher Rockfish, Grass Rockfish, Greenblotched Rockfish, Greenspotted Rockfish, Greenstriped Rockfish, Halfbanded Rockfish, Harlequin Rockfish, Honeycomb Rockfish, Kelp Rockfish, Mexican Rockfish, Northern Rockfish, Olive Rockfish, Pink Rockfish, Pinkrose Rockfish, Puget Sound Rockfish, Pygmy Rockfish, Quillback Rockfish, Red Rockfish, Redbanded Rockfish, Redstripe Rockfish, Rockfish, Rosethorn Rockfish, Rosy Rockfish, Rougheye Rockfish, Semaphore Rockfish, Sharpchin Rockfish, Shortbelly Rockfish, Shortraker Rockfish, Silvergray Rockfish, Speckled Rockfish, Splitnose Rockfish, Squarespot Rockfish, Starry Rockfish, Stripetail Rockfish, Swordspine Rockfish, Tiger Rockfish, Treefish, Vermilion Rockfish, Widow Rockfish, Yelloweye Rockfish, Yellowmouth Rockfish, Yellowtail Rockfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>RSK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Rose ketones</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Rose Ketone in the product. - CAS Registry Number: 676-79-3 - Also known as: 4-(4-Hydroxyphenyl)-2-butanone, 4-Acetylbenzenepropanol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Almond and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of almonds and its derivatives in the product. - Family/Genus/Species: Prunus dulcis. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SAO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Santalum album oil</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Santalum Album Oil  in the product. - CAS Registry Number: 8006-87-9 - Also known as: Sandalwood Oil, East Indian Sandalwood Oil - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SAD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sapucaia nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sapucaia nuts and its derivatives in the product. - Family/Genus/Species: Lecythis zabucajo. - Also known as: paradise nut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SAR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sardine and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sardine and its derivates in the product. - Family/Genus/Species: Clupeidae/(various) - Also known as: Australian Pilchard, European Pilchard, Japanese Pilchard, Pacific Sardine, South African Pilchard, False Pilchard, Fringescale Sardinella, Japanese Scaled Sardine, Oil Sardine, Orangespot Sardine, Perforated-scale Sardine, Redear Sardine, Scaled Sardine, Spanish Sardine, White Sardine - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SB</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Seed Products and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Seed products and its derivatives in the product - Family/Genus/Species: - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SC</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Cashews and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Cashews and its derivatives in the product. - Family/Genus/Species: Anacardium occidentale. - Also known as: Cashew nut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SCA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Scallops and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Scallops and its derivates in the product. - Family/Genus/Species: Pectinidae/Pecten/(various) - Also known as: Atlantic Calico Scallop, Atlantic Scallop, Australian Scallop, Bay Scallop, Common Japanese Scallop, Farrer's Scallop, Giant Scallop, Great Scallop, Iceland Scallop, Lined Scallop, New Zealand Commercial Scallop, Nucleus Scallop, Pacific Calico Scallop, Paper Scallop, Patagonian Scallop, Peruvian Calico Scallop, Peruvian Scallop, Queen Scallop, Reddish Scallop, Red-ribbed Scallop, San Diego Scallop, Scallop, Scallop Saucer, Sea Scallop, Southern Queen Scallop, Southern Scallop, Spiny Scallop, Thailand Moon scallop, Weathervane Scallop, White Scallop, Zigzag Scallop - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SCL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sclareol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sclareol in the product. - CAS Registry Number: 515-03-7 - Also known as: Labdanum, Norambreinolide - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Beech Nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of beech nuts and its derivatives in the product. - Family/Genus/Species: Fagus. - Also known as: Beech mast. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SDF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Scad fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Scad fish and its derivatives in the product.
+			Family/Genus/Species: Carangidae (order Perciformes)
+			Also known as: Mackerel Scad, Amberjack Scad, Jack Scad..etc.
+			Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.
+		</description>
+	</code>
+	<code>
+		<value>SE</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Butternuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of butternuts and its derivatives in the product. - Family/Genus/Species: Juglans cinerea. - Also known as: White walnut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chinquapins and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Chinquapins and its derivatives in the product. - Family/Genus/Species: Castanea pumila. - Also known as: Allegheny chinquapin, American chinquapin and Dwarf Chetsnut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Swai fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Swai and its Derivatives in the product. - Family/Genus/Species: Pangasiidae/Pangasianodon/hypophthalmus - Also known as: Sutchi Catfish, Swai, Sutchi, Striped Pangasius, Tra - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SFT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Spinefoot fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Spinefoot and its Derivatives in the product. - Family/Genus/Species: Siganidae/Siganus/(various) - Also known as: Bluespotted Spinefish, Foxface, Pearly Spinefoot, Rabbitfish, Streaked Spinefoot, Spinefoot - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Ginkgo Nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Ginkgo nuts and its derivatives in the product. - Family/Genus/Species: Ginkgo. - Also known as: Ginkgo seeds, Gingko. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hazelnut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Hazelnuts and its derivatives in the product. - Family/Genus/Species: Corylus. - Also known as: Cobnuts, Filberts. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SHD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sheephead fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sheephead and its Derivatives in the product. - Family/Genus/Species: Labridae/Semicossyphus/darwini or pulcher or reticulatus - Also known as: Sheephead, California Sheephead, Galápagos sheephead, Goldspot sheepshead, Asian sheepshead wrasse - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SHK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Shark and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Shark and its derivates in the product. - Family/Genus/Species: (various) - Also known as: Atlantic Angel Shark, Basking Shark, Bigeye Thresher Shark, Bignose Shark, Black Dogfish, Blacknose Shark, Blacktip Reef Shark, Blacktip Shark, Blue Shark, Bonnethead, Brown Smoothhound, Bull Shark, Catshark, Common Thresher Shark, Dogfish Shark, Dusky Shark, Finetooth Shark, Gray Reef Shark, Great Hammerhead, Great White Shark, Grey Smoothhound, Hammerhead Shark, Large Spotted Dogfish, Lemon Shark, Leopard Shark, Lesser Spotted Dogfish, Longfin Mako Shark, Mako Shark, Narrowtoothed Shark, Night Shark, Northern Dogfish, Pacific Angel Shark, Pelagic Thresher Shark, Porbeagle, Reef Shark, Salmon Shark, Sandbar Shark, Scalloped Hammerhead, School Shark, Sevengill Shark, Shortfin Mako Shark, Silky Shark, Silvertip Shark, Sixgill Shark, Smalleye Hammerhead, Smalltail Shark, Smooth Dogfish, Smooth Hammerhead, Spinner Shark, Spiny Dogfish, Thresher Shark, Tiger Shark, White Shark, Whitetip Reef Shark, Whitetip Shark - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SI</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Hickory Nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of hickory nuts and its derivatives in the product. - Family/Genus/Species: Carya. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SJ</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Shea Nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Shea nuts and its derivatives in the product. - Family/Genus/Species: Vitellaria paradoxa. - Also known as: Shi nut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pili Nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pili nuts and its derivatives in the product. - Family/Genus/Species: Canarium ovatum. - Also known as: Pili seeds. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Lichee Nuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Lichee nuts and its derivatives in the product. - Family/Genus/Species: Litchi chinensis. - Also known as: Lichee seeds. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Macadamia Nut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Macadamia nuts and its derivatives in the product. - Family/Genus/Species: Macadamia. - Also known as: Queensland nut, Bush nut, Maroochi nut, Bauple nut and Hawaii nut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SMF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Schoolmaster fish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Schoolmaster and its Derivatives in the product. - Family/Genus/Species: Lutjanidae/Lutjanus/apodus - Also known as: Schoolmaster, Schoolmaster snapper - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SMR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Salmon roe</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Salmon roe and its derivatives in the product, as listed in in the product. - Family/Genus/Species: Salmo - Also known as: Salmon caviar, red caviar, or ikura - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations."</description>
+	</code>
+	<code>
+		<value>SMT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Smelt and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Smelt and its derivates in the product. - Family/Genus/Species: Osmeridae/(various) - Also known as: Arctic Smelt, Argetine Smelt, Austrailian Smelt, Ayu, Big-Scale Smelt, Cucumberfish, Deepsea Smelt, Delta Smelt, Eulachon, European Smelt, Freshwater Smelt, Great Silver Smelt, Herring Smelt, Jacksmelt, Lesser Silver Smelt, Longfin Smelt, New Zealand Smelt, Night Smelt, Rainbow Smelt, Seep-sea Smelt, Smelt, Surf Smelt, Topsmelt, Typical Smelt, Whitebait Smelt - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Chestnuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of chestnuts and its derivatives in the product. - Family/Genus/Species: Castanea. - Also known as: Sardian nut, Jupiter's nut, and Spanish chestnut. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SO</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Coconuts and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of coconuts and its derivatives in the product. - Family/Genus/Species: Cocos nucifera. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pecan Nut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pecan nuts and its derivatives in the product. - Family/Genus/Species: Carya illinoinensis. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SPF</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Scorpionfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Scorpionfish and its Derivatives in the product. - Family/Genus/Species: Scorpaenidae/(various) - Also known as: California Scorpinfish, Dragonfish, False Jacopever, Firefish, Hunchback Scorpionfish, Large-headed Scorpionfish, Lionfish, Orange Scorpionfish, Plumed Scorpionfish, Stingfish, Turkeyfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SQU</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Squid (Calamari) and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Squid (Calamari) and its derivates in the product. - Family/Genus/Species: (various) - Also known as: Angola Flying Squid, Argentine Shortfin Squid, Armhook Squid , Arrow Squid, Atlantic Brief Squid, Beka Squid, Bigeye Squid, Bigfin Reef Squid, Bigfin Squid , Bobtail Squid , Bottletail Squid , Bush-club Squid, Calamari, California Market Squid, Cape Horn Squid, Caribbean Reef Squid, Cock-eyed Squid , Cuttlefish , Dwarf Bobtail Squid, European Flying Squid, European Squid, Fire Squid , Firefly Squid , Flying Squid, Giant Squid , Glacial Squid , Glass Squid, Grimaldi scaled Squid , Hooked Squid , Indian Squid, Japanese Flying Squid, Joubin's Squid , Jumbo Squid, Longfin Inshore Squid, Magistrate Armhook Squid, Midsize Squid, Mitre Squid, Neritic Squid, Northern Shortfin Squid, Octopus Squid , Panama Brief Squid, Patagonian Inshore Squid, Purpleback Flying Squid, Pygmy Squid , Pyjama Squid , Ram's horn Squid , Sharpear enope Squid , Southern Reef Squid, Southern Shortfin Squid, Stout Bobtail Squid, Wellington Flying Squid, Whip-lash Squid - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Brazil Nut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of brazil nuts and its derivatives in the product. - Family/Genus/Species: Bertholletia excelsa. - Also known as: Castanha. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SS</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sunflower Seeds and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sunflower seeds or its derivatives in the product in the product. - Family/Genus/Species: Helianthus - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>ST</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pistachio and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Pistachio and its derivatives in the product. - Family/Genus/Species: Pistacia. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>STG</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Sturgeon and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Sturgeon and its derivates in the product. - Family/Genus/Species: Acipenseridae/(various) - Also known as: Adriatic Sturgeon, Alabama Sturgeon, Amu Darya Sturgeon, Amur Sturgeon, Atlantic Sturgeon, Baikal Sturgeon, Beluga, Beluga Sturgeon, Bester, Chinese Sturgeon, Dwarf Sturgeon, European sea Sturgeon, Fringebarbel Sturgeon, Green Sturgeon, Gulf Sturgeon, Japanese Sturgeon, Kaluga Sturgeon, Lake Sturgeon, Pallid Sturgeon, Persian Sturgeon, Russian Sturgeon, Sakhalin Sturgeon, Shortnose Sturgeon, Shovelnose Sturgeon, Siberian Sturgeon, Starry Sturgeon, Stellate Sturgeon, Sterlet, Syr Darya Sturgeon, Thorn Sturgeon, White Sturgeon, Yangtze Sturgeon - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>STL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Santalol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Santalol in the product. - CAS Registry Number: 115-71-9 - Also known as: Sandalwood Alcohol, Santalol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SU</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Salicylate and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Salicylate and its derivatives in the product. - Family/Genus/Species: - Also known as: Salicylic acid. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Walnut and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Walnuts and its derivatives in the product. - Family/Genus/Species: Juglans. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SX</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Pulses</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of pulses in the product. This excludes green beans and green peas, which are considered vegetable crops. Also excluded are crops that are mainly grown for oil extraction. - Family/Genus/Species: Fabaceae. - Also known as: Dry seed legume Crops. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>SYH</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Salicylaldehyde</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Salicylaldehyde in the product. - CAS Registry Number: 90-02-8 - Also known as: 2-Formylphenol, Salicylic Aldehyde - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">3-Aminophenol </name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of 3-Aminophenol in the product. - CAS Registry Number: 591-27-5 - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TBP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Trimethylbenzenepropanol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Trimethylbenzenepropanol in the product. - CAS Registry Number: 77-22-9 - Also known as: Lilial, 4-(4-Hydroxy-4-methylpentyl)cyclohex-3-enecarbaldehyde - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TCM</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Trimethylcyclopentenyl methylisopentenol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Ebanol in the product. - CAS Registry Number: 67801-20-1 - Also known as: Sandalore, 2,2,6-Trimethyl-5-cyclohexen-1-one - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">2,5-Diaminotoluene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Toluene-2,5-diamine in the product. - CAS Registry Number: 95-70-5 - Also known as: Toluene-2,5-diamine - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TEP</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Terpinolene</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Terpinolene in the product. - CAS Registry Number: 586-62-9 - Also known as: δ-Terpinene, 1-Methyl-4-(1-methylethyl)-1,4-cyclohexadiene - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Tilefish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Tilefish and its Derivatives in the product. - Family/Genus/Species: Malacanthidae/(various) - Also known as: Blue Tilefish, Blueline Tilefish, Golden Tilefish, Goldface Tilefish, Ocean Whitefish, Pacific Golden-eyed Tilefish, Pacific Sandperch, Sand Tilefish, Tilefish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TPL</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Terpineol</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Terpineol in the product. - CAS Registry Number: 98-55-5 - Also known as: α-Terpineol, 4-(1-Methylethyl)-cyclohex-3-en-1-ol - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TPT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Turpentine</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Turpentine in the product. - CAS Registry Number: 8006-64-2 - Also known as: Gum Turpentine, Pinus Turpentine - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Triticale and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Triticale and its derivatives in the product. - Family/Genus/Species: × Triticosecale. - Also known as: Ryewheat. - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TTD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Tomato and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Tomato and its derivatives in the product. - Family/Genus/Species: Solanum lycopersicum. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TUR</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Turbot and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Turbot and its derivates in the product. - Family/Genus/Species: Scophthalmidae/Scophthalmus/S. maximus - Also known as: Brat, Breet, Britt, Butt, Diamond Turbot, Greenland Turbot, Hornyhead Turbot, New Zealand Turbot, Spottail Spiny Turbot, Spotted Turbot, Spring Turbot, Turbot - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>TYA</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Tetramethyl acetyloctahydronaphthalenes</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Tetramethyl acetyloctahydronaphthalenes in the product. - CAS Registry Number: 13149-01-6 - Also known as: AHTN, Tonalid - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>UM</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Molluscs and its derivatives</name>
+		<name languageCode="sv">Blötdjur</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of molluscs and its derivates in the product. - Family/Genus/Species: Mollusca (various) - Also known as: (various) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+		<description languageCode="sv">Avser förekomst av blötdjur och produkter därav i produkten.</description>
+	</code>
+	<code>
+		<value>UN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Shellfish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Shellfish in the product. Shellfish is a colloquial and fisheries term for exoskeleton-bearing aquatic invertebrates used as food, including various species of molluscs, crustaceans, and echinoderms. - Family/Genus/Species: (various) - Also known as: (various) - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>UW</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Wheat and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Wheat and its derivatives in the product. - Family/Genus/Species: Triticum. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>VLN</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Vanillin</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Vanillin in the product. - CAS Registry Number: 121-33-5 - Also known as: 4-Hydroxy-3-methoxybenzaldehyde, Methyl Vanillin - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>WFD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Wolffish and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Wolffish and its Derivatives in the product. - Family/Genus/Species: Anarhichadidae/Anarhichas or Anarrhichthys/(various) - Also known as: Atlantic Wolffish, Bering Wolffish, Northern Wolffish, Sea wolves, Spotted Wolffish, Wolffish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>WHK</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Whelks and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Whelks and its derivates in the product. - Family/Genus/Species: Buccinidae or Ranellidae or Trochidae/(various) - Also known as: Busycon Whelk, Channeled Whelk, Common Periwinkle, Dog Whelk, Maculated Ivory Whelk, Magpie Whelk, Pear Whelk, Scungili, Veined Rapa Whelk, West Indian Top Shell Whelk, Whelk, Wilk - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>WHT</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Whiting and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Whiting and its derivates in the product. - Family/Genus/Species: Gadidae or Sciaenidae or Sillaginidae/(various) - Also known as: Argentine Hake, Blue Whiting, Cape Hake, Carolina Whiting, Chilean Hake, Deep-water Cape Hake, European Hake, European Whiting, Flat Head Sillago, Hoki, Japanese sillago, Japanese Whiting, King George Whiting, King Whiting, Northern Whiting, Pacific Whiting, Sand Whiting, School Whiting, Sea Mullet, Silver Hake, Silver Sillago, Southern Blue Whiting, Southern Hake, Southern Kingcroaker, Southern Kingfish - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>X99</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Does not contain declaration obligatory allergens</name>
+		<description languageCode="en">Definition (includes Common Name): Does not contain declaration obligatory allergens in the product. - Also known as: - Disclaimer: Refers to the absence of allergens in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+	<code>
+		<value>YMD</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Yam and its derivatives</name>
+		<description languageCode="en">Definition (includes Common Name): Refers to the presence of Yam and its derivatives in the product. - Family/Genus/Species: Dioscorea. - Also known as: - Disclaimer: Refers to the presence of the allergen in the product, as listed in the regulations specified by an agency and specification or any local market regulations.</description>
+	</code>
+</codeList>

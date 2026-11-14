@@ -38,6 +38,104 @@ from saint_elmo_backend.catalog.enums import (
     VatCode,
 )
 
+CODE_LENGTH = 80
+
+
+class CodeListMixin:
+    """
+    One code of a GS1 code list, see catalog.code_lists.
+
+    Codes the data uses but GS1 does not list are kept with is_standard = false, so
+    product rows can still reference them; their name is usually NULL.
+    """
+
+    code: Mapped[str] = mapped_column(String(CODE_LENGTH), unique=True)
+    name: Mapped[str | None] = mapped_column(Text)
+    definition: Mapped[str | None] = mapped_column(Text)
+    is_standard: Mapped[bool] = mapped_column(
+        comment="Listed in the GS1 code list; false for codes only seen in the data"
+    )
+
+
+class Allergen(Base, CodeListMixin):
+    """
+    GS1 AllergenTypeCode, e.g. AM milk, AW cereals containing gluten, UN shellfish.
+    """
+
+    __tablename__ = "allergens"
+
+
+class Nutrient(Base, CodeListMixin):
+    """
+    GS1 NutrientTypeCode (INFOODS tagnames), e.g. FAT, FASAT, LACS.
+    """
+
+    __tablename__ = "nutrients"
+
+
+class MeasurementUnit(Base, CodeListMixin):
+    """
+    GS1 MeasurementUnitCode (UN/ECE Recommendation 20), e.g. GRM, KJO, E14.
+    """
+
+    __tablename__ = "measurement_units"
+
+
+class ClaimType(Base, CodeListMixin):
+    """
+    GS1 ClaimTypeCode, e.g. FREE_FROM, LOW, HIGH.
+    """
+
+    __tablename__ = "claim_types"
+
+
+class ClaimElement(Base, CodeListMixin):
+    """
+    GS1 ClaimElementCode: what a claim is about, e.g. LACTOSE, GLUTEN, FIBRE.
+    """
+
+    __tablename__ = "claim_elements"
+
+
+class Diet(Base, CodeListMixin):
+    """
+    GS1 DietTypeCode, e.g. VEGAN, FREE_FROM_GLUTEN.
+    """
+
+    __tablename__ = "diets"
+
+
+class Label(Base, CodeListMixin):
+    """
+    GS1 PackagingMarkedLabelAccreditationCode, e.g. EU_ORGANIC_FARMING, SVANEN.
+    """
+
+    __tablename__ = "labels"
+
+
+class ActivityType(Base, CodeListMixin):
+    """
+    GS1 ProductActivityTypeCode: production stage an origin refers to, e.g. MILKING.
+    """
+
+    __tablename__ = "activity_types"
+
+
+class FishingMethod(Base, CodeListMixin):
+    """
+    GS1 CatchMethodCode (FAO ISSCFG gear), e.g. TM midwater trawls.
+    """
+
+    __tablename__ = "fishing_methods"
+
+
+class FishingArea(Base, CodeListMixin):
+    """
+    GS1 CatchAreaCode (FAO major fishing areas), e.g. 27 Atlantic, Northeast.
+    """
+
+    __tablename__ = "fishing_areas"
+
 
 class Category(Base):
     """
@@ -178,6 +276,9 @@ class Product(Base):
         back_populates="product", cascade="all, delete-orphan", passive_deletes=True
     )
     claims: Mapped[list["ProductClaim"]] = relationship(
+        back_populates="product", cascade="all, delete-orphan", passive_deletes=True
+    )
+    diets: Mapped[list["ProductDiet"]] = relationship(
         back_populates="product", cascade="all, delete-orphan", passive_deletes=True
     )
     labels: Mapped[list["ProductLabel"]] = relationship(
@@ -360,7 +461,10 @@ class ProductAllergen(Base):
         Index("product_allergens_lookup_idx", "allergen_code", "containment"),
     )
 
-    allergen_code: Mapped[str] = mapped_column(String(5))
+    allergen_code: Mapped[str] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("allergens.code", ondelete="RESTRICT")
+    )
+    allergen: Mapped["Allergen"] = relationship()
     containment: Mapped[AllergenContainment] = mapped_column(
         Enum(AllergenContainment, name="allergen_containment")
     )
@@ -373,13 +477,24 @@ class ProductAllergen(Base):
 
 class ProductClaim(Base):
     """
-    Nutritional or dietary claim, e.g. FREE_FROM_LACTOSE, VEGAN, HIGH_PROTEIN.
+    Nutritional claim as a GS1 type + element pair, e.g. FREE_FROM + LACTOSE,
+    HIGH + FIBRE.
     """
 
     __tablename__ = "product_claims"
-    __table_args__ = (UniqueConstraint("product_id", "claim_code"),)
+    __table_args__ = (
+        UniqueConstraint("product_id", "claim_type_code", "claim_element_code"),
+        Index("product_claims_lookup_idx", "claim_element_code", "claim_type_code"),
+    )
 
-    claim_code: Mapped[str] = mapped_column(String(50), index=True)
+    claim_type_code: Mapped[str] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("claim_types.code", ondelete="RESTRICT")
+    )
+    claim_type: Mapped["ClaimType"] = relationship()
+    claim_element_code: Mapped[str] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("claim_elements.code", ondelete="RESTRICT")
+    )
+    claim_element: Mapped["ClaimElement"] = relationship()
 
     product_id: Mapped[int] = mapped_column(
         ForeignKey("products.id", ondelete="CASCADE")
@@ -387,16 +502,39 @@ class ProductClaim(Base):
     product: Mapped["Product"] = relationship(back_populates="claims")
 
 
+class ProductDiet(Base):
+    """
+    Diet the product is suitable for, e.g. VEGAN, FREE_FROM_GLUTEN.
+    """
+
+    __tablename__ = "product_diets"
+    __table_args__ = (UniqueConstraint("product_id", "diet_code"),)
+
+    diet_code: Mapped[str] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("diets.code", ondelete="RESTRICT"), index=True
+    )
+    diet: Mapped["Diet"] = relationship()
+
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE")
+    )
+    product: Mapped["Product"] = relationship(back_populates="diets")
+
+
 class ProductLabel(Base):
     """
     Label marked on the packaging: certifications (EU_ORGANIC_FARMING, SVANEN, ...)
-    and storage-temperature marks (warmTemperature, coolTemperature, ...).
+    and storage-temperature marks (warmTemperature, coolTemperature, ...). The
+    temperature marks are not GS1 codes.
     """
 
     __tablename__ = "product_labels"
     __table_args__ = (UniqueConstraint("product_id", "label_code"),)
 
-    label_code: Mapped[str] = mapped_column(String(50), index=True)
+    label_code: Mapped[str] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("labels.code", ondelete="RESTRICT"), index=True
+    )
+    label: Mapped["Label"] = relationship()
 
     product_id: Mapped[int] = mapped_column(
         ForeignKey("products.id", ondelete="CASCADE")
@@ -422,18 +560,29 @@ class ProductNutrient(Base):
     )
 
     nutrient_code: Mapped[str] = mapped_column(
-        String(20), comment="GS1 code, e.g. ENER-KJO, FAT, LACS (lactose)"
+        String(CODE_LENGTH),
+        ForeignKey("nutrients.code", ondelete="RESTRICT"),
+        comment="e.g. ENER-KJO, FAT, LACS (lactose)",
     )
+    nutrient: Mapped["Nutrient"] = relationship()
     value: Mapped[Decimal] = mapped_column(Numeric(14, 4))
-    unit: Mapped[str] = mapped_column(String(10), comment="e.g. GRM, MGM, KJO, E14")
+    unit: Mapped[str] = mapped_column(
+        String(CODE_LENGTH),
+        ForeignKey("measurement_units.code", ondelete="RESTRICT"),
+        comment="e.g. GRM, MGM, KJO, E14",
+    )
     precision: Mapped[str | None] = mapped_column(
         String(30), comment="e.g. APPROXIMATELY, LESS_THAN"
     )
     basis_quantity: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
-    basis_unit: Mapped[str | None] = mapped_column(String(10))
+    basis_unit: Mapped[str | None] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("measurement_units.code", ondelete="RESTRICT")
+    )
     daily_value_percent: Mapped[Decimal | None] = mapped_column(Numeric(8, 2))
     serving_size: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
-    serving_size_unit: Mapped[str | None] = mapped_column(String(10))
+    serving_size_unit: Mapped[str | None] = mapped_column(
+        String(CODE_LENGTH), ForeignKey("measurement_units.code", ondelete="RESTRICT")
+    )
 
     product_id: Mapped[int] = mapped_column(
         ForeignKey("products.id", ondelete="CASCADE")
@@ -468,7 +617,9 @@ class IngredientOrigin(Base):
     __table_args__ = (UniqueConstraint("ingredient_id", "stage", "country"),)
 
     stage: Mapped[str] = mapped_column(
-        String(30), comment="e.g. FARMING, MILKING, LAST_PROCESSING"
+        String(CODE_LENGTH),
+        ForeignKey("activity_types.code", ondelete="RESTRICT"),
+        comment="e.g. FARMING, MILKING, LAST_PROCESSING",
     )
     country: Mapped[str] = mapped_column(
         String(10), comment="ISO 3166-1 numeric, or NON_EU"
@@ -524,9 +675,14 @@ class FishCatchMethod(Base):
     production_method: Mapped[FishProductionMethod] = mapped_column(
         Enum(FishProductionMethod, name="fish_production_method")
     )
-    method_codes: Mapped[list[str]] = mapped_column(ARRAY(String(10)))
+    # TODO(sw): not sure if that is the best way of modelling it...
+    # Arrays cannot carry foreign keys; codes are looked up in fishing_methods and
+    # fishing_areas. Some source codes are malformed and match neither.
+    method_codes: Mapped[list[str]] = mapped_column(
+        ARRAY(String(10)), comment="GS1 CatchMethodCode"
+    )
     area_codes: Mapped[list[str]] = mapped_column(
-        ARRAY(String(10)), comment="FAO fishing area codes"
+        ARRAY(String(10)), comment="GS1 CatchAreaCode (FAO fishing areas)"
     )
 
     fish_species_id: Mapped[int] = mapped_column(

@@ -1,0 +1,953 @@
+﻿<codeList term="T4280" SDDversion="5" SDDupdated="2025-03-14" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="allcodes31.xsd">
+	<urn>urn:gs1:gdd:cl:CatchAreaCode_GDSN</urn>
+	<listName languageCode="en">Catch area code</listName>
+	<listName languageCode="sv">Fångstområde</listName>
+	<GDDversion>1</GDDversion>
+	<GDDupdated>2024-08-17</GDDupdated>
+	<domain>gdsn</domain>
+	<code>
+		<value>01</value>
+		<name languageCode="en">Africa - Inland waters</name>
+		<name languageCode="sv">Afrika - Inlandsvatten</name>
+		<description languageCode="en">Africa - Inland waters</description>
+		<description languageCode="sv">Afrika - Inlandsvatten</description>
+	</code>
+	<code>
+		<value>02</value>
+		<name languageCode="en">America, North - Inland waters</name>
+		<name languageCode="sv">Amerika, Norr-inlandsvatten</name>
+		<description languageCode="en">America, North - Inland waters</description>
+		<description languageCode="sv">Amerika, Norr-inlandsvatten</description>
+
+	</code>
+	<code>
+		<value>03</value>
+		<name languageCode="en">America, South - Inland waters</name>
+		<name languageCode="sv">Amerika, Syd-inlandsvatten</name>
+		<description languageCode="en">America, South - Inland waters</description>
+		<description languageCode="sv">Amerika, Syd-inlandsvatten</description>
+	</code>
+	<code>
+		<value>04</value>
+		<name languageCode="en">Asia - Inland waters</name>
+		<name languageCode="sv">Asien- Inlandsvatten</name>
+		<description languageCode="en">Asia - Inland waters</description>
+		<description languageCode="sv">Asien- Inlandsvatten</description>
+	</code>
+	<code>
+		<value>05</value>
+		<name languageCode="en">Europe - Inland waters</name>
+		<name languageCode="sv">Europa- Inlandsvatten</name>
+		<description languageCode="en">Europe - Inland waters</description>
+		<description languageCode="sv">Europa- Inlandsvatten</description>
+	</code>
+	<code>
+		<value>06</value>
+		<name languageCode="en">Oceania - Inland waters</name>
+		<name languageCode="sv">Oceanien- Inlandsvatten</name>
+		<description languageCode="en">Oceania - Inland waters</description>
+		<description languageCode="sv">Oceanien- Inlandsvatten</description>
+	</code>
+	<code>
+		<value>07</value>
+		<name languageCode="en">Former USSR area - Inland waters</name>
+		<name languageCode="sv">Forna Sovjetunionen- Inlandsvatten</name>
+		<description languageCode="en">(Former USSR area - Inland waters)</description>
+		<description languageCode="sv">Forna Sovjetunionen- Inlandsvatten</description>
+	</code>
+	<code>
+		<value>08</value>
+		<name languageCode="en">Antarctica - Inland waters</name>
+		<name languageCode="sv">Antarktis- Inlandsvatten</name>
+		<description languageCode="en">Antarctica - Inland waters</description>
+		<description languageCode="sv">Antarktis- Inlandsvatten</description>
+	</code>
+	<code>
+		<value>18</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Arctic Sea</name>
+		<name languageCode="sv">Norra ishavet</name>
+		<description languageCode="en">Arctic Sea</description>
+		<description languageCode="sv">Norra ishavet</description>
+	</code>
+	<code>
+		<value>21</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Northwest</name>
+		<name languageCode="sv">Nordvästatlanten</name>
+		<description languageCode="en">Atlantic, Northwest</description>
+		<description languageCode="sv">Nordvästatlanten</description>
+	</code>
+		<code>
+		<value>21.0</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Baffin Island, East Bluff, Bylot Island, Devon Island, Ellesmere Island (Subarea 21.0)</name>
+		<name languageCode="sv">Baffin Island, East Bluff, Bylot Island, Devon Island, Ellesmere Island (Delområde 21.0)</name>
+		<description languageCode="en">Baffin Island, East Bluff, Bylot Island, Devon Island, Ellesmere Island (Subarea 21.0)</description>
+		<description languageCode="sv">Baffin Island, East Bluff, Bylot Island, Devon Island, Ellesmere Island (Delområde 21.0)</description>
+	</code>
+	<code>
+		<value>21.1</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Baffin Bay, Davis Strait (Subarea 21.1)</name>
+		<name languageCode="sv">Baffin Bay, Davis Strait (Delområde 21.1)</name>
+		<description languageCode="en">Baffin Bay, Davis Strait (Subarea 21.1)</description>
+		<description languageCode="sv">Baffin Bay, Davis Strait (Delområde 21.1)</description>
+	</code>
+	<code>
+		<value>21.2</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Labrador coast (Subarea 21.2)</name>
+		<name languageCode="sv">Labrador coast (Delområde 21.2)</name>
+		<description languageCode="en">Labrador coast (Subarea 21.2)</description>
+		<description languageCode="sv">Labrador coast (Delområde 21.2)</description>
+	</code>
+	<code>
+		<value>21.3</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Newfoundland (Subarea 21.3)</name>
+		<name languageCode="sv">Newfoundland (Delområde 21.3)</name>
+		<description languageCode="en">Newfoundland (Subarea 21.3)</description>
+		<description languageCode="sv">Newfoundland (Delområde 21.3)</description>
+	</code>
+	<code>
+		<value>21.4</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Northwest Atlantic (Subarea 21.4)</name>
+		<name languageCode="sv">Nordvästatlanten (Sektion 21.4)</name>
+		<description languageCode="en">Northwest Atlantic (Subarea 21.4)</description>
+		<description languageCode="sv">Nordvästatlanten (Sektion 21.4)</description>
+	</code>
+	<code>
+		<value>21.5</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Georges Bank, Gulf of Maine (Subarea 21.5)</name>
+		<name languageCode="sv">Georges Bank, Gulf of Maine (Delområde 21.5)</name>
+		<description languageCode="en">Georges Bank, Gulf of Maine (Subarea 21.5)</description>
+		<description languageCode="sv">Georges Bank, Gulf of Maine (Delområde 21.5)</description>
+	</code>
+	<code>
+		<value>21.6</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Rhode Island (Subarea 21.6)</name>
+		<name languageCode="sv">Rhode Island (Delområde 21.6)</name>
+		<description languageCode="en">Rhode Island (Subarea 21.6)</description>
+		<description languageCode="sv">Rhode Island (Delområde 21.6)</description>
+	</code>
+	<code>
+		<value>27</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Northeast</name>
+		<name languageCode="sv">Nordostatlanten</name>
+		<description languageCode="en">Atlantic, Northeast</description>
+		<description languageCode="sv">Nordostatlanten</description>
+	</code>
+	<code>
+		<value>27.1</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Barents Sea (Subarea 27.1)</name>
+		<name languageCode="sv">Barents hav (Delområde 27.1)</name>
+		<description languageCode="en">Barents Sea (Subarea 27.1)</description>
+		<description languageCode="sv">Barents hav (Delområde 27.1)</description>
+	</code>
+	<code>
+		<value>27.10</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Azores Grounds and Northeast Atlantic South (Subarea 27.10)</name>
+		<name languageCode="sv">Azorernas sockel (Delområde 27.10)</name>
+		<description languageCode="en">Azores Grounds and Northeast Atlantic South (Subarea 27.10)</description>
+		<description languageCode="sv">Azorernas sockel (Delområde 27.10)</description>
+	</code>
+	<code>
+		<value>27.12</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">North of Azores (Subarea 27.12)</name>
+		<name languageCode="sv">Farvattnen norr om Azorerna (Delområde 27.12)</name>
+		<description languageCode="en">North of Azores (Subarea 27.12)</description>
+		<description languageCode="sv">Farvattnen norr om Azorerna (Delområde 27.12)</description>
+	</code>
+	<code>
+		<value>27.14</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">East Greenland (Subarea 27.14)</name>
+		<name languageCode="sv">Östra Grönland (Delområde 27.14)</name>
+		<description languageCode="en">East Greenland (Subarea 27.14)</description>
+		<description languageCode="sv">Östra Grönland (Delområde 27.14)</description>
+	</code>
+	<code>
+		<value>27.14.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Northeast Greenland (Division 27.14.a)</name>
+		<name languageCode="sv">Nordöstra Grönland Sektion 27.14.a)</name>
+		<description languageCode="en">Northeast Greenland (Division 27.14.a)</description>
+		<description languageCode="sv">Nordöstra Grönland (Sektion 27.14.a)</description>
+	</code>
+	<code>
+		<value>27.14.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Southeast Greenland (Division 27.14.b)</name>
+		<name languageCode="sv">Sydöstra Grönland (Sektion 27.14.b)(Sektion 27.14.b)</name>
+		<description languageCode="en">Southeast Greenland (Division 27.14.b)</description>
+		<description languageCode="sv">Sydöstra Grönland (Sektion 27.14.b</description>
+	</code>
+	<code>
+		<value>27.2</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Norwegian Sea, Spitzbergen, and Bear Island (Subarea 27.2)</name>
+		<name languageCode="sv">Norska havet och farvattnen kring Svalbard och Björnön (Delområde 27.2)</name>
+		<description languageCode="en">Norwegian Sea, Spitzbergen, and Bear Island (Subarea 27.2)</description>
+		<description languageCode="sv">Norska havet och farvattnen kring Svalbard och Björnön (Delområde 27.2)</description>
+	</code>
+	<code>
+		<value>27.2.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Norwegian Sea (Division 27.2.a)</name>
+		<name languageCode="sv">Norska havet (Sektion 27.2.a)</name>
+		<description languageCode="en">Norwegian Sea (Division 27.2.a)</description>
+		<description languageCode="sv">Norska havet (Sektion 27.2.a)</description>
+	</code>
+	<code>
+		<value>27.2.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Spitzbergen and Bear Island (Division 27.2.b)</name>
+		<name languageCode="sv">Farvattnen kring Svalbard och Björnön (Sektion 27.2.b)</name>
+		<description languageCode="en">Spitzbergen and Bear Island (Division 27.2.b)</description>
+		<description languageCode="sv">Farvattnen kring Svalbard och Björnön (Sektion 27.2.b)</description>
+	</code>
+	<code>
+		<value>27.3</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Skagerrak, Kattegat, Sound, Belt Sea, and Baltic Sea (Subarea 27.3)</name>
+		<name languageCode="sv">Skagerack, Kattegatt, Öresund, Bälthavet och Östersjön (Delområde 27.3)</name>
+		<description languageCode="en">Skagerrak, Kattegat, Sound, Belt Sea, and Baltic Sea (Subarea 27.3)</description>
+		<description languageCode="sv">Skagerack, Kattegatt, Öresund, Bälthavet och Östersjön (Delområde 27.3)</description>
+	</code>
+	<code>
+		<value>27.3.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Skagerrak and Kattegat (Division 27.3.a)</name>
+		<name languageCode="sv">Skagerrak och Kattegatt (Sektion 27.3.a)</name>
+		<description languageCode="en">Skagerrak and Kattegat (Division 27.3.a)</description>
+		<description languageCode="sv">Skagerrak och Kattegatt (Sektion 27.3.a)</description>
+	</code>
+	<code>
+		<value>27.3.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Sound (Division 27.3.b)</name>
+		<name languageCode="sv">Öresund (Sektion 27.3.b)</name>
+		<description languageCode="en">Sound (Division 27.3.b)</description>
+		<description languageCode="sv">Öresund (Sektion 27.3.b)</description>
+	</code>
+	<code>
+		<value>27.3.b,c</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Sound and Belt Sea or the Transition Area (Divisions 27.3.b,c)</name>
+		<name languageCode="sv">Sound och Bälthavet eller övergångsområdet</name>
+		<description languageCode="en">Sound and Belt Sea or the Transition Area (Divisions 27.3.b,c)</description>
+		<description languageCode="sv">Sound och Bälthavet eller övergångsområdet</description>
+	</code>
+	<code>
+		<value>27.3.c</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Belt Sea (Division 27.3.c)</name>
+		<name languageCode="sv">Bälthavet (Sektion 27.3.c)</name>
+		<description languageCode="en">Belt Sea (Division 27.3.c)</description>
+		<description languageCode="sv">Bälthavet (Sektion 27.3.c)</description>
+	</code>
+	<code>
+		<value>27.3.d</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Baltic Sea (Division 27.3.d)</name>
+		<name languageCode="sv">Östersjön (Sektion 27.3.d)</name>
+		<description languageCode="en">Baltic Sea (Division 27.3.d)</description>
+		<description languageCode="sv">Östersjön (Sektion 27.3.d)</description>
+	</code>
+	<code>
+		<value>27.4</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">North Sea (Subarea 27.4)</name>
+		<name languageCode="sv">Nordsjön (Delområde 27.4)</name>
+		<description languageCode="en">North Sea (Subarea 27.4)</description>
+		<description languageCode="sv">Nordsjön (Delområde 27.4)</description>
+	</code>
+	<code>
+		<value>27.4.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Northern North Sea (Division 27.4.a)</name>
+		<name languageCode="sv">Nordsjöns norra del (Sektion 27.4.a)</name>
+		<description languageCode="en">Northern North Sea (Division 27.4.a)</description>
+		<description languageCode="sv">Nordsjöns norra del (Sektion 27.4.a)</description>
+	</code>
+	<code>
+		<value>27.4.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Central North Sea (Division 27.4.b)</name>
+		<name languageCode="sv">Nordsjöns mellersta del (Sektion 27.4.b)</name>
+		<description languageCode="en">Central North Sea (Division 27.4.b)</description>
+		<description languageCode="sv">Nordsjöns mellersta del (Sektion 27.4.b)</description>
+	</code>
+	<code>
+		<value>27.4.c</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Southern North Sea (Division 27.4.c)</name>
+		<name languageCode="sv">Nordsjöns södra del (Sektion 27.4.c)</name>
+		<description languageCode="en">Southern North Sea (Division 27.4.c)</description>
+		<description languageCode="sv">Nordsjöns södra del (Sektion 27.4.c)</description>
+	</code>
+	<code>
+		<value>27.5</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Iceland and Faroes Grounds (Subarea 27.5)</name>
+		<name languageCode="sv">Islands och Färöarnas socklar (Delområde 27.5)</name>
+		<description languageCode="en">Iceland and Faroes Grounds (Subarea 27.5)</description>
+		<description languageCode="sv">Islands och Färöarnas socklar (Delområde 27.5)</description>
+	</code>
+	<code>
+		<value>27.5.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Iceland Grounds (Division 27.5.a)</name>
+		<name languageCode="sv">Islandssockeln (Sektion 27.5.a)</name>
+		<description languageCode="en">Iceland Grounds (Division 27.5.a)</description>
+		<description languageCode="sv">Islandssockeln (Sektion 27.5.a)</description>
+	</code>
+	<code>
+		<value>27.5.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Faroes Grounds (Division 27.5.b)</name>
+		<name languageCode="sv">Färösockeln (Sektion 27.5.b)</name>
+		<description languageCode="en">Faroes Grounds (Division 27.5.b)</description>
+		<description languageCode="sv">Färösockeln (Sektion 27.5.b)</description>
+	</code>
+	<code>
+		<value>27.6</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Rockall, Northwest Coast of Scotland and North Ireland (Subarea 27.6)</name>
+		<name languageCode="sv">Rockall bank och Hebridernas farvatten (Delområde 27.6)</name>
+		<description languageCode="en">Rockall, Northwest Coast of Scotland and North Ireland (Subarea 27.6)</description>
+		<description languageCode="sv">Rockall bank och Hebridernas farvatten (Delområde 27.6)</description>
+	</code>
+	<code>
+		<value>27.6.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Northwest Coast of Scotland and North Ireland or as the West of Scotland (Division 27.6.a)</name>
+		<name languageCode="sv">Skottlands nordvästra kust och Nordirland eller västra Skottland  (Sektion 27.6.a)</name>
+		<description languageCode="en">Northwest Coast of Scotland and North Ireland or as the West of Scotland (Division 27.6.a)</description>
+		<description languageCode="sv">Hebridernas farvatten (Sektion 27.6.a)</description>
+	</code>
+	<code>
+		<value>27.6.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Rockall (Division 27.6.b)</name>
+		<name languageCode="sv">Rockall bank (Sektion 27.6.b)</name>
+		<description languageCode="en">Rockall (Division 27.6.b)</description>
+		<description languageCode="sv">Rockall bank (Sektion 27.6.b)</description>
+	</code>
+	<code>
+		<value>27.7</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Irish Sea, West of Ireland, Porcupine Bank, Eastern and Western English Channel, etc (Subarea 27.7)</name>
+		<name languageCode="sv">Irländska sjön, farvattnen väster om Irland, Porcupine bank, Engelska kanalens östra och västra del, osv. (Delområde 27.7)</name>
+		<description languageCode="en">Irish Sea, West of Ireland, Porcupine Bank, Eastern and Western English Channel, etc (Subarea 27.7)</description>
+		<description languageCode="sv">Irländska sjön, farvattnen väster om Irland, Porcupine bank, Engelska kanalens östra och västra del, osv. (Delområde 27.7)</description>
+	</code>
+	<code>
+		<value>27.7.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Irish Sea (Division 27.7.a)</name>
+		<name languageCode="sv">Irländska sjön (Sektion 27.7.a)</name>
+		<description languageCode="en">Irish Sea (Division 27.7.a)</description>
+		<description languageCode="sv">Irländska sjön (Sektion 27.7.a)</description>
+	</code>
+	<code>
+		<value>27.7.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">West of Ireland (Division 27.7.b)</name>
+		<name languageCode="sv">Farvattnen väster om Irland (Sektion 27.7.b)</name>
+		<description languageCode="en">West of Ireland (Division 27.7.b)</description>
+		<description languageCode="sv">Farvattnen väster om Irland (Sektion 27.7.b)</description>
+	</code>
+	<code>
+		<value>27.7.c</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Porcupine Bank (Division 27.7.c)</name>
+		<name languageCode="sv">Porcupine Bank (Sektion 27.7.c)</name>
+		<description languageCode="en">Porcupine Bank (Division 27.7.c)</description>
+		<description languageCode="sv">Porcupine Bank (Sektion 27.7.c)</description>
+	</code>
+	<code>
+		<value>27.7.d</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Eastern English Channel (Division 27.7.d)</name>
+		<name languageCode="sv">Engelska kanalens östra del (Sektion 27.7.d)</name>
+		<description languageCode="en">Eastern English Channel (Division 27.7.d)</description>
+		<description languageCode="sv">Engelska kanalens östra del (Sektion 27.7.d)</description>
+	</code>
+	<code>
+		<value>27.7.e</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Western English Channel (Division 27.7.e)</name>
+		<name languageCode="sv">Engelska kanalens västra del (Sektion 27.7.e)</name>
+		<description languageCode="en">Western English Channel (Division 27.7.e)</description>
+		<description languageCode="sv">Engelska kanalens västra del (Sektion 27.7.e)</description>
+	</code>
+	<code>
+		<value>27.7.f</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Bristol Channel (Division 27.7.f)</name>
+		<name languageCode="sv">Bristolkanalen (Sektion 27.7.f)</name>
+		<description languageCode="en">Bristol Channel (Division 27.7.f)</description>
+		<description languageCode="sv">Bristolkanalen (Sektion 27.7.f)</description>
+	</code>
+	<code>
+		<value>27.7.g</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Celtic Sea North (Division 27.7.g)</name>
+		<name languageCode="sv">Keltiska sjöns norra del (Sektion 27.7.g)</name>
+		<description languageCode="en">Celtic Sea North (Division 27.7.g)</description>
+		<description languageCode="sv">Keltiska sjöns norra del (Sektion 27.7.g)</description>
+	</code>
+	<code>
+		<value>27.7.h</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Celtic Sea South (Division 27.7.h)</name>
+		<name languageCode="sv">Keltiska sjöns södra del (Sektion 27.7.h)</name>
+		<description languageCode="en">Celtic Sea South (Division 27.7.h)</description>
+		<description languageCode="sv">Keltiska sjöns södra del (Sektion 27.7.h)</description>
+	</code>
+	<code>
+		<value>27.7.j</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Southwest of Ireland - East (Division 27.7.j)</name>
+		<name languageCode="sv">Farvattnen sydväst om Irland - östra delen (Sektion 27.7.j)</name>
+		<description languageCode="en">Southwest of Ireland - East (Division 27.7.j)</description>
+		<description languageCode="sv">Farvattnen sydväst om Irland - östra delen (Sektion 27.7.j)</description>
+	</code>
+	<code>
+		<value>27.7.k</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Southwest of Ireland - West (Division 27.7.k)</name>
+		<name languageCode="sv">Farvattnen sydväst om Irland - västra delen (Sektion 27.7.k)</name>
+		<description languageCode="en">Southwest of Ireland - West (Division 27.7.k)</description>
+		<description languageCode="sv">Farvattnen sydväst om Irland - västra delen (Sektion 27.7.k)</description>
+	</code>
+	<code>
+		<value>27.8</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Bay of Biscay (Subarea 27.8)</name>
+		<name languageCode="sv">Biscayabukten (Delområde 27.8)</name>
+		<description languageCode="en">Bay of Biscay (Subarea 27.8)</description>
+		<description languageCode="sv">Biscayabukten (Delområde 27.8)</description>
+	</code>
+	<code>
+		<value>27.8.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Bay of Biscay - North (Division 27.8.a)</name>
+		<name languageCode="sv">Biscayabuktens norra del (Sektion 27.8.a)</name>
+		<description languageCode="en">Bay of Biscay - North (Division 27.8.a)</description>
+		<description languageCode="sv">Biscayabuktens norra del (Sektion 27.8.a)</description>
+	</code>
+	<code>
+		<value>27.8.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Bay of Biscay - Central (Division 27.8.b)</name>
+		<name languageCode="sv">Biscayabuktens mellersta del (Sektion 27.8.b)</name>
+		<description languageCode="en">Bay of Biscay - Central (Division 27.8.b)</description>
+		<description languageCode="sv">Biscayabuktens mellersta del (Sektion 27.8.b)</description>
+	</code>
+	<code>
+		<value>27.8.c</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Bay of Biscay - South (Division 27.8.c)</name>
+		<name languageCode="sv">Biscayabuktens södra del (Sektion 27.8.c)</name>
+		<description languageCode="en">Bay of Biscay - South (Division 27.8.c)</description>
+		<description languageCode="sv">Biscayabuktens södra del (Sektion 27.8.c)</description>
+	</code>
+	<code>
+		<value>27.8.d</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Bay of Biscay - Offshore (Division 27.8.d)</name>
+		<name languageCode="sv">Biscayabuktens anslutning mot havet (Sektion 27.8.d)</name>
+		<description languageCode="en">Bay of Biscay - Offshore (Division 27.8.d)</description>
+		<description languageCode="sv">Biscayabuktens anslutning mot havet (Sektion 27.8.d)</description>
+	</code>
+	<code>
+		<value>27.8.e</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">West of Bay of Biscay (Division 27.8.e)</name>
+		<name languageCode="sv">Biscayabuktens västra del (Sektion 27.8.e)</name>
+		<description languageCode="en">West of Bay of Biscay (Division 27.8.e)</description>
+		<description languageCode="sv">Biscayabuktens västra del (Sektion 27.8.e)</description>
+	</code>
+	<code>
+		<value>27.9</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Portuguese Waters (Subarea 27.9)</name>
+		<name languageCode="sv">Portugals farvatten (Delområde 27.9)</name>
+		<description languageCode="en">Portuguese Waters (Subarea 27.9)</description>
+		<description languageCode="sv">Portugals farvatten (Delområde 27.9)</description>
+	</code>
+	<code>
+		<value>27.9.a</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Portuguese Waters - East (Division 27.9.a)</name>
+		<name languageCode="sv">Portugals farvatten - östra delen (Sektion 27.9.a)</name>
+		<description languageCode="en">Portuguese Waters - East (Division 27.9.a)</description>
+		<description languageCode="sv">Portugals farvatten - östra delen (Sektion 27.9.a)</description>
+	</code>
+	<code>
+		<value>27.9.b</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Portuguese Waters - West (Division 27.9.b)</name>
+		<name languageCode="sv">Portugals farvatten - västra delen (Sektion 27.9.b)</name>
+		<description languageCode="en">Portuguese Waters - West (Division 27.9.b)</description>
+		<description languageCode="sv">Portugals farvatten - västra delen (Sektion 27.9.b)</description>
+	</code>
+	<code>
+		<value>31</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Western Central</name>
+		<name languageCode="sv">Västra mellersta Atlanten</name>
+		<description languageCode="en">Atlantic, Western Central</description>
+		<description languageCode="sv">Västra mellersta Atlanten</description>
+	</code>
+	<code>
+		<value>34</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Eastern Central</name>
+		<name languageCode="sv">Östra mellersta Atlanten</name>
+		<description languageCode="en">Atlantic, Eastern Central</description>
+		<description languageCode="sv">Östra mellersta Atlanten</description>
+	</code>
+	<code>
+		<value>34.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Northern Coastal Atlantic, Eastern Central (Subarea 34.1)</name>
+		<description languageCode="en">Northern Coastal Atlantic, Eastern Central (Subarea 34.1)</description>
+	</code>
+	<code>
+		<value>34.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Northern Oceanic Atlantic, Eastern Central (Subarea 34.2)</name>
+		<description languageCode="en">Northern Oceanic Atlantic, Eastern Central (Subarea 34.2)</description>
+	</code>
+	<code>
+		<value>34.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Southern Coastal Atlantic, Eastern Central (Subarea 34.3)</name>
+		<description languageCode="en">Southern Coastal Atlantic, Eastern Central (Subarea 34.3))</description>
+	</code>
+	<code>
+		<value>34.4</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Southern Oceanic Atlantic, Eastern Central (Subarea 34.4)</name>
+		<description languageCode="en">Southern Oceanic Atlantic, Eastern Central (Subarea 34.4)</description>
+	</code>
+	<code>
+		<value>37</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Mediterranean and Black Sea</name>
+		<name languageCode="sv">Medelhavet och Svarta havet</name>
+		<description languageCode="en">Mediterranean and Black Sea</description>
+		<description languageCode="sv">Medelhavet och Svarta havet</description>
+	</code>
+	<code>
+		<value>37.1</value>
+		<name languageCode="en">Western Mediterranean (Subarea 37.1)</name>
+		<name languageCode="sv">Västra medelhavet (Delområde 37.1)</name>
+		<description languageCode="en">Western Mediterranean (Subarea 37.1)</description>
+		<description languageCode="sv">Västra medelhavet (Delområde 37.1)</description>
+	</code>
+	<code>
+		<value>37.1.1</value>
+		<name languageCode="en">Balearic (Division 37.1.1)</name>
+		<name languageCode="sv">Baleariska sjön (Sektion 37.1.1)</name>
+		<description languageCode="en">Balearic (Division 37.1.1)</description>
+		<description languageCode="sv">Baleariska sjön (Sektion 37.1.1)</description>
+	</code>
+	<code>
+		<value>37.1.2</value>
+		<name languageCode="en">Gulf of Lions (Division 37.1.2)</name>
+		<name languageCode="sv">Lejonbukten (Sektion 37.1.2)</name>
+		<description languageCode="en">Gulf of Lions (Division 37.1.2)</description>
+		<description languageCode="sv">Lejonbukten (Sektion 37.1.2)</description>
+	</code>
+	<code>
+		<value>37.1.3</value>
+		<name languageCode="en">Sardinia (Division 37.1.3)</name>
+		<name languageCode="sv">Sardinien (Sektion 37.1.3)</name>
+		<description languageCode="en">Sardinia (Division 37.1.3)</description>
+		<description languageCode="sv">Sardinien (Sektion 37.1.3)</description>
+	</code>
+	<code>
+		<value>37.2</value>
+		<name languageCode="en">Central Mediterranean (Subarea 37.2)</name>
+		<name languageCode="sv">Centrala medelhavet (Delområde 37.2)</name>
+		<description languageCode="en">Central Mediterranean (Subarea 37.2)</description>
+		<description languageCode="sv">Centrala medelhavet (Delområde 37.2)</description>
+	</code>
+	<code>
+		<value>37.2.1</value>
+		<name languageCode="en">Adriatic (Division 37.2.1)</name>
+		<name languageCode="sv">Adriatiska havet (Sektion 37.2.1)</name>
+		<description languageCode="en">Adriatic (Division 37.2.1)</description>
+		<description languageCode="sv">Adriatiska havet (Sektion 37.2.1)</description>
+	</code>
+	<code>
+		<value>37.2.2</value>
+		<name languageCode="en">Ionian (Division 37.2.2)</name>
+		<name languageCode="sv">Joniska havet (Sektion 37.2.2)</name>
+		<description languageCode="en">Ionian (Division 37.2.2)</description>
+		<description languageCode="sv">Joniska havet (Sektion 37.2.2)</description>
+	</code>
+	<code>
+		<value>37.3</value>
+		<name languageCode="en">Eastern Mediterranean (Subarea 37.3)</name>
+		<name languageCode="sv">Östra medelhavet (Delområde 37.3)</name>
+		<description languageCode="en">Eastern Mediterranean (Subarea 37.3)</description>
+		<description languageCode="sv">Östra medelhavet (Delområde 37.3)</description>
+	</code>
+	<code>
+		<value>37.3.1</value>
+		<name languageCode="en">Aegean (Division 37.3.1)</name>
+		<name languageCode="sv">Egiska havet (Sektion 37.3.1)</name>
+		<description languageCode="en">Aegean (Division 37.3.1)</description>
+		<description languageCode="sv">Egiska havet (Sektion 37.3.1)</description>
+	</code>
+	<code>
+		<value>37.3.2</value>
+		<name languageCode="en">Levant (Division 37.3.2)</name>
+		<name languageCode="sv">Levantiska sjön (Delområde 37.3.2)</name>
+		<description languageCode="en">Levant (Division 37.3.2)</description>
+		<description languageCode="sv">Levantiska sjön (Delområde 37.3.2)</description>
+	</code>
+	<code>
+		<value>37.4</value>
+		<name languageCode="en">Black Sea (Subarea 37.4)</name>
+		<name languageCode="sv">Svarta havet (Delområde 37.4)</name>
+		<description languageCode="en">Black Sea (Subarea 37.4)</description>
+		<description languageCode="sv">Svarta havet (Delområde 37.4)</description>
+	</code>
+	<code>
+		<value>37.4.1</value>
+		<name languageCode="en">Marmara Sea (Division 37.4.1)</name>
+		<name languageCode="sv">Marmarasjön (Sektion 37.4.1)</name>
+		<description languageCode="en">Marmara Sea (Division 37.4.1)</description>
+		<description languageCode="sv">Marmarasjön (Sektion 37.4.1)</description>
+	</code>
+	<code>
+		<value>37.4.2</value>
+		<name languageCode="en">Black Sea (Division 37.4.2)</name>
+		<name languageCode="sv">Svarta havet (Sektion 37.4.2)</name>
+		<description languageCode="en">Black Sea (Division 37.4.2)</description>
+		<description languageCode="sv">Svarta havet (Sektion 37.4.2)</description>
+	</code>
+	<code>
+		<value>37.4.3</value>
+		<name languageCode="en">Azov Sea (Division 37.4.3)</name>
+		<name languageCode="sv">Azovska sjön (Sektion 37.4.3)</name>
+		<description languageCode="en">Azov Sea (Division 37.4.3)</description>
+		<description languageCode="sv">Azovska sjön (Sektion 37.4.3)</description>
+	</code>
+	<code>
+		<value>41</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Southwest</name>
+		<name languageCode="sv">Sydvästra Atlanten </name>
+		<description languageCode="en">Atlantic, Southwest</description>
+		<description languageCode="sv">Sydvästra Atlanten </description>
+	</code>
+		<code>
+		<value>41.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Northern Atlantic, Southwest (Subarea 41.1)</name>
+		<description languageCode="en">Northern Atlantic, Southwest (Subarea 41.1)</description>
+	</code>
+		<code>
+		<value>41.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Central Atlantic, Southwest (Subarea 41.2)</name>
+		<description languageCode="en">Central Atlantic, Southwest (Subarea 41.2)</description>
+	</code>
+		<code>
+		<value>41.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Southern Atlantic, Southwest (Subarea 41.3)</name>
+		<description languageCode="en">Southern Atlantic, Southwest (Subarea 41.3)</description>
+	</code>
+	<code>
+		<value>47</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Southeast</name>
+		<name languageCode="sv">Sydöstra Atlanten</name>
+		<description languageCode="en">Atlantic, Southeast</description>
+		<description languageCode="sv">Sydöstra Atlanten</description>
+	</code>
+	<code>
+		<value>48</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Atlantic, Antartic</name>
+		<name languageCode="sv">Atlanten, Antarktis</name>
+		<description languageCode="en">Atlantic, Antartic</description>
+		<description languageCode="sv">Atlanten, Antarktis</description>
+	</code>
+	<code>
+		<value>48.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Peninsular (Subarea 48.1)</name>
+		<description languageCode="en">Peninsular (Subarea 48.1)</description>
+	</code>
+	<code>
+		<value>48.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">South Orkney (Subarea 48.2)</name>
+		<description languageCode="en">South Orkney (Subarea 48.2)</description>
+	</code>
+	<code>
+		<value>48.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">South Georgia (Subarea 48.3)</name>
+		<description languageCode="en">South Georgia (Subarea 48.3)</description>
+	</code>
+	<code>
+		<value>48.4</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">South Sandwich (Subarea 48.4)</name>
+		<description languageCode="en">South Sandwich (Subarea 48.4)</description>
+	</code>
+    <code>
+		<value>48.5</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Weddel Sea (Subarea 48.5)</name>
+		<description languageCode="en">Weddel Sea (Subarea 48.5)</description>
+	</code>
+	<code>
+		<value>48.6</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bouvet (Subarea 48.6)</name>
+		<description languageCode="en">Bouvet (Subarea 48.6)</description>
+	</code>
+	<code>
+		<value>51</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Indian Ocean, Western</name>
+		<name languageCode="sv">Västindiska Oceanen</name>
+		<description languageCode="en">Indian Ocean, Western</description>
+		<description languageCode="sv">Västindiska Oceanen</description>
+	</code>
+	<code>
+		<value>51.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Red Sea (Subarea 51.1)</name>
+		<description languageCode="en">Red Sea (Subarea 51.1))</description>
+	</code>
+	<code>
+		<value>51.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Gulf (Subarea 51.2)</name>
+		<description languageCode="en">Gulf (Subarea 51.2)</description>
+	</code>
+	<code>
+		<value>51.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Western Arabian Sea (Subarea 51.3)</name>
+		<description languageCode="en">Western Arabian Sea (Subarea 51.3)</description>
+	</code>
+	<code>
+		<value>51.4</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eastern Arabian Sea (Subarea 51.4)</name>
+		<description languageCode="en">Eastern Arabian Sea (Subarea 51.4)</description>
+	</code>
+	<code>
+		<value>51.5</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Somalia, Kenya and Tanzania (Subarea 51.5)</name>
+		<description languageCode="en">Somalia, Kenya and Tanzania (Subarea 51.5)</description>
+	</code>
+	<code>
+		<value>51.6</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Madagascar and Mozambique Channel (Subarea 51.6)</name>
+		<description languageCode="en">Madagascar and Mozambique Channel (Subarea 51.6)</description>
+	</code>
+	<code>
+		<value>51.7</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oceanic (Subarea 51.7)</name>
+		<description languageCode="en">Oceanic (Subarea 51.7)</description>
+	</code>
+	<code>
+		<value>51.8</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Mozambique (Subarea 51.8)</name>
+		<description languageCode="en">Mozambique (Subarea 51.8)</description>
+	</code>
+	<code>
+		<value>57</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Indian Ocean, Eastern</name>
+		<name languageCode="sv">Östindiska Oceanen</name>
+		<description languageCode="en">Indian Ocean, Eastern</description>
+		<description languageCode="sv">Östindiska Oceanen</description>
+	</code>
+	<code>
+		<value>57.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Bay of Bengal Indian Ocean, Eastern (Subarea 57.1)</name>
+		<description languageCode="en">Bay of Bengal Indian Ocean, Eastern (Subarea 57.1)</description>
+	</code>
+	<code>
+		<value>57.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Northern Indian Ocean, Eastern (Subarea 57.2)</name>
+		<description languageCode="en">Northern Indian Ocean, Eastern (Subarea 57.2)</description>
+	</code>
+	<code>
+		<value>57.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Central Indian Ocean, Eastern (Subarea 57.3)</name>
+		<description languageCode="en">Central Indian Ocean, Eastern (Subarea 57.3)</description>
+	</code>
+	<code>
+		<value>57.4</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Oceanic Indian Ocean, Eastern (Subarea 57.4)</name>
+		<description languageCode="en">Oceanic Indian Ocean, Eastern (Subarea 57.4)</description>
+	</code>
+	<code>
+		<value>57.5</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Western Australia Indian Ocean, Eastern (Subarea 57.5)</name>
+		<description languageCode="en">Western Australia Indian Ocean, Eastern (Subarea 57.5)</description>
+	</code>
+	<code>
+		<value>57.6</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Southern Australia Indian Ocean, Eastern (Subarea 57.6)</name>
+		<description languageCode="en">Southern Australia Indian Ocean, Eastern (Subarea 57.6)</description>
+	</code>
+	<code>
+		<value>58</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Southern Indian Ocean, Antarctic</name>
+		<name languageCode="sv">Södra indiska oceanen, Antarktis</name>
+		<description languageCode="en">Southern Indian Ocean, Antarctic</description>
+		<description languageCode="sv">Södra indiska oceanen, Antarktis</description>
+	</code>
+	<code>
+		<value>58.4</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Enderby-Wilkes (Subarea 58.4)</name>
+		<description languageCode="en">Enderby-Wilkes (Subarea 58.4)</description>
+	</code>
+	<code>
+		<value>58.5</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Kerguelen, McDonald (Subarea 58.5)</name>
+		<description languageCode="en">Kerguelen, McDonald (Subarea 58.5)</description>
+	</code>
+	<code>
+		<value>58.6</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Crozet (Subarea 58.6)</name>
+		<description languageCode="en">Crozet (Subarea 58.6)</description>
+	</code>
+	<code>
+		<value>58.7</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Marion-Edward (Subarea 58.7)</name>
+		<description languageCode="en">Marion-Edward (Subarea 58.7)</description>
+	</code>
+	<code>
+		<value>61</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Northwest</name>
+		<name languageCode="sv">Nordvästra stillahavet</name>
+		<description languageCode="en">Pacific, Northwest</description>
+		<description languageCode="sv">Nordvästra stillahavet</description>
+	</code>
+	<code>
+		<value>67</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Northeast</name>
+		<name languageCode="sv">Nordöstra stillahavet</name>
+		<description languageCode="en">Pacific, Northeast</description>
+		<description languageCode="sv">Nordöstra stillahavet</description>
+	</code>
+	<code>
+		<value>71</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Western Central</name>
+		<name languageCode="sv">Västra mellersta stillahavet</name>
+		<description languageCode="en">Pacific, Western Central</description>
+		<description languageCode="sv">Västra mellersta stillahavet</description>
+	</code>
+	<code>
+		<value>77</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Eastern Central</name>
+		<name languageCode="sv">Östra mellersta stillahavet</name>
+		<description languageCode="en">Pacific, Eastern Central</description>
+		<description languageCode="sv">Östra mellersta stillahavet</description>
+	</code>
+	<code>
+		<value>81</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Southwest</name>
+		<name languageCode="sv">Sydvästra stillahavet</name>
+		<description languageCode="en">Pacific, Southwest</description>
+		<description languageCode="sv">Sydvästra stillahavet</description>
+	</code>
+	<code>
+		<value>87</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Southeast</name>
+		<name languageCode="sv">Sydöstra stillahavet</name>
+		<description languageCode="en">Pacific, Southeast</description>
+		<description languageCode="sv">Sydöstra stillahavet</description>
+	</code>
+	<code>
+		<value>87.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Northern Pacific, Southeast (Subarea 87.1)</name>
+		<description languageCode="en">Northern Pacific, Southeast (Subarea 87.1)</description>
+	</code>
+	<code>
+		<value>87.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Central Pacific, Southeast (Subarea 87.2)</name>
+		<description languageCode="en">Central Pacific, Southeast (Subarea 87.2)</description>
+	</code>
+	<code>
+		<value>87.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Southern Pacific, Southeast (Subarea 87.3)</name>
+		<description languageCode="en">Southern Pacific, Southeast (Subarea 87.3)</description>
+	</code>
+	<code>
+		<value>88</value>
+		<scope targetMarketCountryCode="752">true</scope>
+		<name languageCode="en">Pacific, Antarctic</name>
+		<name languageCode="sv">Stillahavet, Antarktis</name>
+		<description languageCode="en">Pacific, Antarctic</description>
+		<description languageCode="sv">Stillahavet, Antarktis</description>
+	</code>
+	<code>
+		<value>88.1</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Eastern Ross Sea (Subarea 88.1)</name>
+		<description languageCode="en">Eastern Ross Sea (Subarea 88.1)</description>
+	</code>
+	<code>
+		<value>88.2</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Western Ross Sea (Subarea 88.2)</name>
+		<description languageCode="en">Western Ross Sea (Subarea 88.2)</description>
+	</code>
+	<code>
+		<value>88.3</value>
+		<scope targetMarketCountryCode="752">false</scope>
+		<name languageCode="en">Amundsen Sea (Subarea 88.3)</name>
+		<description languageCode="en">Amundsen Sea (Subarea 88.3)</description>
+	</code>
+</codeList>

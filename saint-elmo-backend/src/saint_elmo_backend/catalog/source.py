@@ -257,6 +257,38 @@ def collect_codes(synkka: SynkkaData, group_name: str) -> set[str]:
     }
 
 
+# Synkka files diet types under nutritionalClaim with this pseudo claim type
+_DIET_CLAIM_TYPE = "DIET"
+
+
+def collect_claims(synkka: SynkkaData) -> set[tuple[str, str]]:
+    """
+    Nutritional claims as GS1 (ClaimTypeCode, ClaimElementCode) pairs. Synkka's own
+    value id joins the two (FREE_FROM_LACTOSE); the parts are in `unit` (type) and
+    `synkkaId` (element).
+    """
+    return {
+        (value.unit, value.synkka_id)
+        for group in synkka.classifications
+        if group.name == "nutritionalClaim"
+        for value in group.values
+        if value.unit and value.synkka_id and value.unit != _DIET_CLAIM_TYPE
+    }
+
+
+def collect_diets(synkka: SynkkaData) -> set[str]:
+    """
+    GS1 DietTypeCode values, which Synkka carries as claims of type DIET.
+    """
+    return {
+        value.synkka_id
+        for group in synkka.classifications
+        if group.name == "nutritionalClaim"
+        for value in group.values
+        if value.unit == _DIET_CLAIM_TYPE and value.synkka_id
+    }
+
+
 # DECIMAL classification groups that repeat nutritionalContent without its basis
 _NUTRIENT_GROUPS = ("nutritionFact", "gda", "mineral", "vitamin", "composition")
 
