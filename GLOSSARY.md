@@ -42,6 +42,10 @@ _Avoid_: Taxonomy, enums
 A replacement product that Valio Aimo itself lists for a product.
 _Avoid_: Alternative, official substitute
 
+**Valio Aimo API**:
+Valio Aimo's live service that answers price and availability for a list of products, a customer and a delivery date. Read-only: it takes no quotes or orders.
+_Avoid_: MockAPI, challenge API, Aimo API
+
 ## Quantities
 
 **Sales unit**:

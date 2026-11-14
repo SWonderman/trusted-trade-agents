@@ -7,14 +7,21 @@ from saint_elmo_backend.api.error_handlers import register_error_handlers
 from saint_elmo_backend.api.middleware import RequestContextMiddleware
 from saint_elmo_backend.api.v1.router import router as api_v1_router
 from saint_elmo_backend.core.logger import setup_logger
+from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.db.engine import dispose_engine
+from saint_elmo_backend.valio_aimo.client import create_valio_aimo_client
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):
+async def lifespan(app: FastAPI):
+    # One Valio Aimo client (one connection pool) for the app's lifetime; routes get it
+    # through the `get_valio_aimo_client` dependency
+    valio_aimo_client = create_valio_aimo_client(get_settings())
+    app.state.valio_aimo_client = valio_aimo_client
     try:
         yield
     finally:
+        await valio_aimo_client.aclose()
         await dispose_engine()
 
 

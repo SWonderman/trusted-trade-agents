@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from http import HTTPMethod
 from typing import override
 
@@ -53,6 +54,7 @@ class HttpkitStatusError(HttpkitError):
         url: str,
         status_code: int,
         error_body: str,
+        headers: Mapping[str, str] | None = None,
     ) -> None:
         super().__init__(message)
 
@@ -60,6 +62,7 @@ class HttpkitStatusError(HttpkitError):
         self.url: str = url
         self.status_code: int = status_code
         self.error_body: str = error_body
+        self.headers: Mapping[str, str] = headers or {}
 
     @override
     def is_retryable(self) -> bool:
