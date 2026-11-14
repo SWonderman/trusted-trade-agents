@@ -188,10 +188,11 @@
 		font-feature-settings: 'cv11', 'ss01';
 	}
 
+	/* Except inside an element the visitor asked to animate, e.g. by pressing Play. */
 	@media (prefers-reduced-motion: reduce) {
-		*,
-		*::before,
-		*::after {
+		:not([data-motion='allowed'], [data-motion='allowed'] *),
+		:not([data-motion='allowed'], [data-motion='allowed'] *)::before,
+		:not([data-motion='allowed'], [data-motion='allowed'] *)::after {
 			animation-duration: 0.01ms !important;
 			animation-iteration-count: 1 !important;
 			transition-duration: 0.01ms !important;

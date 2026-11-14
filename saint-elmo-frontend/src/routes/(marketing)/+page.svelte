@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Roundel from '#lib/components/Roundel.svelte';
+	import OrderJourney from '#lib/components/marketing/OrderJourney.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import ScaleIcon from '@lucide/svelte/icons/scale';
@@ -28,45 +29,6 @@
 			icon: ScrollTextIcon,
 			title: 'Everything is written down',
 			text: 'Every tool call, decision and approval goes into an append-only audit trail that both the buyer and Valio Aimo can read.'
-		}
-	];
-
-	const steps = [
-		{
-			n: 'I',
-			title: 'The request',
-			text: 'The buyer tells their agent what the kitchen needs, in their own words. The agent works out what “by Monday” means and says so.',
-			artefact: '“1,000 litres of lactose-free milk by Monday”'
-		},
-		{
-			n: 'II',
-			title: 'The search',
-			text: 'The agent searches Valio Aimo’s catalogue by what a product declares, not by what its name suggests. Unknown never counts as free-from.',
-			artefact: 'claim FREE_FROM_LACTOSE'
-		},
-		{
-			n: 'III',
-			title: 'The offer',
-			text: 'Live price and stock are fetched for a shortlist only. Each figure says where it came from and how long it holds.',
-			artefact: '€1.84 per litre, 64 cases in stock'
-		},
-		{
-			n: 'IV',
-			title: 'The quote',
-			text: 'Saint Elmo turns litres into the cases Valio Aimo sells, rounds to the lot size and shows its working on every line.',
-			artefact: '1,000 L → 50 KI, 1 KI ≈ 20 L'
-		},
-		{
-			n: 'V',
-			title: 'The judgement',
-			text: 'Plain code, not a language model, checks the quote against the mandate. The answer is one of three, always with a reason.',
-			artefact: 'OVER_AUTO_APPROVE_LIMIT'
-		},
-		{
-			n: 'VI',
-			title: 'The order',
-			text: 'A person signs off on their own screen, never through the agent. Price and stock are checked again at the moment of commitment.',
-			artefact: 'PENDING_APPROVAL → PLACED'
 		}
 	];
 
@@ -278,21 +240,13 @@
 					<p class="kicker">How it works</p>
 					<h2 id="how-title" class="font-display-tight">How one order travels</h2>
 					<p class="section-intro">
-						Every order an agent places goes through the same six steps. The agent proposes, and
-						Saint Elmo checks, converts and records. Choosing is the agent’s job; enforcing the
-						limits never is.
+						Six steps, every order. The agent proposes; Saint Elmo checks, converts, asks when it
+						must, and writes it all down.
 					</p>
 				</div>
-				<ol class="steps" {@attach reveal}>
-					{#each steps as s (s.n)}
-						<li>
-							<span class="numeral" aria-hidden="true">{s.n}</span>
-							<h3>{s.title}</h3>
-							<p>{s.text}</p>
-							<p class="artefact code">{s.artefact}</p>
-						</li>
-					{/each}
-				</ol>
+				<div {@attach reveal}>
+					<OrderJourney />
+				</div>
 			</div>
 		</section>
 
@@ -968,68 +922,6 @@
 		line-height: 1.65;
 		color: var(--ink-soft);
 	}
-	.steps {
-		display: grid;
-		gap: 1rem;
-		margin-top: 3.5rem;
-		counter-reset: step;
-	}
-	@media (min-width: 720px) {
-		.steps {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-	@media (min-width: 1100px) {
-		.steps {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-	.steps li {
-		position: relative;
-		padding: 1.75rem 1.5rem 1.5rem;
-		border-radius: 1.125rem;
-		background: oklch(0.985 0.01 85);
-		border: 1px solid oklch(0.24 0.03 60 / 0.09);
-		box-shadow: 0 1px 0 oklch(1 0 0 / 0.8) inset;
-		transition:
-			transform 250ms cubic-bezier(0.2, 0.7, 0.2, 1),
-			box-shadow 250ms;
-	}
-	.steps li:hover {
-		transform: translateY(-3px);
-		box-shadow: 0 20px 40px -24px oklch(0.24 0.03 60 / 0.35);
-	}
-	.numeral {
-		display: block;
-		font-family: var(--font-display);
-		font-style: italic;
-		font-size: 2.25rem;
-		line-height: 1;
-		color: var(--vermilion);
-	}
-	.steps h3 {
-		margin-top: 0.875rem;
-		font-size: 1.0625rem;
-		font-weight: 600;
-		letter-spacing: -0.01em;
-	}
-	.steps p {
-		margin-top: 0.375rem;
-		font-size: 0.9375rem;
-		line-height: 1.6;
-		color: var(--ink-soft);
-	}
-	.steps .artefact {
-		display: inline-block;
-		margin-top: 1rem;
-		padding: 0.25rem 0.625rem;
-		border-radius: 0.5rem;
-		background: var(--lapis-night);
-		color: var(--vellum);
-		font-size: 0.75rem;
-		line-height: 1.5;
-	}
-
 	/* Night and deep sections */
 	.night {
 		background: var(--lapis-night);
@@ -1341,9 +1233,6 @@
 		.float,
 		.corona {
 			animation: none;
-		}
-		.steps li:hover {
-			transform: none;
 		}
 	}
 </style>
