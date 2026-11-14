@@ -9,7 +9,7 @@ class InvalidAgentTokenError(Exception):
 
 class AgentNotFoundError(Exception):
     """
-    No agent with this public id in the buyer organization.
+    No agent with this public id in the buyer organisation.
     """
 
 

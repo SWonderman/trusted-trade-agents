@@ -19,7 +19,7 @@ class AuditEventType(StrEnum):
     ORDER_REJECTED_BY_HUMAN = "ORDER_REJECTED_BY_HUMAN"
     # A buyer admin issued an Agent token, with its jti, scopes and expiry
     AGENT_TOKEN_ISSUED = "AGENT_TOKEN_ISSUED"
-    # A buyer admin revoked an Agent token
+    # A buyer admin revoked an Agent token, with its jti, scopes and expiry
     AGENT_TOKEN_REVOKED = "AGENT_TOKEN_REVOKED"
     # A buyer admin disabled an agent, with the live tokens that cut off
     AGENT_DISABLED = "AGENT_DISABLED"

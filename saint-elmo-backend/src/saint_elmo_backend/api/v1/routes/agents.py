@@ -88,12 +88,12 @@ async def list_agents(admin: BuyerAdmin, session: ASession) -> AgentListResponse
     "token is returned only in this response and never stored: copy it now. It works "
     "from the next request.",
 )
-async def issue_agent_token(
+async def issue_token(
     agent_id: UUID4, data: AgentTokenIn, admin: BuyerAdmin, session: ASession
 ) -> IssuedAgentTokenResponse:
     scopes = data.granted_scopes
     try:
-        issued = await agent_services.issue_token_for_agent(
+        issued = await agent_services.issue_token_as_buyer_admin(
             session,
             organization_id=admin.organization.id,
             agent_public_id=agent_id,

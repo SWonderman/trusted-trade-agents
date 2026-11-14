@@ -39,13 +39,19 @@ async def list_agents(session: AsyncSession, *, organization_id: int) -> list[Ag
 
 
 async def get_agent_by_public_id(
-    session: AsyncSession, *, organization_id: int, public_id: UUID
+    session: AsyncSession, *, organization_id: int, public_id: UUID, for_update: bool = False
 ) -> Agent | None:
+    """
+    With `for_update`, locks the agent's row until the transaction ends and reads it fresh.
+    """
+
     stmt = (
         select(Agent)
         .options(joinedload(Agent.organization))
         .where(Agent.org_id == organization_id, Agent.public_id == public_id)
     )
+    if for_update:
+        stmt = stmt.with_for_update(of=Agent).execution_options(populate_existing=True)
     return await session.scalar(stmt)
 
 
@@ -64,6 +70,10 @@ async def list_credentials(
 async def get_agent_credential(
     session: AsyncSession, *, organization_id: int, agent_id: int, jti: UUID
 ) -> AgentCredential | None:
+    """
+    Locks the credential's row until the transaction ends and reads it fresh.
+    """
+
     stmt = (
         select(AgentCredential)
         .options(joinedload(AgentCredential.created_by))
@@ -72,6 +82,8 @@ async def get_agent_credential(
             AgentCredential.agent_id == agent_id,
             AgentCredential.jti == jti,
         )
+        .with_for_update(of=AgentCredential)
+        .execution_options(populate_existing=True)
     )
     return await session.scalar(stmt)
 

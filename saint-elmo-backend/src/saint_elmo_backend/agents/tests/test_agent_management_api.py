@@ -2,6 +2,7 @@
 Buyer admins managing their buyer organisation's agents and Agent tokens, over HTTP.
 """
 
+import asyncio
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -389,16 +390,39 @@ async def test_issue_revoke_and_disable_are_audited_once(clean_db, session, clie
     assert all(event.user_id == admin.id and event.agent_id == agent.id for event in events)
     issue_event, _, revoke_event, disable_event = events
     assert issue_event.subject_public_id == agent.public_id
-    assert issue_event.payload == {
+    expires_at = datetime.fromisoformat(issued["expiresAt"])
+    assert {**issue_event.payload, "expiresAt": None} == {
         "jti": issued["jti"],
         "label": "laptop",
         "scopes": issued["scopes"],
-        "expiresAt": issued["expiresAt"],
+        "expiresAt": None,
     }
+    assert datetime.fromisoformat(issue_event.payload["expiresAt"]) == expires_at
     assert revoke_event.payload == {
         "jti": issued["jti"],
         "scopes": issued["scopes"],
-        "expiresAt": issued["expiresAt"],
+        "expiresAt": issue_event.payload["expiresAt"],
     }
     # Only the tokens disabling cut off: the revoked one already was
     assert disable_event.payload == {"cutOffJtis": [live["jti"]]}
+
+
+async def test_concurrent_revokes_and_disables_are_audited_once(clean_db, session, client):
+    organization = await make_organization(session)
+    admin = await make_user(session, organization)
+    agent = await make_agent(session, organization)
+    await session.commit()
+    headers = user_session_headers(admin)
+    issued = await _issue(client, admin, agent)
+
+    revokes = await asyncio.gather(
+        *(client.delete(f"{tokens_url(agent)}/{issued['jti']}", headers=headers) for _ in range(5))
+    )
+    disables = await asyncio.gather(
+        *(client.post(f"{AGENTS_URL}/{agent.public_id}/disable", headers=headers) for _ in range(5))
+    )
+
+    assert all(response.status_code == 200 for response in [*revokes, *disables])
+    event_types = [event.event_type for event in await _audit_events(session, organization)]
+    assert event_types.count(AuditEventType.AGENT_TOKEN_REVOKED) == 1
+    assert event_types.count(AuditEventType.AGENT_DISABLED) == 1

@@ -75,20 +75,49 @@ async def issue_agent_token(
 def _token_terms(scopes: Collection[Scope], expires_at: datetime) -> dict[str, Any]:
     return {
         "scopes": sorted(str(scope) for scope in scopes),
-        "expiresAt": expires_at.isoformat().replace("+00:00", "Z"),
+        "expiresAt": expires_at.isoformat(),
     }
 
 
-async def get_agent(session: AsyncSession, *, organization_id: int, public_id: UUID) -> Agent:
+async def _record_agent_event(
+    session: AsyncSession,
+    agent: Agent,
+    event_type: AuditEventType,
+    *,
+    user_id: int,
+    payload: dict[str, Any],
+) -> None:
+    """
+    A buyer admin's action on one of their agents, in the agent's audit trail.
+    """
+
+    await audit_services.record_event(
+        session,
+        organization_id=agent.org_id,
+        event_type=event_type,
+        user_id=user_id,
+        agent_id=agent.id,
+        subject_public_id=agent.public_id,
+        payload=payload,
+    )
+
+
+async def get_agent_by_public_id(
+    session: AsyncSession, *, organization_id: int, public_id: UUID, for_update: bool = False
+) -> Agent:
+    """
+    With `for_update`, locks the agent's row until the transaction ends.
+    """
+
     agent = await crud.get_agent_by_public_id(
-        session, organization_id=organization_id, public_id=public_id
+        session, organization_id=organization_id, public_id=public_id, for_update=for_update
     )
     if agent is None:
         raise AgentNotFoundError()
     return agent
 
 
-async def issue_token_for_agent(
+async def issue_token_as_buyer_admin(
     session: AsyncSession,
     *,
     organization_id: int,
@@ -99,12 +128,15 @@ async def issue_token_for_agent(
     issued_by_user_id: int,
 ) -> IssuedAgentToken:
     """
-    A buyer admin issuing a token for one of their buyer organization's agents.
+    A buyer admin issuing a token for one of their buyer organisation's agents, through
+    `issue_agent_token`, and recording it in the audit trail.
 
     The caller owns the commit.
     """
 
-    agent = await get_agent(session, organization_id=organization_id, public_id=agent_public_id)
+    agent = await get_agent_by_public_id(
+        session, organization_id=organization_id, public_id=agent_public_id
+    )
     issued = await issue_agent_token(
         session,
         agent,
@@ -113,13 +145,11 @@ async def issue_token_for_agent(
         lifetime=lifetime,
         created_by_user_id=issued_by_user_id,
     )
-    await audit_services.record_event(
+    await _record_agent_event(
         session,
-        organization_id=organization_id,
-        event_type=AuditEventType.AGENT_TOKEN_ISSUED,
+        agent,
+        AuditEventType.AGENT_TOKEN_ISSUED,
         user_id=issued_by_user_id,
-        agent_id=agent.id,
-        subject_public_id=agent.public_id,
         payload={
             "jti": str(issued.jti),
             "label": label,
@@ -136,7 +166,9 @@ async def list_agent_tokens(
     The agent's issued tokens, newest first: their credential rows, never a token value.
     """
 
-    agent = await get_agent(session, organization_id=organization_id, public_id=agent_public_id)
+    agent = await get_agent_by_public_id(
+        session, organization_id=organization_id, public_id=agent_public_id
+    )
     return await crud.list_credentials(session, organization_id=organization_id, agent_id=agent.id)
 
 
@@ -150,12 +182,15 @@ async def revoke_agent_token(
 ) -> AgentCredential:
     """
     Revoke one of the agent's tokens, refused from the next request on. Revoking a
-    revoked token changes nothing.
+    revoked token changes nothing; the credential row is locked so that concurrent
+    revocations record one audit event.
 
     The caller owns the commit.
     """
 
-    agent = await get_agent(session, organization_id=organization_id, public_id=agent_public_id)
+    agent = await get_agent_by_public_id(
+        session, organization_id=organization_id, public_id=agent_public_id
+    )
     credential = await crud.get_agent_credential(
         session, organization_id=organization_id, agent_id=agent.id, jti=jti
     )
@@ -165,13 +200,11 @@ async def revoke_agent_token(
     if credential.revoked_at is None:
         credential.revoked_at = datetime.now(UTC)
         await session.flush()
-        await audit_services.record_event(
+        await _record_agent_event(
             session,
-            organization_id=organization_id,
-            event_type=AuditEventType.AGENT_TOKEN_REVOKED,
+            agent,
+            AuditEventType.AGENT_TOKEN_REVOKED,
             user_id=revoked_by_user_id,
-            agent_id=agent.id,
-            subject_public_id=agent.public_id,
             payload={
                 "jti": str(credential.jti),
                 **_token_terms(credential.scopes, credential.expires_at),
@@ -185,25 +218,26 @@ async def disable_agent(
 ) -> Agent:
     """
     Disable the agent: every one of its tokens is refused from the next request on.
-    Disabling a disabled agent changes nothing.
+    Disabling a disabled agent changes nothing; the agent's row is locked so that
+    concurrent requests record one audit event.
 
     The caller owns the commit.
     """
 
-    agent = await get_agent(session, organization_id=organization_id, public_id=agent_public_id)
+    agent = await get_agent_by_public_id(
+        session, organization_id=organization_id, public_id=agent_public_id, for_update=True
+    )
     if agent.status != AgentStatus.DISABLED:
         live = await crud.list_live_credentials(
             session, organization_id=organization_id, agent_id=agent.id, now=datetime.now(UTC)
         )
         agent.status = AgentStatus.DISABLED
         await session.flush()
-        await audit_services.record_event(
+        await _record_agent_event(
             session,
-            organization_id=organization_id,
-            event_type=AuditEventType.AGENT_DISABLED,
+            agent,
+            AuditEventType.AGENT_DISABLED,
             user_id=disabled_by_user_id,
-            agent_id=agent.id,
-            subject_public_id=agent.public_id,
             payload={"cutOffJtis": [str(credential.jti) for credential in live]},
         )
     return agent
