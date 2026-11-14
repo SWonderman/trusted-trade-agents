@@ -43,11 +43,7 @@ async def search_products(data: ProductSearchRequest, session: ASession) -> Prod
             offset=data.offset,
         )
     except UnknownCodesError as exc:
-        # Named by request field, so the agent can map each code back to its filter
-        fields = ProductSearchRequest.model_fields
-        raise UnknownFilterCodes.for_filters(
-            {fields[name].alias or name: codes for name, codes in exc.unknown.items()}
-        ) from exc
+        raise UnknownFilterCodes.for_request(ProductSearchRequest, exc.unknown) from exc
 
     return ProductSearchResponse.from_result(result)
 

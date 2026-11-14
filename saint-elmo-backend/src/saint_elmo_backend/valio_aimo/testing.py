@@ -1,5 +1,5 @@
 """
-Shared fake of the Valio Aimo API for the test suite (#12–#16 reuse it).
+Shared fake of the Valio Aimo API for the test suite.
 
 `FakeValioAimoApi` is an `AsyncTransport` that answers `/api/price`,
 `/api/availability` and `/api/ping` like the real API, from a small scripted
@@ -242,6 +242,7 @@ class FakeValioAimoApi:
       (e.g. 429 with a `Retry-After`) before answering normally again; `after=n`
       lets n requests through first.
     - `raise_next(exc)` makes the next request raise a transport error.
+    - `add_product(...)` scripts a product of a test's own, e.g. a substitute candidate.
     - `change_price(...)` and `change_availability(...)` move a product's live data,
       e.g. between a quote and its order.
     - More than 1,000 products in one request is rejected with 422, like the API.
@@ -256,6 +257,27 @@ class FakeValioAimoApi:
         self._prices: dict[str, Callable[[str], dict[str, Any]]] = dict(_SCRIPTED_PRICES)
         self._availability: dict[str, Callable[[str, date], dict[str, Any]]] = dict(
             _SCRIPTED_AVAILABILITY
+        )
+
+    def add_product(
+        self,
+        product_id: str,
+        *,
+        value: float,
+        comparison: float,
+        comparison_unit: str = "L",
+        amount: float = 500.0,
+        delay: timedelta = timedelta(0),
+        sales_unit: str = "KI",
+    ) -> None:
+        """
+        Answer for `product_id` from now on: priced at `value` per sales unit and
+        `comparison` per `comparison_unit`, with `amount` in stock `delay` after the
+        requested date.
+        """
+        self._prices[product_id] = lambda p: _priced(p, value, comparison, comparison_unit)
+        self._availability[product_id] = lambda p, d: _available(
+            p, amount=amount, on=d + delay, sales_unit=sales_unit
         )
 
     def change_price(self, product_id: str, *, value: float, comparison: float) -> None:

@@ -35,6 +35,10 @@ class Claim(CamelBaseModel):
     type: str = Field(description="GS1 claim type, e.g. FREE_FROM")
     element: str = Field(description="GS1 claim element, e.g. LACTOSE")
 
+    @classmethod
+    def from_code(cls, claim: ClaimCode) -> "Claim":
+        return cls(type=claim.type, element=claim.element)
+
 
 class ProductSearchRequest(CamelBaseModel):
     query: str | None = Field(

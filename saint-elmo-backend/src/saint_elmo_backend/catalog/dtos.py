@@ -49,6 +49,11 @@ class ProductFilters:
     # GS1 allergen codes; how strictly they are excluded is set by allergen_strictness
     excluded_allergens: tuple[str, ...] = ()
     allergen_strictness: AllergenStrictness = AllergenStrictness.CONTAINS
+    # A product must be one of them
+    product_codes: tuple[str, ...] = ()
+    # A product must be in none of these categories and from none of these vendors
+    excluded_category_codes: tuple[str, ...] = ()
+    excluded_vendors: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

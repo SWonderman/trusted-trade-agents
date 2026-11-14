@@ -88,7 +88,7 @@ async def unknown_claim_codes(session: AsyncSession, claims: Sequence[ClaimCode]
     )
 
 
-async def _unknown_filter_codes(
+async def unknown_filter_codes(
     session: AsyncSession, filters: ProductFilters
 ) -> dict[str, list[str]]:
     """
@@ -121,7 +121,7 @@ async def search_products(
     if query is not None and not query.strip():
         query = None
 
-    if unknown := await _unknown_filter_codes(session, filters):
+    if unknown := await unknown_filter_codes(session, filters):
         raise UnknownCodesError(unknown)
 
     matches = await crud.search_products(
