@@ -25,3 +25,8 @@ async def get_agent_by_name(
         .where(Agent.org_id == organization_id, Agent.name == name)
     )
     return await session.scalar(stmt)
+
+
+async def get_agent(session: AsyncSession, *, organization_id: int, agent_id: int) -> Agent | None:
+    stmt = select(Agent).where(Agent.org_id == organization_id, Agent.id == agent_id)
+    return await session.scalar(stmt)

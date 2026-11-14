@@ -163,8 +163,18 @@ async def write_mandate(session: AsyncSession, agent: Agent, terms: MandateTerms
 
 
 async def get_agent_mandate(
-    session: AsyncSession, *, organization_id: int, agent_id: int
+    session: AsyncSession,
+    *,
+    organization_id: int,
+    agent_id: int,
+    now: datetime | None = None,
+    excluding_order_id: int | None = None,
 ) -> AgentMandate:
+    """
+    With the period spend committed by the agent's orders in the spend period containing
+    `now` (default: the current time), leaving out `excluding_order_id`, e.g. the
+    pending order being re-checked.
+    """
     mandate = await crud.get_mandate_for_agent(
         session, organization_id=organization_id, agent_id=agent_id
     )
@@ -172,22 +182,24 @@ async def get_agent_mandate(
         raise MandateNotFoundError()
 
     terms = _terms_of(mandate)
+    start, end = spend_period_bounds(terms.spend_period, now or datetime.now(UTC))
+    committed, by_category = await crud.committed_spend(
+        session,
+        organization_id=organization_id,
+        agent_id=agent_id,
+        start=start,
+        end=end,
+        excluding_order_id=excluding_order_id,
+    )
     return AgentMandate(
         public_id=mandate.public_id,
         version=mandate.version,
         terms=terms,
-        period_spend=_period_spend(terms, datetime.now(UTC)),
-    )
-
-
-def _period_spend(terms: MandateTerms, now: datetime) -> PeriodSpend:
-    start, end = spend_period_bounds(terms.spend_period, now)
-    # TODO(#15): sum the agent's PLACED, APPROVED and PENDING_APPROVAL orders in the
-    # period once the order book exists
-    committed = Decimal(0)
-    return PeriodSpend(
-        period_start=start,
-        period_end=end,
-        committed=committed,
-        remaining=max(terms.period_spend_cap - committed, Decimal(0)),
+        period_spend=PeriodSpend(
+            period_start=start,
+            period_end=end,
+            committed=committed,
+            remaining=max(terms.period_spend_cap - committed, Decimal(0)),
+            committed_by_category=by_category,
+        ),
     )

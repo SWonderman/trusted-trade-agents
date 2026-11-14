@@ -3,3 +3,17 @@ from enum import StrEnum
 
 class AuditEventType(StrEnum):
     QUOTE_CREATED = "QUOTE_CREATED"
+    # An agent asked to place an order from a quote
+    ORDER_REQUESTED = "ORDER_REQUESTED"
+    # Live data re-checked and judged, at placing and at approval, with what changed
+    ORDER_RECHECKED = "ORDER_RECHECKED"
+    # The order entered that status
+    ORDER_CONFIRMED = "ORDER_CONFIRMED"
+    ORDER_PENDING_APPROVAL = "ORDER_PENDING_APPROVAL"
+    # A human approved it, with the approver and note
+    ORDER_APPROVED = "ORDER_APPROVED"
+    ORDER_PLACED = "ORDER_PLACED"
+    # The policy rejected it
+    ORDER_REJECTED = "ORDER_REJECTED"
+    # A human rejected it, with the approver and note
+    ORDER_REJECTED_BY_HUMAN = "ORDER_REJECTED_BY_HUMAN"

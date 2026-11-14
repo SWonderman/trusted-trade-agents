@@ -115,16 +115,19 @@ create_quote ─▶ QUOTED ──(expiry / closingTime passed)──▶ EXPIRED
                   │
      ┌────────────┼──────────────────────┐
      ▼            ▼                      ▼
- CONFIRMED   PENDING_APPROVAL         REJECTED (policy hard-fail,
- (auto)           │                    or re-check failed)
-     │      human approves / rejects
-     │       │            │
-     │       ▼            ▼
-     │    APPROVED     REJECTED
+ CONFIRMED   PENDING_APPROVAL ◀─┐     REJECTED (policy hard-fail)
+ (auto)           │             │
+     │      human approves / rejects (approval re-checks live data)
+     │       │            │     │
+     │       ▼            ▼     └─ new NEEDS_HUMAN reason or higher total:
+     │    APPROVED     REJECTED      stays pending, to be decided again
      │       │
      ▼       ▼
    PLACED (recorded in our order book; the mock API has no order endpoint)
 ```
+
+- **A failed re-check creates no order.** If the Valio Aimo API is unavailable when an order is placed, the agent gets an error and the quote stays orderable. One quote gives at most one order, so rejecting it would use the quote up over an outage.
+- **An approval never commits more than the approver saw.** The approval re-check rejects the order if a hard-fail now applies (e.g. the closing time has passed). A needs-human reason the order wasn't pending with, or a total above the one it was pending with, keeps it pending with the new reasons and total shown, to be decided again.
 
 ### 3.6 Mandate model (first draft)
 

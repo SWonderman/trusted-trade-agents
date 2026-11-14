@@ -1,5 +1,6 @@
 from enum import StrEnum
 from typing import Any
+from uuid import UUID
 
 from fastapi import HTTPException, status
 from pydantic import Field, create_model
@@ -59,6 +60,7 @@ class ErrorCode(StrEnum):
 
     # Orders
     ORDER_NOT_FOUND = "ORDER_NOT_FOUND"
+    ORDER_NOT_PENDING = "ORDER_NOT_PENDING"
     ORDER_ALREADY_FULFILLED = "ORDER_ALREADY_FULFILLED"
     SHIPPING_ADDRESS_MISSING = "SHIPPING_ADDRESS_MISSING"
 
@@ -91,6 +93,8 @@ class ErrorCode(StrEnum):
 
     # Quotes
     QUOTE_NOT_FOUND = "QUOTE_NOT_FOUND"
+    QUOTE_EXPIRED = "QUOTE_EXPIRED"
+    QUOTE_ALREADY_ORDERED = "QUOTE_ALREADY_ORDERED"
 
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
@@ -104,8 +108,11 @@ class SaintElmoHTTPException(HTTPException):
         error_code: ErrorCode,
         detail: str,
         headers: Headers | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         self.error_code: ErrorCode = error_code
+        # Machine-readable context for the error, e.g. the id of a conflicting resource
+        self.details: dict[str, Any] | None = details
 
         super().__init__(
             status_code=status_code,
@@ -668,6 +675,42 @@ class QuoteNotFound(SaintElmoHTTPException):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             error_code=ErrorCode.QUOTE_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class QuoteExpired(SaintElmoHTTPException):
+    def __init__(self, detail: str = "The quote has expired; quote again for fresh prices"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.QUOTE_EXPIRED,
+            detail=detail,
+        )
+
+
+class QuoteAlreadyOrdered(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "An order was already placed from this quote; `details.orderId` is that order",
+        details: dict[str, Any] | None = None,
+    ):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.QUOTE_ALREADY_ORDERED,
+            detail=detail,
+            details=details,
+        )
+
+    @classmethod
+    def for_order(cls, order_public_id: UUID) -> "QuoteAlreadyOrdered":
+        return cls(details={"orderId": str(order_public_id)})
+
+
+class OrderNotPending(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Only an order pending approval can be approved or rejected"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.ORDER_NOT_PENDING,
             detail=detail,
         )
 

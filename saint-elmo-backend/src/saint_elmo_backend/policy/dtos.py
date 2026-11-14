@@ -13,6 +13,19 @@ from saint_elmo_backend.policy.enums import PolicyOutcome, PolicyReasonCode, Sev
 
 
 @dataclass(frozen=True, slots=True)
+class LineRequest:
+    """
+    One line to price and judge, as a quote requested it. `unit` None means the quantity is in the product's sales unit. `substitutes_for` is
+    the product code this line is a substitute for.
+    """
+
+    product_code: str
+    quantity: Decimal
+    unit: str | None = None
+    substitutes_for: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class ProductFacts:
     """
     What the catalog declares about a product. An allergen without an entry, a claim,

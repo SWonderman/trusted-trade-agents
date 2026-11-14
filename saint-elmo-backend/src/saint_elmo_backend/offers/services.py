@@ -1,5 +1,5 @@
 """
-Live offers (#12): price and availability from the Valio Aimo API for a shortlist of
+Live offers: price and availability from the Valio Aimo API for a shortlist of
 products on a delivery date, with quantities converted to sales units.
 
 The Valio Aimo client hands over the API's values as they are. Turning them into
@@ -60,10 +60,14 @@ async def get_offers(
     language: Language,
     now: datetime,
     ignore_closing_time: bool = False,
+    use_cache: bool = True,
 ) -> Offers:
     """
     Raises `UnknownProductsError` listing every unknown code, `CustomerNumberMissingError`,
     and lets the client's `ValioAimoError` through when the API stays unavailable.
+
+    `use_cache=False` asks the API for every product, as placing an order must; the
+    fresh answers still refresh the cache.
 
     `ignore_closing_time` is a demo setting for the live mock, whose closing times are a
     frozen snapshot that has passed: a passed closing time then neither misses the
@@ -79,8 +83,10 @@ async def get_offers(
     if not customer:
         raise CustomerNumberMissingError(organization_id)
 
-    prices = await _prices(valio_aimo, cache, customer, deliver_by, codes, now)
-    availability = await _availability(valio_aimo, cache, customer, deliver_by, codes, now)
+    prices = await _prices(valio_aimo, cache, customer, deliver_by, codes, now, use_cache)
+    availability = await _availability(
+        valio_aimo, cache, customer, deliver_by, codes, now, use_cache
+    )
 
     return Offers(
         deliver_by=deliver_by,
@@ -108,12 +114,17 @@ async def _prices(
     on: date,
     codes: list[str],
     now: datetime,
+    use_cache: bool,
 ) -> dict[str, tuple[Cached[ProductPrice], bool]]:
     """
     Product code -> (price, whether it came from the cache). Only uncached products are
     sent to the API.
     """
-    found = {code: entry for code in codes if (entry := cache.get_price(customer, code, on, now))}
+    found = {
+        code: entry
+        for code in codes
+        if use_cache and (entry := cache.get_price(customer, code, on, now))
+    }
     result = {code: (entry, True) for code, entry in found.items()}
 
     if missing := [code for code in codes if code not in found]:
@@ -130,9 +141,12 @@ async def _availability(
     on: date,
     codes: list[str],
     now: datetime,
+    use_cache: bool,
 ) -> dict[str, tuple[Cached[ProductAvailability], bool]]:
     found = {
-        code: entry for code in codes if (entry := cache.get_availability(customer, code, on, now))
+        code: entry
+        for code in codes
+        if use_cache and (entry := cache.get_availability(customer, code, on, now))
     }
     result = {code: (entry, True) for code, entry in found.items()}
 

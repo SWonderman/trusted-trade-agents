@@ -19,7 +19,8 @@ class ErrorBody(CamelBaseModel):
     code: ErrorCode
     message: str
     request_id: str | None = None
-    details: list[ErrorFieldDetail] | None = None
+    # Field errors for a validation error; otherwise the error's own context
+    details: list[ErrorFieldDetail] | dict[str, Any] | None = None
 
 
 class ErrorEnvelope(CamelBaseModel):
@@ -30,7 +31,7 @@ def _prepare_envelope(
     error_code: ErrorCode,
     message: str,
     request: Request,
-    details: list[dict[str, Any]] | None = None,
+    details: list[dict[str, Any]] | dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     envelope = ErrorEnvelope(
         error=ErrorBody(
@@ -50,6 +51,7 @@ async def _handle_saint_elmo_error(request: Request, exc: SaintElmoHTTPException
             error_code=exc.error_code,
             message=exc.detail,
             request=request,
+            details=exc.details,
         ),
         headers=exc.headers,
     )
