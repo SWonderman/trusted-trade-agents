@@ -3,6 +3,7 @@
 	import Roundel from '#lib/components/Roundel.svelte';
 	import OrderJourney from '#lib/components/marketing/OrderJourney.svelte';
 	import MandatePlayground from '#lib/components/marketing/MandatePlayground.svelte';
+	import ApiExample from '#lib/components/marketing/ApiExample.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import ScaleIcon from '@lucide/svelte/icons/scale';
@@ -271,10 +272,10 @@
 		</section>
 
 		<!-- Openness -->
-		<section id="open" class="deep open" aria-labelledby="open-title">
+		<section id="open" class="ivory open" aria-labelledby="open-title">
 			<div class="wrap open-grid">
 				<div {@attach reveal}>
-					<p class="kicker kicker-gold">For developers</p>
+					<p class="kicker">For developers</p>
 					<h2 id="open-title" class="font-display-tight">One API, two doors</h2>
 					<p class="body">
 						The MCP server is a thin adapter over the same backend that REST clients and the console
@@ -293,27 +294,9 @@
 					</ul>
 				</div>
 
-				<figure class="terminal" {@attach reveal}>
-					<div class="terminal-bar">
-						<span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-						<span class="code">place_order · dairy-restock</span>
-					</div>
-					<pre class="code"><code
-							><span class="t-key">"status"</span>: <span class="t-str">"PENDING_APPROVAL"</span>,
-<span class="t-key">"policy"</span>: &#123;
-  <span class="t-key">"outcome"</span>: <span class="t-str">"NEEDS_HUMAN"</span>,
-  <span class="t-key">"reasonCodes"</span>: [<span class="t-str">"OVER_AUTO_APPROVE_LIMIT"</span>]
-&#125;,
-<span class="t-key">"total"</span>: &#123; <span class="t-key">"net"</span>: <span class="t-num"
-								>1840.00</span
-							>, <span class="t-key">"currency"</span>: <span class="t-str">"EUR"</span
-							> &#125;</code
-						></pre>
-					<figcaption>
-						Illustrative. The agent never waits for a person: it checks back with
-						<span class="code">get_order_status</span>.
-					</figcaption>
-				</figure>
+				<div {@attach reveal}>
+					<ApiExample />
+				</div>
 			</div>
 		</section>
 
@@ -444,7 +427,7 @@
 		position: sticky;
 		top: 0;
 		z-index: 40;
-		background: oklch(0.985 0.008 85 / 0.78);
+		background: oklch(0.985 0.008 85 / 0.92);
 		backdrop-filter: blur(14px) saturate(1.4);
 		-webkit-backdrop-filter: blur(14px) saturate(1.4);
 		border-bottom: 1px solid var(--ink-faint);
@@ -891,11 +874,6 @@
 	.night {
 		background: var(--lapis-night);
 	}
-	.deep {
-		background:
-			radial-gradient(ellipse 60% 70% at 85% 30%, oklch(0.78 0.11 268 / 0.12), transparent 70%),
-			var(--lapis-deep);
-	}
 	.mandate {
 		padding-block: 6.5rem;
 		scroll-margin-top: 4rem;
@@ -922,6 +900,20 @@
 	.open h2 {
 		margin-top: 1rem;
 		color: var(--on-night);
+	}
+	/* Developers: back on ivory, like the hero */
+	.ivory {
+		background:
+			radial-gradient(ellipse 45% 60% at 80% 40%, oklch(0.88 0.08 82 / 0.28), transparent 70%),
+			var(--ivory);
+		color: var(--ink);
+		border-top: 1px solid var(--ink-faint);
+	}
+	.open h2 {
+		color: var(--ink);
+	}
+	.open .body {
+		color: var(--ink-soft);
 	}
 	.body {
 		margin-top: 1.5rem;
@@ -965,8 +957,9 @@
 		width: 2.25rem;
 		height: 2.25rem;
 		border-radius: 0.625rem;
-		border: 1px solid var(--hair);
-		color: var(--gold-fixed);
+		border: 1px solid oklch(0.55 0.11 68 / 0.3);
+		background: oklch(1 0 0 / 0.7);
+		color: var(--ochre);
 	}
 	.door-icon :global(svg) {
 		width: 1rem;
@@ -980,58 +973,8 @@
 		margin-top: 0.25rem;
 		font-size: 0.9375rem;
 		line-height: 1.6;
-		color: var(--on-night-soft);
+		color: var(--ink-soft);
 	}
-	.terminal {
-		border-radius: 1rem;
-		overflow: hidden;
-		background: oklch(0.13 0.03 270);
-		border: 1px solid oklch(1 0 0 / 0.1);
-		box-shadow: 0 40px 80px -40px oklch(0 0 0 / 0.8);
-	}
-	.terminal-bar {
-		display: flex;
-		align-items: center;
-		gap: 0.875rem;
-		padding: 0.75rem 1rem;
-		border-bottom: 1px solid oklch(1 0 0 / 0.08);
-		font-size: 0.75rem;
-		color: var(--on-night-soft);
-	}
-	.lights {
-		display: flex;
-		gap: 0.375rem;
-	}
-	.lights i {
-		width: 0.625rem;
-		height: 0.625rem;
-		border-radius: 50%;
-		background: oklch(1 0 0 / 0.14);
-	}
-	.terminal pre {
-		margin: 0;
-		padding: 1.25rem 1.25rem 1.5rem;
-		overflow-x: auto;
-		font-size: 0.8125rem;
-		line-height: 1.7;
-		color: var(--on-night);
-	}
-	.t-key {
-		color: var(--corona);
-	}
-	.t-str {
-		color: var(--gold-fixed);
-	}
-	.t-num {
-		color: var(--ok-tone);
-	}
-	.terminal figcaption {
-		margin: 0;
-		padding: 0.875rem 1.25rem;
-		border-top: 1px solid oklch(1 0 0 / 0.08);
-		font-size: 0.75rem;
-	}
-
 	/* Closing band */
 	.cta-band {
 		padding-block: 6rem;
