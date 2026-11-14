@@ -1,12 +1,10 @@
-"""
-Shared pytest fixtures.
+import base64
+import os
+import secrets
 
-Lives at the project root so it is visible to every co-located domain test
-(e.g. catalog/tests/). Integration-oriented: the DB fixtures need the compose
-Postgres running, but run against a separate `<POSTGRES_DB>_test` database that is
-created and migrated on first use, so the seeded dev catalog is never touched.
-Pure unit tests request none of these fixtures and stay DB-free.
-"""
+# NOTE(sw): keys do not depend on the developer's .env keys
+os.environ["JWT_SECRET"] = secrets.token_urlsafe(48)
+os.environ["AGENT_TOKEN_SIGNING_KEY"] = base64.urlsafe_b64encode(os.urandom(32)).decode()
 
 import asyncio
 from collections.abc import AsyncIterator, Iterator
@@ -38,9 +36,6 @@ def test_db_url() -> Iterator[str]:
 
     with pytest.MonkeyPatch.context() as mp:
         mp.setenv("DB_URL", url)
-        # TODO(#7): connect as app_runtime once a migration provisions the role, so
-        # tests exercise RLS. Until then the app uses the owner role in tests.
-        mp.setenv("APP_DB_URL", url)
         get_settings.cache_clear()
 
         asyncio.run(create_database(url))
@@ -76,7 +71,7 @@ async def reference_data(clean_db, session) -> None:
 @pytest.fixture
 async def session(test_db_url) -> AsyncIterator[AsyncSession]:
     """
-    Owner-role session on the test DB, for arranging data and checking results.
+    Session on the test DB, for arranging data and checking results.
     """
     engine = create_async_engine(test_db_url)
     try:

@@ -1,10 +1,3 @@
-"""
-Valio Aimo product catalogue, loaded from the static challenge data.
-
-Global (shared by all tenants): no TenantMixin and no row-level security. Read-only at
-runtime - rows are written only by the catalogue seeder.
-"""
-
 from datetime import datetime
 from decimal import Decimal
 from typing import Any

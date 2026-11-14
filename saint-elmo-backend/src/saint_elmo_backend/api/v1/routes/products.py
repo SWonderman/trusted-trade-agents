@@ -1,13 +1,17 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
+from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.api.annotations import ASession
 from saint_elmo_backend.api.exceptions import (
+    InvalidCredentials,
+    PermissionDenied,
     ProductNotFound,
     UnknownFilterCodes,
     to_response_error,
 )
+from saint_elmo_backend.api.v1.auth import authenticate
 from saint_elmo_backend.catalog import services
 from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.catalog.exceptions import ProductNotFoundError, UnknownCodesError
@@ -17,10 +21,12 @@ from saint_elmo_backend.catalog.schemas import (
     ProductSearchResponse,
 )
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(authenticate(users=True, agent_scope=Scope.CATALOG_READ))],
+    responses=to_response_error(InvalidCredentials, PermissionDenied),
+)
 
 
-# TODO(#7): require auth once the auth ticket lands; the catalogue is global, non-tenant data
 @router.post(
     "/search",
     response_model=ProductSearchResponse,
@@ -46,7 +52,6 @@ async def search_products(data: ProductSearchRequest, session: ASession) -> Prod
     return ProductSearchResponse.from_result(result)
 
 
-# TODO(#7): require auth once the auth ticket lands; the catalogue is global, non-tenant data
 @router.get(
     "/{code}",
     response_model=ProductDetailResponse,
