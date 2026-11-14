@@ -3,6 +3,8 @@ from enum import StrEnum
 
 class AuditEventType(StrEnum):
     QUOTE_CREATED = "QUOTE_CREATED"
+    # An agent asked for ranked substitutes, with the candidates returned
+    SUBSTITUTES_REQUESTED = "SUBSTITUTES_REQUESTED"
     # An agent asked to place an order from a quote
     ORDER_REQUESTED = "ORDER_REQUESTED"
     # Live data re-checked and judged, at placing and at approval, with what changed

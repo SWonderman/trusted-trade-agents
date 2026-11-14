@@ -102,10 +102,16 @@ def _matching_product_ids(query: str) -> Select:
 
 def _filter_conditions(filters: ProductFilters) -> list[ColumnElement[bool]]:
     conditions: list[ColumnElement[bool]] = []
+    if filters.product_codes:
+        conditions.append(Product.code.in_(filters.product_codes))
     if filters.category_codes:
         conditions.append(Product.category.has(Category.code.in_(filters.category_codes)))
     if filters.vendors:
         conditions.append(Product.vendor.has(Vendor.name.in_(filters.vendors)))
+    if filters.excluded_category_codes:
+        conditions.append(~Product.category.has(Category.code.in_(filters.excluded_category_codes)))
+    if filters.excluded_vendors:
+        conditions.append(~Product.vendor.has(Vendor.name.in_(filters.excluded_vendors)))
     conditions += [
         Product.claims.any(
             and_(
@@ -227,6 +233,32 @@ async def count_products(
         stmt = stmt.join(matches, matches.c.product_id == Product.id)
 
     return (await session.execute(stmt)).scalar_one()
+
+
+async def matching_product_codes(session: AsyncSession, filters: ProductFilters) -> list[str]:
+    """
+    Codes of every product passing `filters`, most reliable first (no reliability data
+    last), then by code: the order of a search without a query.
+    """
+    stmt = (
+        select(Product.code)
+        .where(*_filter_conditions(filters))
+        .order_by(Product.delivery_reliability.desc().nulls_last(), Product.code)
+    )
+    return list((await session.scalars(stmt)).all())
+
+
+async def curated_substitute_codes(session: AsyncSession, product_id: int) -> list[str]:
+    """
+    Codes of the curated substitutes Valio Aimo lists for the product, by code.
+    """
+    stmt = (
+        select(Product.code)
+        .join(ProductSubstitution, ProductSubstitution.substitute_id == Product.id)
+        .where(ProductSubstitution.product_id == product_id)
+        .order_by(Product.code)
+    )
+    return list((await session.scalars(stmt)).all())
 
 
 async def existing_codes(

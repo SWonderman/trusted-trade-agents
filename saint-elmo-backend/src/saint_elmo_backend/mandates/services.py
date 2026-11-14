@@ -1,6 +1,5 @@
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-from zoneinfo import ZoneInfo
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,6 +8,7 @@ from saint_elmo_backend.catalog import services as catalog_services
 from saint_elmo_backend.catalog.dtos import ClaimCode
 from saint_elmo_backend.catalog.exceptions import UnknownCodesError
 from saint_elmo_backend.catalog.models import Allergen, Category, Diet, Label
+from saint_elmo_backend.core.calendar import BUYER_TIMEZONE
 from saint_elmo_backend.mandates import crud
 from saint_elmo_backend.mandates.dtos import (
     AgentMandate,
@@ -20,17 +20,14 @@ from saint_elmo_backend.mandates.enums import SpendPeriod
 from saint_elmo_backend.mandates.exceptions import MandateNotFoundError
 from saint_elmo_backend.mandates.models import Mandate
 
-# Spend periods follow the buyer organizations' calendar, which is Finnish
-SPEND_PERIOD_TIMEZONE = ZoneInfo("Europe/Helsinki")
-
 
 def spend_period_bounds(period: SpendPeriod, now: datetime) -> tuple[datetime, datetime]:
     """
     The spend period containing `now`, from its start (inclusive) to its end
-    (exclusive), both at midnight in `SPEND_PERIOD_TIMEZONE`.
+    (exclusive), both at midnight in `BUYER_TIMEZONE`.
     """
 
-    today = now.astimezone(SPEND_PERIOD_TIMEZONE).date()
+    today = now.astimezone(BUYER_TIMEZONE).date()
     match period:
         case SpendPeriod.WEEK:
             start = today - timedelta(days=today.weekday())
@@ -43,7 +40,7 @@ def spend_period_bounds(period: SpendPeriod, now: datetime) -> tuple[datetime, d
 
 
 def _midnight(day: date) -> datetime:
-    return datetime(day.year, day.month, day.day, tzinfo=SPEND_PERIOD_TIMEZONE)
+    return datetime(day.year, day.month, day.day, tzinfo=BUYER_TIMEZONE)
 
 
 def _terms_of(mandate: Mandate) -> MandateTerms:

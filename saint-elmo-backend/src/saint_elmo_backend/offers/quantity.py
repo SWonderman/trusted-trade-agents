@@ -1,5 +1,5 @@
 """
-Quantity conversion (#12, shared with quotes #14): turns a quantity in buyer units
+Quantity conversion: turns a quantity in buyer units
 (L, KG) or in one of the product's units into whole sales units and the lot size.
 
 For L and KG the amount per sales unit comes from the price: catalog price divided by
@@ -149,6 +149,22 @@ def convert_quantity(
         delivered_unit=requested_unit,
         reason_codes=reasons,
     )
+
+
+def may_express(unit: str, product: ProductMeasures) -> bool:
+    """
+    Whether the catalog suggests a quantity in `unit` can be converted for the product,
+    before a live price confirms it: `unit` is its sales unit, another of its units, or
+    L or KG with an amount declared in its name or packaging.
+    """
+    unit = unit.upper()
+    sales_unit = product.sales_unit.upper()
+    if unit == sales_unit:
+        return True
+    if unit in BUYER_UNITS:
+        return bool(_cross_check_candidates(unit, product))
+    units = {code.upper() for code in product.unit_sizes}
+    return unit in units and sales_unit in units
 
 
 def _conversion(

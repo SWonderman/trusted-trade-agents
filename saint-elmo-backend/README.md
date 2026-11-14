@@ -149,6 +149,45 @@ organisation; another organisation's quote is a 404 `QUOTE_NOT_FOUND`.
 - **Period spend** counts the agent's pending, approved and placed orders (below), so the
   period and category caps see them as well as the quote itself.
 
+## Substitutes
+
+`POST /api/v1/products/{code}/substitutes` (Agent token, `offers:read`) ranks substitutes
+for a product that can't meet a need, labelled `BEST`, `BETTER`, then `GOOD`. It only
+ranks: choosing one and quoting it with `substitutesFor` is the agent's (ADR 0002).
+`saint_elmo_backend/substitutes/`.
+
+- **Candidates**: the product's curated substitutes, then products in its category, that
+  meet the calling agent's mandate requirements (claims, labels, diets, allergen
+  exclusions at the mandate's strictness, allowed origins, minimum reliability) plus the
+  request's filters. Required codes are united and origins intersected, so a filter can
+  only narrow; disjoint origins find nothing. Blocked categories and vendors are left out,
+  since the policy rejects them; ones merely not on the allowed lists stay, with a
+  NEEDS_HUMAN `policyPreview`, so a substitute outside the mandate is escalated rather
+  than hidden. The mandate's minimum reliability lets
+  products without data through, as the policy does; the request's excludes them, as
+  search does.
+- **Buyer unit**: the request's `unit`, the original's sales unit for a bare `quantity`,
+  or without a quantity the original's live comparison unit (L or KG), falling back to its
+  sales unit; prices and previews are then for one buyer unit. Candidates whose catalog
+  declares no amount in it are dropped before pricing, and those the live conversion
+  can't express after.
+- **Live offers** are fetched for at most 50 candidates (curated first, then most reliable,
+  then by code) plus the original.
+- **Ranking** (`substitutes/ranking.py`): a score out of 100. Delivery 40 (20 for meeting
+  `deliverBy`, 20 for covering the quantity; unknown stock counts), price per buyer unit 30
+  (cheapest candidate's / this one's), reliability 15 (unknown counts as the candidates'
+  mean), labels gained 10 (5 each, at most 2), CO₂ estimate 5 (lowest / this one's,
+  unknown counts as the mean). Delivery comes first outright: candidates are ordered by
+  how many of the two delivery conditions they meet, then by score, so no price
+  advantage lifts a late candidate above an on-time one. Ties go to curated substitutes,
+  then the lower code.
+- **`policyPreview`** judges each candidate as a substitute line for the original, with
+  the agent's mandate and period spend, as a quote would now. It commits to nothing.
+- Without `deliverBy`, offers are evaluated for tomorrow (Europe/Helsinki), echoed in
+  `deliverBy`. No candidates is a 200 with `NO_SUBSTITUTES_FOUND`.
+- **Audit**: `SUBSTITUTES_REQUESTED` with the request, the candidates priced, and those
+  returned with their ranks, scores and previews.
+
 ## Orders
 
 `POST /api/v1/orders` (Agent token, `order:place`) places an order from one of the

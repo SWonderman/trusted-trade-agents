@@ -3,7 +3,7 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from pydantic import Field, create_model
+from pydantic import BaseModel, Field, create_model
 
 from saint_elmo_backend.core.schema import CamelBaseModel
 
@@ -622,6 +622,20 @@ class UnknownFilterCodes(SaintElmoHTTPException):
         """
         listed = ", ".join(f"{field}=[{', '.join(codes)}]" for field, codes in unknown.items())
         return cls(f"Unknown codes: {listed}")
+
+    @classmethod
+    def for_request(
+        cls, request: type[BaseModel], unknown: dict[str, list[str]]
+    ) -> "UnknownFilterCodes":
+        """
+        `unknown` maps `request`'s Python field names to their unknown codes. They are
+        named by request field (its alias), so the agent can map each code back to its
+        filter.
+        """
+        fields = request.model_fields
+        return cls.for_filters(
+            {fields[name].alias or name: codes for name, codes in unknown.items()}
+        )
 
 
 class UnknownProducts(SaintElmoHTTPException):
