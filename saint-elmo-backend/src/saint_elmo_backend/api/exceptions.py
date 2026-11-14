@@ -80,6 +80,7 @@ class ErrorCode(StrEnum):
     DUPLICATE_CATEGORY = "DUPLICATE_CATEGORY"
     DUPLICATE_SKU = "DUPLICATE_SKU"
     DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
+    UNKNOWN_CODE = "UNKNOWN_CODE"
 
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
@@ -582,6 +583,18 @@ class DuplicateIdentifier(SaintElmoHTTPException):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
             error_code=ErrorCode.DUPLICATE_IDENTIFIER,
+            detail=detail,
+        )
+
+
+class UnknownCode(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "Unknown codes: requiredDiets=[CARNIVORE], requiredLabels=[ORGANIC]",
+    ):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            error_code=ErrorCode.UNKNOWN_CODE,
             detail=detail,
         )
 
