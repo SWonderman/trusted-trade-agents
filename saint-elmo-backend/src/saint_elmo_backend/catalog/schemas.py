@@ -1,11 +1,13 @@
 from datetime import date
-from typing import Any, Literal
+from decimal import Decimal
+from typing import Annotated, Any, Literal
 
-from pydantic import Field
+from pydantic import Field, StringConstraints
 
 from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
     ProductDetail,
+    ProductFilters,
     ProductSearchHit,
     ProductSearchResult,
 )
@@ -20,6 +22,11 @@ from saint_elmo_backend.catalog.models import Product
 from saint_elmo_backend.core.schema import CamelBaseModel, DecimalNumber
 
 
+class Claim(CamelBaseModel):
+    type: str = Field(description="GS1 claim type, e.g. FREE_FROM")
+    element: str = Field(description="GS1 claim element, e.g. LACTOSE")
+
+
 class ProductSearchRequest(CamelBaseModel):
     query: str | None = Field(
         default=None,
@@ -29,8 +36,45 @@ class ProductSearchRequest(CamelBaseModel):
         default=Language.EN,
         description="Language of the returned texts; falls back to fi when missing",
     )
+    category_codes: list[str] = Field(
+        default_factory=list, description="Product must be in any of these categories"
+    )
+    vendors: list[str] = Field(
+        default_factory=list, description="Product must come from any of these vendors, by name"
+    )
+    required_claims: list[Claim] = Field(
+        default_factory=list, description="Product must carry all of these claims"
+    )
+    required_diets: list[str] = Field(
+        default_factory=list, description="GS1 diet codes, e.g. VEGAN; product must carry all"
+    )
+    required_labels: list[str] = Field(
+        default_factory=list,
+        description="Packaging label codes, e.g. EU_ORGANIC_FARMING; product must carry all",
+    )
+    countries_of_origin: list[Annotated[str, StringConstraints(pattern=r"^[A-Za-z]{2}$")]] = Field(
+        default_factory=list,
+        description="ISO 3166-1 alpha-2, any case; product must come from any of these",
+    )
+    min_delivery_reliability: Decimal | None = Field(
+        default=None,
+        ge=0,
+        le=1,
+        description="Excludes products below this share and products with no delivery history",
+    )
     limit: int = Field(default=20, ge=1, le=100)
     offset: int = Field(default=0, ge=0)
+
+    def to_filters(self) -> ProductFilters:
+        return ProductFilters(
+            category_codes=tuple(self.category_codes),
+            vendors=tuple(self.vendors),
+            required_claims=tuple((claim.type, claim.element) for claim in self.required_claims),
+            required_diets=tuple(self.required_diets),
+            required_labels=tuple(self.required_labels),
+            countries_of_origin=tuple(country.lower() for country in self.countries_of_origin),
+            min_delivery_reliability=self.min_delivery_reliability,
+        )
 
 
 class Provenance(CamelBaseModel):
@@ -57,11 +101,6 @@ class ProductUnit(CamelBaseModel):
     code: str
     size_in_base_units: DecimalNumber
     gtin: str | None = Field(description="GTIN of this packaging level, e.g. the case")
-
-
-class Claim(CamelBaseModel):
-    type: str = Field(description="GS1 claim type, e.g. FREE_FROM")
-    element: str = Field(description="GS1 claim element, e.g. LACTOSE")
 
 
 class ProductSummary(CamelBaseModel):

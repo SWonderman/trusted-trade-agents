@@ -80,6 +80,7 @@ class ErrorCode(StrEnum):
     DUPLICATE_CATEGORY = "DUPLICATE_CATEGORY"
     DUPLICATE_SKU = "DUPLICATE_SKU"
     DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
+    UNKNOWN_CODE = "UNKNOWN_CODE"
 
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
@@ -584,6 +585,26 @@ class DuplicateIdentifier(SaintElmoHTTPException):
             error_code=ErrorCode.DUPLICATE_IDENTIFIER,
             detail=detail,
         )
+
+
+class UnknownFilterCodes(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Search filters name codes the catalog does not know"):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            error_code=ErrorCode.UNKNOWN_CODE,
+            detail=detail,
+        )
+
+    @classmethod
+    def for_filters(cls, unknown: dict[str, list[str]]) -> "UnknownFilterCodes":
+        """
+        `unknown` maps request field names to their unknown codes.
+
+        Example:
+        "Unknown codes: requiredDiets=[CARNIVORE], requiredLabels=[ORGANIC]".
+        """
+        listed = ", ".join(f"{field}=[{', '.join(codes)}]" for field, codes in unknown.items())
+        return cls(f"Unknown codes: {listed}")
 
 
 class LocationNotFound(SaintElmoHTTPException):

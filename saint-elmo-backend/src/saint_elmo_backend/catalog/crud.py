@@ -1,20 +1,26 @@
+from collections.abc import Collection
 from typing import Any
 
-from sqlalchemy import ColumnElement, Select, case, cast, func, literal, null, or_, select
+from sqlalchemy import ColumnElement, Select, and_, case, cast, func, literal, null, or_, select
 from sqlalchemy.dialects.postgresql import REGCONFIG
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import InstrumentedAttribute, joinedload, selectinload
 
-from saint_elmo_backend.catalog.dtos import ProductMatch
+from saint_elmo_backend.catalog.dtos import ProductFilters, ProductMatch
 from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.catalog.models import (
+    Category,
     Product,
     ProductAllergen,
+    ProductClaim,
+    ProductDiet,
     ProductFishSpecies,
     ProductIngredient,
+    ProductLabel,
     ProductSafetySheet,
     ProductSubstitution,
     ProductTranslation,
+    Vendor,
 )
 
 # Each translation's search vector is built with its own language's configuration
@@ -70,8 +76,42 @@ def _matching_product_ids(query: str) -> Select:
     )
 
 
+def _filter_conditions(filters: ProductFilters) -> list[ColumnElement[bool]]:
+    conditions: list[ColumnElement[bool]] = []
+    if filters.category_codes:
+        conditions.append(Product.category.has(Category.code.in_(filters.category_codes)))
+    if filters.vendors:
+        conditions.append(Product.vendor.has(Vendor.name.in_(filters.vendors)))
+    conditions += [
+        Product.claims.any(
+            and_(
+                ProductClaim.claim_type_code == claim_type,
+                ProductClaim.claim_element_code == element,
+            )
+        )
+        for claim_type, element in filters.required_claims
+    ]
+    conditions += [
+        Product.diets.any(ProductDiet.diet_code == diet) for diet in filters.required_diets
+    ]
+    conditions += [
+        Product.labels.any(ProductLabel.label_code == label) for label in filters.required_labels
+    ]
+    if filters.countries_of_origin:
+        conditions.append(Product.country_of_origin.in_(filters.countries_of_origin))
+    if filters.min_delivery_reliability is not None:
+        # NULL compares as unknown, so products without reliability data drop out
+        conditions.append(Product.delivery_reliability >= filters.min_delivery_reliability)
+    return conditions
+
+
 async def search_products(
-    session: AsyncSession, *, query: str | None, limit: int, offset: int
+    session: AsyncSession,
+    *,
+    query: str | None,
+    filters: ProductFilters,
+    limit: int,
+    offset: int,
 ) -> list[ProductMatch]:
     if query is None:
         stmt = select(Product, null().label("relevance")).order_by(
@@ -85,7 +125,8 @@ async def search_products(
             .order_by(matches.c.relevance.desc(), Product.code)
         )
     stmt = (
-        stmt.limit(limit)
+        stmt.where(*_filter_conditions(filters))
+        .limit(limit)
         .offset(offset)
         .options(
             selectinload(Product.translations),
@@ -106,13 +147,26 @@ async def search_products(
     ]
 
 
-async def count_products(session: AsyncSession, *, query: str | None) -> int:
-    if query is None:
-        stmt = select(func.count()).select_from(Product)
-    else:
-        stmt = select(func.count()).select_from(_matching_product_ids(query).subquery())
+async def count_products(
+    session: AsyncSession, *, query: str | None, filters: ProductFilters
+) -> int:
+    stmt = select(func.count()).select_from(Product).where(*_filter_conditions(filters))
+    if query is not None:
+        matches = _matching_product_ids(query).subquery()
+        stmt = stmt.join(matches, matches.c.product_id == Product.id)
 
     return (await session.execute(stmt)).scalar_one()
+
+
+async def existing_codes(
+    session: AsyncSession, column: InstrumentedAttribute[str], codes: Collection[str]
+) -> set[str]:
+    """
+    The subset of `codes` present in `column`, e.g. Diet.code.
+    """
+    if not codes:
+        return set()
+    return set((await session.scalars(select(column).where(column.in_(codes)))).all())
 
 
 async def get_product_by_code(session: AsyncSession, code: str) -> Product | None:

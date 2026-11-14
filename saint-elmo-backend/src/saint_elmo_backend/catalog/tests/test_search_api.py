@@ -278,6 +278,125 @@ async def test_limit_above_100_is_rejected(client):
     assert response.status_code == 422
 
 
+@pytest.mark.parametrize(
+    ("filters", "matching", "other"),
+    [
+        ({"categoryCodes": ["C200"]}, {"category": "C200"}, {"category": "C300"}),
+        ({"vendors": ["Valio Oy"]}, {"vendor": "Valio Oy"}, {"vendor": "Arla Oy"}),
+        (
+            {"requiredClaims": [{"type": "FREE_FROM", "element": "LACTOSE"}]},
+            {"claims": [("FREE_FROM", "LACTOSE")]},
+            {"claims": [("FREE_FROM", "GLUTEN")]},
+        ),
+        ({"requiredDiets": ["VEGAN"]}, {"diets": ["VEGAN"]}, {"diets": ["HALAL"]}),
+        (
+            {"requiredLabels": ["EU_ORGANIC_FARMING"]},
+            {"labels": ["EU_ORGANIC_FARMING"]},
+            {"labels": ["SVANEN"]},
+        ),
+        ({"countriesOfOrigin": ["FI"]}, {"country_of_origin": "fi"}, {"country_of_origin": "se"}),
+        (
+            {"minDeliveryReliability": 0.9},
+            {"delivery_reliability": Decimal("0.95")},
+            {"delivery_reliability": None},
+        ),
+    ],
+    ids=["category", "vendor", "claim", "diet", "label", "country", "reliability"],
+)
+async def test_each_filter_alone_returns_only_matching_products(
+    reference_data, session, client, filters, matching, other
+):
+    await make_product(session, code="100001", **matching)
+    await make_product(session, code="100002", **other)
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json=filters)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total"] == 1
+    assert [item["code"] for item in body["items"]] == ["100001"]
+
+
+async def test_filters_narrow_a_query_and_total_counts_the_filtered_matches(
+    reference_data, session, client
+):
+    for code in ("100001", "100002"):
+        await make_product(
+            session,
+            code=code,
+            names={"en": "Lactose free milk"},
+            diets=["VEGAN"],
+            country_of_origin="fi",
+        )
+    await make_product(session, code="100003", names={"en": "Lactose free milk"}, diets=["VEGAN"])
+    await make_product(
+        session, code="100004", names={"en": "Butter"}, diets=["VEGAN"], country_of_origin="fi"
+    )
+    await session.commit()
+
+    response = await client.post(
+        SEARCH_URL,
+        json={
+            "query": "milk",
+            "requiredDiets": ["VEGAN"],
+            "countriesOfOrigin": ["fi", "se"],
+            "limit": 1,
+        },
+    )
+
+    body = response.json()
+    assert body["total"] == 2
+    assert [item["code"] for item in body["items"]] == ["100001"]
+
+
+async def test_unknown_codes_from_every_filter_are_listed_in_one_error(
+    reference_data, session, client
+):
+    await make_product(session, category="C200")
+    await session.commit()
+
+    response = await client.post(
+        SEARCH_URL,
+        json={
+            "categoryCodes": ["C200", "C999"],
+            "requiredClaims": [
+                {"type": "FREE_FROM", "element": "LACTOSE"},
+                {"type": "NEARLY_FREE_FROM", "element": "GLUTEN"},
+                {"type": "FREE_FROM", "element": "MOONDUST"},
+            ],
+            "requiredDiets": ["VEGAN", "CARNIVORE"],
+            "requiredLabels": ["ORGANIC", "EU_ORGANIC_FARMING"],
+        },
+    )
+
+    assert response.status_code == 422
+    error = response.json()["error"]
+    assert error["code"] == "UNKNOWN_CODE"
+    assert error["message"] == (
+        "Unknown codes: categoryCodes=[C999], requiredClaims=[NEARLY_FREE_FROM, MOONDUST], "
+        "requiredDiets=[CARNIVORE], requiredLabels=[ORGANIC]"
+    )
+
+
+async def test_known_but_unused_codes_match_nothing(reference_data, session, client):
+    await make_product(session, diets=["VEGAN"])
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"requiredDiets": ["KOSHER"]})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 0
+
+
+async def test_unknown_code_error_is_documented_in_openapi(client):
+    schema = (await client.get("/openapi.json")).json()
+
+    unprocessable = schema["paths"][SEARCH_URL]["post"]["responses"]["422"]
+    examples = unprocessable["content"]["application/json"]["examples"]
+    assert "UnknownFilterCodes" in examples
+
+
 async def test_search_request_is_documented_in_openapi(client):
     schema = (await client.get("/openapi.json")).json()
 
@@ -286,7 +405,19 @@ async def test_search_request_is_documented_in_openapi(client):
     request_model = schema["components"]["schemas"][request_ref.rsplit("/", 1)[-1]]
 
     assert request_model["properties"]["limit"]["maximum"] == 100
-    assert set(request_model["properties"]) == {"query", "language", "limit", "offset"}
+    assert set(request_model["properties"]) == {
+        "query",
+        "language",
+        "categoryCodes",
+        "vendors",
+        "requiredClaims",
+        "requiredDiets",
+        "requiredLabels",
+        "countriesOfOrigin",
+        "minDeliveryReliability",
+        "limit",
+        "offset",
+    }
 
 
 async def test_search_response_is_documented_in_openapi(client):
