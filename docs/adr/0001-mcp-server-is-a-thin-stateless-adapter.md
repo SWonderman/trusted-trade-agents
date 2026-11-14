@@ -14,4 +14,5 @@ Each tool is written by hand and maps to exactly one backend endpoint. Parameter
 
 - Policy outcomes (`REJECT`, `NEEDS_HUMAN`, shortfalls) are normal tool results. Only transport, auth and validation failures become MCP `isError` results, carrying the backend error envelope's `code`, `message` and `details`.
 - Output models duplicate a subset of the backend's response shapes. That's intended: when the contract drifts, MCP tests fail.
+- Input schemas may mirror the backend's field types and bounds (e.g. `limit` 1–100, `minDeliveryReliability` 0–1) so the agent sees them up front. They never add a rule the backend doesn't enforce, and the backend stays authoritative. A mirrored bound must change together with the backend's.
 - The MCP server requires an agent key from day one, even before the backend checks keys, so client configuration never has to change.
