@@ -1,9 +1,10 @@
 import re
 
-from typing import overload
+from decimal import Decimal
+from typing import Annotated, overload
 from collections.abc import Mapping, Iterable
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, PlainSerializer
 
 UNDERSCORE_RE = re.compile(r"(?<=[^\-_])[\-_]+[^\-_]")
 
@@ -56,3 +57,7 @@ def _to_camel(value: str | Iterable) -> str:
 
 class CamelBaseModel(BaseModel):
     model_config = ConfigDict(alias_generator=_to_camel, populate_by_name=True)
+
+
+# Decimal kept exact in Python but sent as a JSON number, not pydantic's default string
+DecimalNumber = Annotated[Decimal, PlainSerializer(float, return_type=float, when_used="json")]

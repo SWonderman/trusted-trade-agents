@@ -21,6 +21,7 @@ from saint_elmo_backend.catalog.models import (
     Product,
     ProductAllergen,
     ProductClaim,
+    ProductDeposit,
     ProductDiet,
     ProductLabel,
     ProductTranslation,
@@ -44,6 +45,7 @@ async def make_product(
     *,
     code: str | None = None,
     names: dict[str, str] | None = None,
+    marketing_texts: dict[str, str] | None = None,
     category: str = "C100",
     vendor: str = "Test Vendor",
     brand: str | None = None,
@@ -51,9 +53,11 @@ async def make_product(
     base_unit: str = "ST",
     allowed_lot_size: Decimal = Decimal("0.01"),
     units: dict[str, Decimal] | None = None,
+    unit_gtins: dict[str, str] | None = None,
     claims: Sequence[tuple[str, str]] = (),
     diets: Sequence[str] = (),
     labels: Sequence[str] = (),
+    deposits: Sequence[str] = (),
     allergens: dict[str, AllergenContainment] | None = None,
     **fields: Any,
 ) -> Product:
@@ -63,7 +67,9 @@ async def make_product(
     """
     code = code or str(next(_codes))
     names = names or {"en": f"Test product {code}"}
+    marketing_texts = marketing_texts or {}
     units = units or {base_unit: Decimal("1")}
+    unit_gtins = unit_gtins or {}
 
     product = Product(
         code=code,
@@ -74,11 +80,17 @@ async def make_product(
         vendor=await _get_or_create(session, Vendor, name=vendor),
         brand=await _get_or_create(session, Brand, name=brand) if brand else None,
         translations=[
-            ProductTranslation(language=language, name=name)
-            for language, name in names.items()
+            ProductTranslation(
+                language=language,
+                name=names.get(language),
+                marketing_text=marketing_texts.get(language),
+            )
+            for language in names | marketing_texts
         ],
         units=[
-            ProductUnit(unit_code=unit_code, size_in_base_units=size)
+            ProductUnit(
+                unit_code=unit_code, size_in_base_units=size, gtin=unit_gtins.get(unit_code)
+            )
             for unit_code, size in units.items()
         ],
         claims=[
@@ -87,6 +99,10 @@ async def make_product(
         ],
         diets=[ProductDiet(diet_code=diet) for diet in diets],
         labels=[ProductLabel(label_code=label) for label in labels],
+        deposits=[
+            ProductDeposit(material_code=material, quantity=Decimal("1"), unit="ST")
+            for material in deposits
+        ],
         allergens=[
             ProductAllergen(allergen_code=allergen, containment=containment)
             for allergen, containment in (allergens or {}).items()

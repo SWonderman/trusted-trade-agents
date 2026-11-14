@@ -1,3 +1,4 @@
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -30,6 +31,8 @@ class Settings(BaseSettings):
 
     # Static Valio Aimo data set (product JSON + CSVs), loaded by the catalogue seeder
     catalog_data_dir: Path = Path("../data")
+    # Date the static data set was exported; reported as provenance on catalogue responses
+    catalog_snapshot_date: date
 
 
 @lru_cache
