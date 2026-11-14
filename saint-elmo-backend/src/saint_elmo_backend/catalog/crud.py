@@ -1,15 +1,37 @@
 from collections.abc import Collection
 from typing import Any
 
-from sqlalchemy import ColumnElement, Select, and_, case, cast, func, literal, null, or_, select
+from sqlalchemy import (
+    ColumnElement,
+    Select,
+    and_,
+    case,
+    cast,
+    distinct,
+    func,
+    literal,
+    null,
+    or_,
+    select,
+)
 from sqlalchemy.dialects.postgresql import REGCONFIG
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute, joinedload, selectinload
 
-from saint_elmo_backend.catalog.dtos import ProductFilters, ProductMatch
+from saint_elmo_backend.catalog.dtos import (
+    CategoryUsage,
+    ClaimUsage,
+    CodeUsage,
+    GS1Code,
+    ProductFilters,
+    ProductMatch,
+)
 from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.catalog.models import (
     Category,
+    ClaimElement,
+    ClaimType,
+    CodeListMixin,
     Product,
     ProductAllergen,
     ProductClaim,
@@ -196,3 +218,87 @@ async def get_product_by_code(session: AsyncSession, code: str) -> Product | Non
         )
     )
     return await session.scalar(stmt)
+
+
+async def used_codes(
+    session: AsyncSession,
+    code_list: type[CodeListMixin],
+    *,
+    code: InstrumentedAttribute[str],
+    product_id: InstrumentedAttribute[int],
+) -> list[CodeUsage]:
+    """
+    Codes of a code list that at least one product uses, ordered by code. `code` and
+    `product_id` are the columns of the product association table referencing it.
+    """
+    stmt = (
+        select(
+            code_list.code,
+            code_list.name,
+            code_list.definition,
+            func.count(distinct(product_id)).label("product_count"),
+        )
+        .join_from(code_list, code.class_, code == code_list.code)
+        .group_by(code_list.code, code_list.name, code_list.definition)
+        .order_by(code_list.code)
+    )
+    return [
+        CodeUsage(
+            code=row.code,
+            name=row.name,
+            definition=row.definition,
+            product_count=row.product_count,
+        )
+        for row in (await session.execute(stmt)).all()
+    ]
+
+
+async def used_claims(session: AsyncSession) -> list[ClaimUsage]:
+    """
+    Claim type + element pairs that at least one product makes, ordered by type then
+    element.
+    """
+    stmt = (
+        select(
+            ClaimType.code.label("type_code"),
+            ClaimType.name.label("type_name"),
+            ClaimType.definition.label("type_definition"),
+            ClaimElement.code.label("element_code"),
+            ClaimElement.name.label("element_name"),
+            ClaimElement.definition.label("element_definition"),
+            func.count(distinct(ProductClaim.product_id)).label("product_count"),
+        )
+        .select_from(ProductClaim)
+        .join(ClaimType, ClaimType.code == ProductClaim.claim_type_code)
+        .join(ClaimElement, ClaimElement.code == ProductClaim.claim_element_code)
+        .group_by(ClaimType.id, ClaimElement.id)
+        .order_by(ClaimType.code, ClaimElement.code)
+    )
+    return [
+        ClaimUsage(
+            type=GS1Code(code=row.type_code, name=row.type_name, definition=row.type_definition),
+            element=GS1Code(
+                code=row.element_code,
+                name=row.element_name,
+                definition=row.element_definition,
+            ),
+            product_count=row.product_count,
+        )
+        for row in (await session.execute(stmt)).all()
+    ]
+
+
+async def used_categories(session: AsyncSession) -> list[CategoryUsage]:
+    """
+    Categories with at least one product, ordered by code.
+    """
+    stmt = (
+        select(Category.code, func.count(Product.id).label("product_count"))
+        .join(Product, Product.category_id == Category.id)
+        .group_by(Category.id)
+        .order_by(Category.code)
+    )
+    return [
+        CategoryUsage(code=row.code, product_count=row.product_count)
+        for row in (await session.execute(stmt)).all()
+    ]

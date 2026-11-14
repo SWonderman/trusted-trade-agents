@@ -64,3 +64,48 @@ class ProductDetail:
     name: str | None
     curated_substitutes: list[CuratedSubstitute]
     provenance: CatalogProvenance
+
+
+@dataclass(frozen=True, slots=True)
+class CodeUsage:
+    """
+    One code of a GS1 code list and how many products use it.
+    """
+
+    code: str
+    name: str | None
+    definition: str | None
+    product_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class GS1Code:
+    code: str
+    name: str | None
+    definition: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class ClaimUsage:
+    """
+    One claim type + element pair and how many products make that claim.
+    """
+
+    type: GS1Code
+    element: GS1Code
+    product_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class CategoryUsage:
+    code: str
+    product_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class CatalogVocabulary:
+    claims: list[ClaimUsage]
+    diets: list[CodeUsage]
+    labels: list[CodeUsage]
+    allergens: list[CodeUsage]
+    categories: list[CategoryUsage]
