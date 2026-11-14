@@ -5,7 +5,7 @@ from sqlalchemy import ARRAY, DateTime, Enum, ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from saint_elmo_backend.accounts.models import Organization
-from saint_elmo_backend.agents.enums import AgentStatus
+from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.db.base import Base
 from saint_elmo_backend.db.mixins import OrgOwnedMixin, PublicIdMixin, TimestampMixin
 
@@ -32,8 +32,17 @@ class AgentCredential(Base, TimestampMixin, OrgOwnedMixin):
 
     jti: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), unique=True)
     label: Mapped[str] = mapped_column(String(255))
-    # Scope values (agents.enums.Scope), validated when the token is issued
-    scopes: Mapped[list[str]] = mapped_column(ARRAY(String(32)))
+    # Stored as the scope strings themselves ("catalog:read"), the same as in the token
+    scopes: Mapped[list[Scope]] = mapped_column(
+        ARRAY(
+            Enum(
+                Scope,
+                native_enum=False,
+                length=32,
+                values_callable=lambda scopes: [scope.value for scope in scopes],
+            )
+        )
+    )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

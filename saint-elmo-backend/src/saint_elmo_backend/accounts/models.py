@@ -22,7 +22,7 @@ class Organization(Base, PublicIdMixin, TimestampMixin):
 
 class User(Base, PublicIdMixin, TimestampMixin, OrgOwnedMixin):
     """
-    A human in one buyer/client organization. Users are seeded; the only account feature is login.
+    A human in one buyer organization. Users are seeded; the only account feature is login.
     """
 
     __tablename__ = "users"

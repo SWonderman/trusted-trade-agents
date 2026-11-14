@@ -1,3 +1,13 @@
+"""
+Shared pytest fixtures.
+
+Lives at the project root so it is visible to every co-located domain test
+(e.g. catalog/tests/). Integration-oriented: the DB fixtures need the compose
+Postgres running, but run against a separate `<POSTGRES_DB>_test` database that is
+created and migrated on first use, so the seeded dev catalog is never touched.
+Pure unit tests request none of these fixtures and stay DB-free.
+"""
+
 import base64
 import os
 import secrets

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
+from saint_elmo_backend.accounts.dtos import OrganizationRef
 from saint_elmo_backend.agents.enums import Scope
 
 
@@ -15,6 +16,7 @@ class AgentTokenClaims:
     agent_public_id: UUID
     organization_public_id: UUID
     mandate_public_id: UUID
+    scopes: frozenset[Scope]
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,8 +28,7 @@ class AuthenticatedAgent:
     id: int
     public_id: UUID
     name: str
-    org_id: int
-    organization_public_id: UUID
+    organization: OrganizationRef
     mandate_public_id: UUID
     scopes: frozenset[Scope]
     credential_jti: UUID

@@ -1,5 +1,5 @@
 """
-Insert buyer organisations and users for integration tests, and mint user sessions.
+Insert buyer organizations and users for integration tests, and mint user sessions.
 
 Users are seeded, never signed up, so tests arrange them directly in the database.
 """
@@ -8,10 +8,11 @@ from itertools import count
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from saint_elmo_backend.accounts import tokens
 from saint_elmo_backend.accounts.dtos import AuthenticatedUser
 from saint_elmo_backend.accounts.enums import Role
 from saint_elmo_backend.accounts.models import Organization, User
-from saint_elmo_backend.api.v1.auth import create_access_token
+from saint_elmo_backend.accounts.services import organization_ref
 from saint_elmo_backend.core.passwords import hash_password
 
 DEFAULT_PASSWORD = "correct-horse-battery-staple"
@@ -65,7 +66,7 @@ def user_session_headers(user: User) -> dict[str, str]:
     `Authorization` header with a valid user session for `user`, without going through login.
     """
 
-    token, _ = create_access_token(
+    token, _ = tokens.sign(
         AuthenticatedUser(
             id=user.id,
             public_id=user.public_id,
@@ -73,9 +74,7 @@ def user_session_headers(user: User) -> dict[str, str]:
             first_name=user.first_name,
             last_name=user.last_name,
             role=user.role,
-            org_id=user.org_id,
-            organization_public_id=user.organization.public_id,
-            organization_name=user.organization.name,
+            organization=organization_ref(user.organization),
         )
     )
     return {"Authorization": f"Bearer {token}"}

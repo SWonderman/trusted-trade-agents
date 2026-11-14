@@ -39,7 +39,7 @@ class MeOutput(CamelBaseModel):
             last_name=user.last_name,
             role=user.role,
             organization=OrganizationSummary(
-                public_id=user.organization_public_id,
-                name=user.organization_name,
+                public_id=user.organization.public_id,
+                name=user.organization.name,
             ),
         )

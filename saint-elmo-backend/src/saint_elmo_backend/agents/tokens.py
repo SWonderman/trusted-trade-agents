@@ -13,7 +13,6 @@ import json
 from collections.abc import Collection
 from datetime import datetime
 from functools import lru_cache
-from typing import Any
 from uuid import UUID
 
 import jwt
@@ -24,12 +23,11 @@ from jwt.exceptions import InvalidTokenError
 from saint_elmo_backend.agents.dtos import AgentTokenClaims
 from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.agents.exceptions import InvalidAgentTokenError
+from saint_elmo_backend.core import exceptions, tokens
 from saint_elmo_backend.core.settings import get_settings
 
 ALGORITHM = "EdDSA"
 TOKEN_TYPE = "at+jwt"
-
-_REQUIRED_CLAIMS = ["iss", "aud", "sub", "org_id", "scope", "mandate_id", "jti", "iat", "exp"]
 
 
 def _b64url_decode(value: str) -> bytes:
@@ -83,45 +81,41 @@ def sign(
     issued_at: datetime,
     expires_at: datetime,
 ) -> str:
-    settings = get_settings()
-    payload: dict[str, Any] = {
-        "iss": settings.token_issuer,
-        "aud": settings.agent_token_audience,
-        "sub": str(agent_public_id),
-        "org_id": str(organization_public_id),
-        "scope": " ".join(sorted(scopes)),
-        "mandate_id": str(mandate_public_id),
-        "jti": str(jti),
-        "iat": int(issued_at.timestamp()),
-        "exp": int(expires_at.timestamp()),
-    }
-    return jwt.encode(
-        payload,
-        _private_key(),
+    return tokens.sign(
+        key=_private_key(),
         algorithm=ALGORITHM,
+        audience=get_settings().agent_token_audience,
+        subject=agent_public_id,
+        organization_public_id=organization_public_id,
+        issued_at=issued_at,
+        expires_at=expires_at,
+        claims={
+            "scope": " ".join(sorted(scopes)),
+            "mandate_id": str(mandate_public_id),
+            "jti": str(jti),
+        },
         headers={"kid": key_id(), "typ": TOKEN_TYPE},
     )
 
 
 def verify(token: str) -> AgentTokenClaims:
-    settings = get_settings()
     try:
         if jwt.get_unverified_header(token).get("typ") != TOKEN_TYPE:
             raise InvalidAgentTokenError()
 
-        payload = jwt.decode(
+        claims = tokens.verify(
             token,
-            _private_key().public_key(),
-            algorithms=[ALGORITHM],
-            issuer=settings.token_issuer,
-            audience=settings.agent_token_audience,
-            options={"require": _REQUIRED_CLAIMS},
+            key=_private_key().public_key(),
+            algorithm=ALGORITHM,
+            audience=get_settings().agent_token_audience,
+            required=("scope", "mandate_id", "jti"),
         )
         return AgentTokenClaims(
-            jti=UUID(payload["jti"]),
-            agent_public_id=UUID(payload["sub"]),
-            organization_public_id=UUID(payload["org_id"]),
-            mandate_public_id=UUID(payload["mandate_id"]),
+            jti=tokens.uuid_claim(claims, "jti"),
+            agent_public_id=tokens.uuid_claim(claims, "sub"),
+            organization_public_id=tokens.uuid_claim(claims, "org_id"),
+            mandate_public_id=tokens.uuid_claim(claims, "mandate_id"),
+            scopes=frozenset(Scope(scope) for scope in str(claims["scope"]).split()),
         )
-    except (InvalidTokenError, ValueError, TypeError, KeyError):
+    except (InvalidTokenError, exceptions.InvalidJWTError, ValueError):
         raise InvalidAgentTokenError() from None

@@ -87,8 +87,13 @@ def _assert_permission_denied(response, message: str) -> None:
     assert message in response.json()["error"]["message"]
 
 
-async def test_credentials_are_required(clean_db, client):
-    _assert_invalid_credentials(await client.post(SEARCH_URL, json={}))
+@pytest.mark.parametrize(
+    ("method", "url"),
+    [("POST", SEARCH_URL), ("GET", "/api/v1/products/100001")],
+    ids=["search", "detail"],
+)
+async def test_catalog_requires_credentials(clean_db, client, method, url):
+    _assert_invalid_credentials(await client.request(method, url, json={}))
 
 
 async def test_agent_token_opens_the_catalog(clean_db, session, client):
@@ -131,6 +136,7 @@ _FORGERIES: dict[str, Callable[[str], str]] = {
     "wrong audience": lambda token: _resign(token, aud=get_settings().user_token_audience),
     "wrong issuer": lambda token: _resign(token, iss="someone-else"),
     "missing mandate_id": lambda token: _resign(token, mandate_id=None),
+    "scope changed and re-signed": lambda token: _resign(token, scope="catalog:read order:place"),
     "not typed as an access token": lambda token: _resign(token, headers={"typ": "JWT"}),
     "other agent's id": lambda token: _resign(token, sub="00000000-0000-0000-0000-000000000000"),
     "unknown jti": lambda token: _resign(token, jti="00000000-0000-0000-0000-000000000000"),

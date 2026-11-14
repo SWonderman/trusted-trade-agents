@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from saint_elmo_backend.accounts import services
+from saint_elmo_backend.accounts import services, tokens
 from saint_elmo_backend.accounts.exceptions import InvalidCredentialsError
 from saint_elmo_backend.accounts.schemas import AccessTokenResponse, MeOutput
 from saint_elmo_backend.api.annotations import ASession
 from saint_elmo_backend.api.exceptions import InvalidCredentials, to_response_error
-from saint_elmo_backend.api.v1.auth import CurrentUser, create_access_token
+from saint_elmo_backend.api.v1.auth import CurrentUser
 
 router = APIRouter()
 
@@ -34,7 +34,7 @@ async def login(
     except InvalidCredentialsError:
         raise InvalidCredentials(detail="Incorrect email or password") from None
 
-    access_token, lifetime = create_access_token(user)
+    access_token, lifetime = tokens.sign(user)
     return AccessTokenResponse(
         access_token=access_token,
         expires_in=int(lifetime.total_seconds()),

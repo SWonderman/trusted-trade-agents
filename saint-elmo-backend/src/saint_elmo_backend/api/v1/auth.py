@@ -11,10 +11,8 @@ pass as the other.
 
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
 from inspect import Parameter, Signature
 from typing import Annotated
-from uuid import UUID
 
 import jwt
 from fastapi import Depends, Security
@@ -24,8 +22,10 @@ from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from saint_elmo_backend.accounts import services as account_services
-from saint_elmo_backend.accounts.dtos import AuthenticatedUser
+from saint_elmo_backend.accounts import tokens as user_session_tokens
+from saint_elmo_backend.accounts.dtos import AuthenticatedUser, OrganizationRef
 from saint_elmo_backend.accounts.enums import Permission
+from saint_elmo_backend.accounts.exceptions import InvalidCredentialsError
 from saint_elmo_backend.accounts.permissions import role_has_permission
 from saint_elmo_backend.agents import services as agent_services
 from saint_elmo_backend.agents import tokens as agent_tokens
@@ -34,9 +34,6 @@ from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.agents.exceptions import InvalidAgentTokenError
 from saint_elmo_backend.api.annotations import ASession
 from saint_elmo_backend.api.exceptions import InvalidCredentials, PermissionDenied
-from saint_elmo_backend.core.settings import get_settings
-
-_USER_SESSION_ALGORITHM = "HS256"
 
 user_session_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/token",
@@ -61,58 +58,12 @@ class Principal:
     """
     Who is calling: a user or an agent, always within exactly one buyer organisation.
 
-    Services take `org_id` from here as a required argument (ADR 0004).
+    Services take `organization.id` from here as a required argument (ADR 0004).
     """
 
-    org_id: int
-    organization_public_id: UUID
+    organization: OrganizationRef
     user: AuthenticatedUser | None = None
     agent: AuthenticatedAgent | None = None
-
-
-def create_access_token(user: AuthenticatedUser) -> tuple[str, timedelta]:
-    """
-    Sign a user session. Returns the token and its lifetime.
-    """
-
-    settings = get_settings()
-    now = datetime.now(UTC)
-    lifetime = timedelta(minutes=settings.access_token_lifetime_minutes)
-
-    payload = {
-        "iss": settings.token_issuer,
-        "aud": settings.user_token_audience,
-        "sub": str(user.public_id),
-        "org_id": str(user.organization_public_id),
-        "role": user.role,
-        "iat": int(now.timestamp()),
-        "exp": int((now + lifetime).timestamp()),
-    }
-
-    token = jwt.encode(
-        payload, settings.jwt_secret.get_secret_value(), algorithm=_USER_SESSION_ALGORITHM
-    )
-    return token, lifetime
-
-
-def _decode_access_token(token: str) -> tuple[UUID, UUID]:
-    """
-    Verify a user session and return the user's and buyer organisation's public ids.
-    """
-
-    settings = get_settings()
-    try:
-        payload = jwt.decode(
-            token,
-            settings.jwt_secret.get_secret_value(),
-            algorithms=[_USER_SESSION_ALGORITHM],
-            issuer=settings.token_issuer,
-            audience=settings.user_token_audience,
-            options={"require": ["iss", "aud", "sub", "org_id", "iat", "exp"]},
-        )
-        return UUID(payload["sub"]), UUID(payload["org_id"])
-    except (InvalidTokenError, ValueError, TypeError, KeyError):
-        raise InvalidCredentials() from None
 
 
 async def _resolve_principal(session: AsyncSession, token: str) -> Principal:
@@ -121,25 +72,22 @@ async def _resolve_principal(session: AsyncSession, token: str) -> Principal:
     except InvalidTokenError:
         raise InvalidCredentials() from None
 
-    if algorithm == _USER_SESSION_ALGORITHM:
-        user_public_id, organization_public_id = _decode_access_token(token)
-        user = await account_services.get_session_user(
-            session, user_public_id, organization_public_id
-        )
-        if user is None:
-            raise InvalidCredentials()
-        return Principal(
-            org_id=user.org_id, organization_public_id=user.organization_public_id, user=user
-        )
+    if algorithm == user_session_tokens.ALGORITHM:
+        try:
+            user = await account_services.authenticate_session(session, token)
+        except InvalidCredentialsError:
+            raise InvalidCredentials() from None
+        return Principal(organization=user.organization, user=user)
 
     if algorithm == agent_tokens.ALGORITHM:
         try:
             agent = await agent_services.authenticate_agent(session, token)
         except InvalidAgentTokenError:
             raise InvalidCredentials() from None
-        return Principal(
-            org_id=agent.org_id, organization_public_id=agent.organization_public_id, agent=agent
-        )
+        # Persist the credential's last use. Authentication is the first work on the
+        # request's session, so this commit holds nothing of the route's.
+        await session.commit()
+        return Principal(organization=agent.organization, agent=agent)
 
     raise InvalidCredentials()
 
@@ -181,7 +129,7 @@ def authenticate(*, users: bool = False, agent_scope: Scope | None = None):
             context = {"user_public_id": principal.user.public_id}
 
         with logger.contextualize(
-            organization_public_id=principal.organization_public_id, **context
+            organization_public_id=principal.organization.public_id, **context
         ):
             yield principal
 

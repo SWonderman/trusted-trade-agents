@@ -96,6 +96,10 @@ _Avoid_: Policy (the policy applies the mandate), permissions, rules
 A coarse capability on an agent token saying which kinds of operation the agent may call at all, such as reading the catalog or placing orders, independent of any mandate limit.
 _Avoid_: Permission, privilege, role
 
+**Role**:
+What a human user may do in Saint Elmo: buyer admin or approver. A role grants a fixed set of permissions, such as managing agents or approving orders. Users have a role; agents have scopes and a mandate.
+_Avoid_: Permission (for an agent's authority), user type
+
 **Revocation**:
 A buyer admin withdrawing an agent token, or every token of an agent, so that it is refused from the next request on.
 

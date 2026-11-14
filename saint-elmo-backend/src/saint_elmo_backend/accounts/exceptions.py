@@ -1,6 +1,7 @@
-class AccountError(Exception):
-    """Base class for accounts-domain errors."""
+class InvalidCredentialsError(Exception):
+    """
+    Unknown email, wrong password, an invalid user session, or an inactive user or buyer
+    organization.
 
-
-class InvalidCredentialsError(AccountError):
-    """Unknown email, wrong password, or an inactive user or buyer organization."""
+    Deliberately one error: callers learn nothing about which check failed.
+    """
