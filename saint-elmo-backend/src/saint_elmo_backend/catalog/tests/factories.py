@@ -21,6 +21,7 @@ from saint_elmo_backend.catalog.models import (
     Product,
     ProductAllergen,
     ProductClaim,
+    ProductDeposit,
     ProductDiet,
     ProductLabel,
     ProductTranslation,
@@ -55,6 +56,7 @@ async def make_product(
     claims: Sequence[tuple[str, str]] = (),
     diets: Sequence[str] = (),
     labels: Sequence[str] = (),
+    deposits: Sequence[str] = (),
     allergens: dict[str, AllergenContainment] | None = None,
     **fields: Any,
 ) -> Product:
@@ -93,6 +95,10 @@ async def make_product(
         ],
         diets=[ProductDiet(diet_code=diet) for diet in diets],
         labels=[ProductLabel(label_code=label) for label in labels],
+        deposits=[
+            ProductDeposit(material_code=material, quantity=Decimal("1"), unit="ST")
+            for material in deposits
+        ],
         allergens=[
             ProductAllergen(allergen_code=allergen, containment=containment)
             for allergen, containment in (allergens or {}).items()

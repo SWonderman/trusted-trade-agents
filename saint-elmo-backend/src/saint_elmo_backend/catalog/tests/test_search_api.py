@@ -180,6 +180,42 @@ async def test_hit_carries_the_product_attributes(reference_data, session, clien
     assert {key: hit.get(key) for key in expected} == expected
 
 
+async def test_hit_carries_units_deposit_flag_claims_diets_and_labels(
+    reference_data, session, client
+):
+    await make_product(
+        session,
+        base_unit="ST",
+        units={"ST": Decimal("1"), "KI": Decimal("12")},
+        deposits=["PANT1"],
+        claims=[("FREE_FROM", "LACTOSE")],
+        diets=["VEGAN"],
+        labels=["EU_ORGANIC_FARMING"],
+    )
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    [hit] = response.json()["items"]
+    assert sorted(hit["units"], key=lambda unit: unit["sizeInBaseUnits"]) == [
+        {"code": "ST", "sizeInBaseUnits": 1.0},
+        {"code": "KI", "sizeInBaseUnits": 12.0},
+    ]
+    assert hit["hasDeposit"] is True
+    assert hit["claims"] == [{"type": "FREE_FROM", "element": "LACTOSE"}]
+    assert hit["diets"] == ["VEGAN"]
+    assert hit["labels"] == ["EU_ORGANIC_FARMING"]
+
+
+async def test_product_without_deposits_has_no_deposit(reference_data, session, client):
+    await make_product(session)
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    assert response.json()["items"][0]["hasDeposit"] is False
+
+
 async def test_missing_reliability_carbon_footprint_and_brand_are_null(
     reference_data, session, client
 ):
@@ -231,3 +267,24 @@ async def test_search_response_is_documented_in_openapi(client):
     response_model = schema["components"]["schemas"][response_ref.rsplit("/", 1)[-1]]
 
     assert set(response_model["properties"]) == {"total", "items", "provenance"}
+    assert set(schema["components"]["schemas"]["ProductHit"]["properties"]) == {
+        "code",
+        "name",
+        "gtin",
+        "categoryCode",
+        "vendor",
+        "brand",
+        "salesUnit",
+        "baseUnit",
+        "allowedLotSize",
+        "units",
+        "variableUnit",
+        "hasDeposit",
+        "claims",
+        "diets",
+        "labels",
+        "countryOfOrigin",
+        "deliveryReliability",
+        "carbonFootprint",
+        "relevance",
+    }

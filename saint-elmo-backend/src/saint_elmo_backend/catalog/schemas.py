@@ -12,7 +12,7 @@ from saint_elmo_backend.catalog.dtos import (
 from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.core.schema import CamelBaseModel
 
-# TODO(sw): this could be moved to core.utils.py or somethinl like that
+# TODO(sw): this could be moved to core.utils.py or something like that
 def _to_float(value: Decimal | None) -> float | None:
     return float(value) if value is not None else None
 
@@ -50,6 +50,16 @@ class CarbonFootprint(CamelBaseModel):
     )
 
 
+class ProductUnit(CamelBaseModel):
+    code: str
+    size_in_base_units: float
+
+
+class Claim(CamelBaseModel):
+    type: str = Field(description="GS1 claim type, e.g. FREE_FROM")
+    element: str = Field(description="GS1 claim element, e.g. LACTOSE")
+
+
 class ProductHit(CamelBaseModel):
     code: str
     name: str | None
@@ -62,9 +72,18 @@ class ProductHit(CamelBaseModel):
     allowed_lot_size: float = Field(
         description="Order quantity must be a multiple of this, in sales units"
     )
+    units: list[ProductUnit] = Field(
+        description="Units the product can be handled in, converted to base units"
+    )
     variable_unit: bool | None = Field(
         description="Sold by variable weight, so the actual quantity of a unit varies"
     )
+    has_deposit: bool = Field(
+        description="Returnable packaging is charged together with each sales unit"
+    )
+    claims: list[Claim]
+    diets: list[str] = Field(description="GS1 diet codes, e.g. VEGAN")
+    labels: list[str] = Field(description="Packaging label codes, e.g. EU_ORGANIC_FARMING")
     country_of_origin: str | None = Field(description="ISO 3166-1 alpha-2, lowercase")
     delivery_reliability: float | None = Field(
         description="Share of historical orders delivered as ordered, 0-1; "
@@ -88,7 +107,18 @@ class ProductHit(CamelBaseModel):
             sales_unit=product.sales_unit,
             base_unit=product.base_unit,
             allowed_lot_size=float(product.allowed_lot_size),
+            units=[
+                ProductUnit(code=unit.unit_code, size_in_base_units=float(unit.size_in_base_units))
+                for unit in product.units
+            ],
             variable_unit=product.variable_unit,
+            has_deposit=bool(product.deposits),
+            claims=[
+                Claim(type=claim.claim_type_code, element=claim.claim_element_code)
+                for claim in product.claims
+            ],
+            diets=[diet.diet_code for diet in product.diets],
+            labels=[label.label_code for label in product.labels],
             country_of_origin=product.country_of_origin,
             delivery_reliability=_to_float(product.delivery_reliability),
             carbon_footprint=(

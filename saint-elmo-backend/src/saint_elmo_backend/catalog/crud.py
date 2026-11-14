@@ -72,6 +72,11 @@ async def search_products(
         .offset(offset)
         .options(
             selectinload(Product.translations),
+            selectinload(Product.units),
+            selectinload(Product.deposits),
+            selectinload(Product.claims),
+            selectinload(Product.diets),
+            selectinload(Product.labels),
             joinedload(Product.category),
             joinedload(Product.vendor),
             joinedload(Product.brand),

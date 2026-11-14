@@ -165,3 +165,34 @@ async def test_search_loads_category_vendor_and_brand(reference_data, session, q
     assert match.product.vendor.name == "Valio Oy"
     assert match.product.brand is not None
     assert match.product.brand.name == "Valio"
+
+
+@pytest.mark.parametrize("query", [None, "milk"], ids=["browse", "query"])
+async def test_search_loads_units_deposits_claims_diets_and_labels(
+    reference_data, session, query
+):
+    await make_product(
+        session,
+        names={"en": "Milk"},
+        base_unit="ST",
+        units={"ST": Decimal("1"), "KI": Decimal("12")},
+        deposits=["PANT1"],
+        claims=[("FREE_FROM", "LACTOSE")],
+        diets=["VEGAN"],
+        labels=["EU_ORGANIC_FARMING"],
+    )
+    session.expunge_all()
+
+    [match] = await crud.search_products(session, query=query, limit=20, offset=0)
+
+    product = match.product
+    assert {unit.unit_code: unit.size_in_base_units for unit in product.units} == {
+        "ST": Decimal("1"),
+        "KI": Decimal("12"),
+    }
+    assert [deposit.material_code for deposit in product.deposits] == ["PANT1"]
+    assert [(c.claim_type_code, c.claim_element_code) for c in product.claims] == [
+        ("FREE_FROM", "LACTOSE")
+    ]
+    assert [diet.diet_code for diet in product.diets] == ["VEGAN"]
+    assert [label.label_code for label in product.labels] == ["EU_ORGANIC_FARMING"]
