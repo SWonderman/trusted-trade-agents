@@ -206,6 +206,7 @@ def _build_response[T: BaseModel](
             url=url,
             status_code=raw_response.status_code(),
             error_body=raw_response.text(),
+            headers=raw_response.headers(),
         )
 
     payload: T | JsonValue | None

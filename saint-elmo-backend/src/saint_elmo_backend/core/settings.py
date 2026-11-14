@@ -3,6 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,6 +34,13 @@ class Settings(BaseSettings):
     catalog_data_dir: Path = Path("../data")
     # Date the static data set was exported; reported as provenance on catalogue responses
     catalog_snapshot_date: date
+
+    # Valio Aimo API (live price and availability). Optional so the app starts and
+    # catalog-only development works without them; calls then fail as not configured.
+    valio_aimo_api_url: str | None = None
+    valio_aimo_api_key: SecretStr | None = None
+    valio_aimo_max_attempts: int = 3  # in total, including the first
+    valio_aimo_backoff_base_seconds: float = 0.5
 
 
 @lru_cache
