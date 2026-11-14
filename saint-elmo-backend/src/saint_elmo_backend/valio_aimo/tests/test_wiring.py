@@ -65,4 +65,4 @@ async def test_routes_get_the_client_through_an_overridable_dependency() -> None
         response = await http.get("/eila-price")
 
     assert response.status_code == 200
-    assert response.json() == {"value": "39.8"}
+    assert response.json() == {"value": "31.31"}

@@ -8,6 +8,7 @@ from saint_elmo_backend.httpkit.exceptions import HttpkitConnectionError, Httpki
 from saint_elmo_backend.valio_aimo.client import ValioAimoClient
 from saint_elmo_backend.valio_aimo.exceptions import ValioAimoNotConfigured, ValioAimoUnavailable
 from saint_elmo_backend.valio_aimo.testing import (
+    BLOCKED_PRODUCT,
     EILA_10L,
     LATE_PRODUCT,
     PRICE_ERROR_PRODUCT,
@@ -75,7 +76,7 @@ async def test_ping_gets_the_ping_endpoint_with_the_api_key() -> None:
     [request] = api.requests
     assert (request.method, request.url) == (HTTPMethod.GET, "/api/ping")
     assert request.headers["X-API-Key"] == "secret"
-    assert pong == {"message": "pong"}
+    assert pong == {"status": "ok"}
 
 
 # Responses
@@ -90,9 +91,9 @@ async def test_price_parses_the_response_without_changing_values() -> None:
     assert eila.product_id == EILA_10L
     assert eila.quantity == Decimal("1.0")
     assert eila.catalog_price is not None
-    assert eila.catalog_price.value == Decimal("39.80")
+    assert eila.catalog_price.value == Decimal("31.31")
     assert eila.comparison_price is not None
-    assert eila.comparison_price.value == Decimal("1.99")
+    assert eila.comparison_price.value == Decimal("1.57")
     assert eila.comparison_unit == "L"
     assert eila.error is False
 
@@ -118,7 +119,7 @@ async def test_terminal_amount_comes_through_as_999999() -> None:
     )
 
     terminal = availability[TERMINAL_PRODUCT]
-    assert terminal.logistic_model == "TERMINAL"
+    assert terminal.logistic_model == "Terminal"
     [line] = terminal.schedule_lines
     assert line.available_amount == Decimal("999999")
 
@@ -136,6 +137,36 @@ async def test_empty_schedule_lines_and_late_dates_come_through_as_is() -> None:
     [late] = availability[LATE_PRODUCT].schedule_lines
     assert late.available_date == "2026-11-19"
     assert late.sales_block is False
+
+
+async def test_a_sales_block_comes_through_as_is() -> None:
+    client = make_fake_client(FakeValioAimoApi())
+
+    availability = await client.availability(
+        customer="123", requested_date=DELIVERY, products=[BLOCKED_PRODUCT]
+    )
+
+    blocked = availability[BLOCKED_PRODUCT]
+    assert blocked.sales_block is True
+    [line] = blocked.schedule_lines
+    assert line.sales_block is True
+    assert line.available_date == "2026-12-28"
+
+
+async def test_dates_and_times_come_through_in_the_api_format() -> None:
+    client = make_fake_client(FakeValioAimoApi())
+
+    prices = await client.price(customer="123", requested_date=DELIVERY, products=[EILA_10L])
+    availability = await client.availability(
+        customer="123", requested_date=DELIVERY, products=[EILA_10L]
+    )
+
+    price = prices[EILA_10L].catalog_price
+    assert price is not None
+    assert price.valid_from == "2026-09-01T00:00:00+0300"
+    assert availability[EILA_10L].closing_time == "2026-11-14T15:00:00+0200"
+    [line] = availability[EILA_10L].schedule_lines
+    assert line.available_date == "2026-11-16"
 
 
 async def test_a_product_the_api_leaves_out_is_absent_from_the_result() -> None:

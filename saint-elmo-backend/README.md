@@ -42,7 +42,9 @@ fallback to fake data.
 take it as `AValioAimoClient`. Tests override `get_valio_aimo_client` with
 `valio_aimo.testing.make_fake_client()`, a real client on top of `FakeValioAimoApi`, which
 scripts the scenarios the offers work needs (`463038` with a per-litre comparison price,
-TERMINAL, `error: true`, undeliverable, late, 429 then success).
+TERMINAL, `error: true`, undeliverable, late, sales-blocked, 429 then success). Its
+values and formats are copied from live responses: title-case `logisticModel` (`Stock`,
+`Terminal`) and timestamps such as `2026-11-16T00:00:00+0200`.
 
 The smoke test in `valio_aimo/tests/test_smoke.py` calls the real API (`ping` plus a
 price for `463038`) and runs only when `VALIO_AIMO_API_URL` and `VALIO_AIMO_API_KEY` are
