@@ -21,13 +21,13 @@ uv run saint-elmo-mcp    # serves http://127.0.0.1:8001/mcp
 
 ## Connect an agent
 
-Every request must carry an agent key, either as `X-Agent-Key: <key>` or as `Authorization: Bearer <key>`. The MCP server only checks that one is present and forwards it. The backend decides whether it's valid.
+Every request must carry an agent token (issued by a buyer admin, see ADR 0003), either as `X-Agent-Key: <token>` or as `Authorization: Bearer <token>`. The MCP server only checks that one is present and forwards it. The backend decides whether it's valid.
 
 Claude Code:
 
 ```sh
 claude mcp add --transport http saint-elmo http://localhost:8001/mcp \
-  --header "X-Agent-Key: <agent key>"
+  --header "X-Agent-Key: <agent token>"
 ```
 
 Any other MCP client that can send custom headers on streamable HTTP works the same way.
