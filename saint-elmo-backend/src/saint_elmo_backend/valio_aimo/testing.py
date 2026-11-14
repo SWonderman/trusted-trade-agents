@@ -6,6 +6,10 @@ Shared fake of the Valio Aimo API for the test suite (#12–#16 reuse it).
 catalogue, so a real `ValioAimoClient` (batching, retries, parsing) runs on top of
 it. Use `make_fake_client` to get one.
 
+Values and formats are copied from live responses (2026-11-14): title-case
+`logisticModel` (`Stock`, `Terminal`), timestamps with a `+0200` offset, amounts as
+floats, plain dates only in `availableDate`.
+
 Never wire this into the running app: there is no fallback to fake data.
 """
 
@@ -25,7 +29,8 @@ from saint_elmo_backend.valio_aimo.client import Sleep, ValioAimoClient
 # Scripted products
 
 # Valio Eila® semi skimmed milk drink 10 l novobox lactose free, sold per KI (2 × 10 l).
-# catalogPrice / comparisonPrice = 39.80 / 1.99 = 20 L per sales unit.
+# Live values: catalogPrice / comparisonPrice = 31.31 / 1.57 ≈ 20 L per sales unit,
+# delivered as Terminal.
 EILA_10L = "463038"
 # Delivered from a supplier's warehouse: available amount unknown, reported as 999999.
 TERMINAL_PRODUCT = "900001"
@@ -33,12 +38,16 @@ TERMINAL_PRODUCT = "900001"
 PRICE_ERROR_PRODUCT = "900002"
 # Empty `scheduleLines`: cannot be delivered on any date.
 UNDELIVERABLE_PRODUCT = "900003"
-# Deliverable, but only 3 days after the requested date.
+# Deliverable, but only 3 days after the requested date. Stock, so its amount is real.
 LATE_PRODUCT = "900004"
+# Cannot be ordered right now: `salesBlock` on the product and its schedule line, with
+# an available date weeks away (like 463989 live).
+BLOCKED_PRODUCT = "900005"
 # Not in the fake catalogue: the API leaves it out of every response.
 UNKNOWN_PRODUCT = "999990"
 
 LATE_PRODUCT_DELAY = timedelta(days=3)
+BLOCKED_PRODUCT_DELAY = timedelta(days=42)
 # The real API's limit, kept separate from the client's constant on purpose: the fake
 # models the API, so a client that stops batching gets the same 422 the API would send.
 MAX_PRODUCTS_PER_REQUEST = 1000
@@ -46,9 +55,16 @@ MAX_PRODUCTS_PER_REQUEST = 1000
 FAKE_API_URL = "https://valio-aimo.test"
 FAKE_API_KEY = "test-key"
 
-_TIME_NOW = "2026-11-14T10:15:00.000000+02:00"
-_VALID_FROM = "2026-11-01"
-_VALID_TO = "9999-12-31"
+_TIME_NOW = "2026-11-14T10:15:00+0200"
+_VALID_FROM = "2026-09-01T00:00:00+0300"
+_VALID_TO = "9999-12-31T00:00:00+0200"
+
+
+def _timestamp(day: date, time: str = "00:00:00") -> str:
+    """
+    The API's timestamp format, e.g. `2026-11-16T00:00:00+0200`.
+    """
+    return f"{day.isoformat()}T{time}+0200"
 
 
 def _price(value: float, value_with_tax: float) -> dict[str, Any]:
@@ -101,45 +117,61 @@ def _available(
     product_id: str,
     *,
     amount: float,
-    on: date | None,
+    on: date,
     sales_unit: str = "KI",
-    logistic_model: str = "STOCK",
+    logistic_model: str = "Stock",
+    sales_block: bool = False,
 ) -> dict[str, Any]:
-    lines = (
-        []
-        if on is None
-        else [
+    return {
+        "productId": product_id,
+        "closingTime": _timestamp(on - timedelta(days=2), "15:00:00"),
+        "salesBlock": sales_block,
+        "logisticModel": logistic_model,
+        "scheduleLines": [
             {
-                "salesBlock": False,
+                "salesBlock": sales_block,
                 "availableAmount": amount,
                 "availableDate": on.isoformat(),
                 "salesUnit": sales_unit,
             }
-        ]
-    )
+        ],
+    }
+
+
+def _undeliverable(product_id: str) -> dict[str, Any]:
+    # Live, an undeliverable product has no closing time and no logistic model either
     return {
         "productId": product_id,
-        "closingTime": None if on is None else f"{(on - timedelta(days=1)).isoformat()}T12:00:00",
+        "closingTime": None,
         "salesBlock": False,
-        "logisticModel": logistic_model,
-        "scheduleLines": lines,
+        "logisticModel": None,
+        "scheduleLines": [],
     }
 
 
 _SCRIPTED_PRICES: dict[str, Callable[[str], dict[str, Any]]] = {
-    EILA_10L: lambda p: _priced(p, 39.80, 1.99, "L"),
+    EILA_10L: lambda p: _priced(p, 31.31, 1.57, "L"),
     TERMINAL_PRODUCT: lambda p: _priced(p, 12.50, 2.50, "KG"),
     PRICE_ERROR_PRODUCT: _price_error,
     UNDELIVERABLE_PRODUCT: lambda p: _priced(p, 8.00, 4.00, "KG"),
     LATE_PRODUCT: lambda p: _priced(p, 8.00, 4.00, "KG"),
+    BLOCKED_PRODUCT: lambda p: _priced(p, 5.20, 10.40, "KG"),
 }
 
 _SCRIPTED_AVAILABILITY: dict[str, Callable[[str, date], dict[str, Any]]] = {
-    EILA_10L: lambda p, d: _available(p, amount=120, on=d),
-    TERMINAL_PRODUCT: lambda p, d: _available(p, amount=999999, on=d, logistic_model="TERMINAL"),
-    PRICE_ERROR_PRODUCT: lambda p, d: _available(p, amount=120, on=d),
-    UNDELIVERABLE_PRODUCT: lambda p, _d: _available(p, amount=0, on=None),
-    LATE_PRODUCT: lambda p, d: _available(p, amount=40, on=d + LATE_PRODUCT_DELAY),
+    EILA_10L: lambda p, d: _available(p, amount=999999.0, on=d, logistic_model="Terminal"),
+    TERMINAL_PRODUCT: lambda p, d: _available(p, amount=999999.0, on=d, logistic_model="Terminal"),
+    PRICE_ERROR_PRODUCT: lambda p, d: _available(p, amount=120.0, on=d),
+    UNDELIVERABLE_PRODUCT: lambda p, _d: _undeliverable(p),
+    LATE_PRODUCT: lambda p, d: _available(p, amount=40.0, on=d + LATE_PRODUCT_DELAY),
+    BLOCKED_PRODUCT: lambda p, d: _available(
+        p,
+        amount=999999.0,
+        on=d + BLOCKED_PRODUCT_DELAY,
+        sales_unit="ST",
+        logistic_model="Terminal",
+        sales_block=True,
+    ),
 }
 
 
@@ -230,7 +262,7 @@ class FakeValioAimoApi:
 
         match request.url:
             case "/api/ping":
-                return FakeResponse(200, {"message": "pong"})
+                return FakeResponse(200, {"status": "ok"})
             case "/api/price":
                 return self._answer(request, self._price_body)
             case "/api/availability":
@@ -258,7 +290,7 @@ class FakeValioAimoApi:
         return {
             "customerId": customer,
             "currency": "EUR",
-            "pricingDate": requested.isoformat(),
+            "pricingDate": _timestamp(requested),
             "products": [_SCRIPTED_PRICES[p](p) for p in products if p in _SCRIPTED_PRICES],
         }
 
@@ -266,7 +298,7 @@ class FakeValioAimoApi:
     def _availability_body(_customer: str, requested: date, products: list[str]) -> JsonValue:
         return {
             "timeNow": _TIME_NOW,
-            "requestedDate": f"{requested.isoformat()}T00:00:00",
+            "requestedDate": _timestamp(requested),
             "products": [
                 _SCRIPTED_AVAILABILITY[p](p, requested)
                 for p in products
