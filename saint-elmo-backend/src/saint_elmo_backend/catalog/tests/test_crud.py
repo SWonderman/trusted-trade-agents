@@ -124,3 +124,29 @@ async def test_browse_has_no_relevance(reference_data, session):
     [match] = await crud.search_products(session, query=None, limit=20, offset=0)
 
     assert match.relevance is None
+
+
+async def test_misspelled_query_finds_the_product_by_trigram_similarity(
+    reference_data, session
+):
+    milk = await make_product(session, names={"en": "Lactose free milk"})
+    await make_product(session, names={"en": "Butter"})
+
+    matches = await crud.search_products(session, query="lactose fre mlik", limit=20, offset=0)
+
+    assert [match.product.id for match in matches] == [milk.id]
+    assert await crud.count_products(session, query="lactose fre mlik") == 1
+
+
+async def test_text_match_ranks_above_a_fuzzy_match(reference_data, session):
+    # The fuzzy match is more reliable, so it would come first if ranking were ignored
+    fuzzy = await make_product(
+        session, names={"en": "Milkk"}, delivery_reliability=Decimal("0.99")
+    )
+    exact = await make_product(
+        session, names={"en": "Whole milk"}, delivery_reliability=Decimal("0.10")
+    )
+
+    matches = await crud.search_products(session, query="milk", limit=20, offset=0)
+
+    assert [match.product.id for match in matches] == [exact.id, fuzzy.id]

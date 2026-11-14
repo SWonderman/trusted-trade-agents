@@ -101,6 +101,16 @@ async def test_query_finds_a_product_by_its_name_in_each_language(
     assert [item["code"] for item in body["items"]] == ["100001"]
 
 
+async def test_misspelled_query_still_finds_the_product(reference_data, session, client):
+    await make_product(session, code="100001", names={"en": "Lactose free milk"})
+    await make_product(session, code="100002", names={"en": "Butter"})
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"query": "lactose fre mlik"})
+
+    assert [item["code"] for item in response.json()["items"]] == ["100001"]
+
+
 async def test_query_results_are_ordered_by_relevance(reference_data, session, client):
     await make_product(
         session,

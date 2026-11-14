@@ -1,4 +1,4 @@
-from sqlalchemy import Select, cast, func, literal, null, select
+from sqlalchemy import Select, cast, func, literal, null, or_, select
 from sqlalchemy.dialects.postgresql import REGCONFIG
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -27,18 +27,28 @@ def _text_query(query: str):
 
 def _matching_product_ids(query: str) -> Select:
     """
-    (product_id, relevance) for every product with a matching translation; a product
-    matching in several languages keeps its best rank.
+    (product_id, relevance) for every product with a translation matching the query by
+    full text, or by name trigram similarity (`%`, pg_trgm's threshold) to handle potential typos.
+    Relevance is the better of the two scores and a product matching in several
+    languages keeps its best one.
     """
     text_query = _text_query(query)
     return (
         select(
             ProductTranslation.product_id,
-            func.max(func.ts_rank(ProductTranslation.search_vector, text_query)).label(
-                "relevance"
-            ),
+            func.max(
+                func.greatest(
+                    func.ts_rank(ProductTranslation.search_vector, text_query),
+                    func.similarity(ProductTranslation.name, query),
+                )
+            ).label("relevance"),
         )
-        .where(ProductTranslation.search_vector.bool_op("@@")(text_query))
+        .where(
+            or_(
+                ProductTranslation.search_vector.bool_op("@@")(text_query),
+                ProductTranslation.name.bool_op("%")(query),
+            )
+        )
         .group_by(ProductTranslation.product_id)
     )
 
