@@ -118,3 +118,33 @@ schedule lines or a product missing from the availability answer become
 - The API still failing after the client's retries, or not being configured, answers
   503 `VALIO_AIMO_UNAVAILABLE`. A buyer organisation without a customer number answers
   409 `CUSTOMER_NUMBER_MISSING`.
+
+## Quotes
+
+`POST /api/v1/quotes` (Agent token, `quote:create`) turns up to 50 lines into a quote:
+each line converted and priced through the offers layer, then judged by the policy
+(`policy/engine.py`) against the calling agent's mandate. `GET /api/v1/quotes/{quoteId}`
+(same scope) reads one back as it was quoted. Both are scoped to the caller's buyer
+organisation; another organisation's quote is a 404 `QUOTE_NOT_FOUND`.
+
+- **Created whatever the outcome**: a REJECT is a 201 with its reasons, for the agent to
+  revise from and quote again with `previousQuoteId`.
+- **`buyerRequest` and `rationale`** are required, stored and echoed, and never read by
+  the policy (ADR 0002).
+- **Substitutes**: a line with `substitutesFor` is judged by the mandate's substitution
+  rules. The substituted product is priced for the same quantity, so prices compare per
+  buyer unit. It only has to exist in the catalog.
+- **Expiry**: `expiresAt` is the earliest of `createdAt + QUOTE_TTL_MINUTES` (default
+  `15`) and each line's offer `validUntil` (its price's `validTo` and closing time for
+  `deliverBy`). A deadline that has already passed doesn't count: the policy rejects that
+  line (e.g. `CLOSING_TIME_PASSED`), and the quote still starts `QUOTED`. After
+  `expiresAt`, `GET` shows `EXPIRED`.
+- **Storage**: each quote line keeps its offer as the JSON `POST /offers` returned, and
+  the quote keeps the policy reasons, deposits and mandate version in the API's JSON
+  shape, so a read shows exactly what the agent was told.
+- **Audit**: creating a quote records `QUOTE_CREATED` in `audit_events`
+  (`saint_elmo_backend/audit/`). The event holds the full request, every offer used with
+  its conversion and provenance (substituted products included), the policy result and
+  the mandate version.
+- Period spend is still 0 until orders exist (#15), so the period and category caps only
+  see the quote itself.
