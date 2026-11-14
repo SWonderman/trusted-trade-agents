@@ -269,6 +269,25 @@ async def get_product_by_code(session: AsyncSession, code: str) -> Product | Non
     return await session.scalar(stmt)
 
 
+async def get_products_by_codes(session: AsyncSession, codes: Collection[str]) -> list[Product]:
+    """
+    The products with these codes, with what offers need loaded: names, units and
+    packaging levels. Codes not in the catalog are simply absent.
+    """
+    if not codes:
+        return []
+    stmt = (
+        select(Product)
+        .where(Product.code.in_(codes))
+        .options(
+            selectinload(Product.translations),
+            selectinload(Product.units),
+            selectinload(Product.packaging_levels),
+        )
+    )
+    return list((await session.scalars(stmt)).all())
+
+
 async def used_codes(
     session: AsyncSession,
     code_list: type[CodeListMixin],
