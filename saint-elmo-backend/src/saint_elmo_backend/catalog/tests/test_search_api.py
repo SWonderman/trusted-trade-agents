@@ -6,6 +6,7 @@ from decimal import Decimal
 
 import pytest
 
+from saint_elmo_backend.catalog.enums import AllergenContainment
 from saint_elmo_backend.catalog.tests.factories import make_product
 from saint_elmo_backend.core.settings import get_settings
 
@@ -415,6 +416,8 @@ async def test_search_request_is_documented_in_openapi(client):
         "requiredLabels",
         "countriesOfOrigin",
         "minDeliveryReliability",
+        "excludedAllergens",
+        "allergenStrictness",
         "limit",
         "offset",
     }
@@ -448,4 +451,142 @@ async def test_search_response_is_documented_in_openapi(client):
         "deliveryReliability",
         "carbonFootprint",
         "relevance",
+        "allergens",
     }
+
+
+async def test_excluding_an_allergen_drops_only_products_that_contain_it_by_default(
+    reference_data, session, client
+):
+    await make_product(session, code="100001", allergens={"AM": AllergenContainment.CONTAINS})
+    await make_product(session, code="100002", allergens={"AM": AllergenContainment.MAY_CONTAIN})
+    await make_product(session, code="100003", allergens={"AM": AllergenContainment.FREE_FROM})
+    await make_product(session, code="100004")
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"excludedAllergens": ["AM"]})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total"] == 3
+    assert sorted(item["code"] for item in body["items"]) == ["100002", "100003", "100004"]
+
+
+async def test_may_contain_strictness_also_drops_products_that_may_contain_the_allergen(
+    reference_data, session, client
+):
+    await make_product(session, code="100001", allergens={"AM": AllergenContainment.CONTAINS})
+    await make_product(session, code="100002", allergens={"AM": AllergenContainment.MAY_CONTAIN})
+    await make_product(session, code="100003", allergens={"AM": AllergenContainment.FREE_FROM})
+    await make_product(session, code="100004")
+    await session.commit()
+
+    response = await client.post(
+        SEARCH_URL, json={"excludedAllergens": ["AM"], "allergenStrictness": "may_contain"}
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total"] == 2
+    assert sorted(item["code"] for item in body["items"]) == ["100003", "100004"]
+
+
+async def test_declared_free_strictness_keeps_only_products_declared_free_from_every_allergen(
+    reference_data, session, client
+):
+    free_from = AllergenContainment.FREE_FROM
+    await make_product(session, code="100001", allergens={"AM": free_from, "AW": free_from})
+    await make_product(session, code="100002", allergens={"AM": free_from})
+    await make_product(
+        session,
+        code="100003",
+        allergens={"AM": free_from, "AW": AllergenContainment.UNDECLARED},
+    )
+    await make_product(session, code="100004")
+    await session.commit()
+
+    response = await client.post(
+        SEARCH_URL,
+        json={"excludedAllergens": ["AM", "AW"], "allergenStrictness": "declared_free"},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total"] == 1
+    assert [item["code"] for item in body["items"]] == ["100001"]
+
+
+async def test_hit_lists_the_status_of_each_excluded_allergen_with_unknown_for_missing_data(
+    reference_data, session, client
+):
+    await make_product(
+        session,
+        allergens={"AM": AllergenContainment.MAY_CONTAIN, "AW": AllergenContainment.FREE_FROM},
+    )
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"excludedAllergens": ["AW", "AE", "AM"]})
+
+    [hit] = response.json()["items"]
+    assert hit["allergens"] == [
+        {"code": "AW", "status": "FREE_FROM"},
+        {"code": "AE", "status": "UNKNOWN"},
+        {"code": "AM", "status": "MAY_CONTAIN"},
+    ]
+
+
+async def test_hit_lists_every_allergen_the_product_contains_even_when_not_excluded(
+    reference_data, session, client
+):
+    await make_product(
+        session,
+        allergens={
+            "AW": AllergenContainment.CONTAINS,
+            "AE": AllergenContainment.CONTAINS,
+            "AN": AllergenContainment.MAY_CONTAIN,
+            "AM": AllergenContainment.FREE_FROM,
+        },
+    )
+    await session.commit()
+
+    filtered = await client.post(SEARCH_URL, json={"excludedAllergens": ["AM"]})
+    browsed = await client.post(SEARCH_URL, json={})
+
+    assert filtered.json()["items"][0]["allergens"] == [
+        {"code": "AM", "status": "FREE_FROM"},
+        {"code": "AE", "status": "CONTAINS"},
+        {"code": "AW", "status": "CONTAINS"},
+    ]
+    assert browsed.json()["items"][0]["allergens"] == [
+        {"code": "AE", "status": "CONTAINS"},
+        {"code": "AW", "status": "CONTAINS"},
+    ]
+
+
+async def test_unknown_allergen_codes_are_listed_with_the_other_unknown_codes(
+    reference_data, session, client
+):
+    response = await client.post(
+        SEARCH_URL,
+        json={"requiredDiets": ["CARNIVORE"], "excludedAllergens": ["AM", "MOONDUST"]},
+    )
+
+    assert response.status_code == 422
+    error = response.json()["error"]
+    assert error["code"] == "UNKNOWN_CODE"
+    assert error["message"] == (
+        "Unknown codes: requiredDiets=[CARNIVORE], excludedAllergens=[MOONDUST]"
+    )
+
+
+async def test_strictness_without_excluded_allergens_filters_nothing(
+    reference_data, session, client
+):
+    await make_product(session, code="100001", allergens={"AM": AllergenContainment.CONTAINS})
+    await make_product(session, code="100002")
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"allergenStrictness": "declared_free"})
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 2

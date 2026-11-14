@@ -89,8 +89,12 @@ def _assert_permission_denied(response, message: str) -> None:
 
 @pytest.mark.parametrize(
     ("method", "url"),
-    [("POST", SEARCH_URL), ("GET", "/api/v1/products/100001")],
-    ids=["search", "detail"],
+    [
+        ("POST", SEARCH_URL),
+        ("GET", "/api/v1/products/100001"),
+        ("GET", "/api/v1/catalog/vocabulary"),
+    ],
+    ids=["search", "detail", "vocabulary"],
 )
 async def test_catalog_requires_credentials(clean_db, client, method, url):
     _assert_invalid_credentials(await client.request(method, url, json={}))

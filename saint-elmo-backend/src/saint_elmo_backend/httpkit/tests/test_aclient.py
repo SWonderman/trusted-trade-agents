@@ -337,3 +337,15 @@ async def test_response_surfaces_status_code_and_headers(
     assert response.status_code == 200
     assert response.headers == {"X-Trace": "abc"}
     assert response.payload == {"a": 1}
+
+
+async def test_status_error_carries_response_headers(make_async_client: MakeAsyncClient):
+    """
+    A status error keeps the response headers, so callers can honour e.g. Retry-After.
+    """
+    client, _ = make_async_client(response=FakeResponse(status=429, headers={"Retry-After": "2"}))
+
+    with pytest.raises(HttpkitStatusError) as err:
+        _ = await client.arequest(url="/products")
+
+    assert err.value.headers == {"Retry-After": "2"}
