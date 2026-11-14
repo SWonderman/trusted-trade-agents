@@ -41,6 +41,12 @@ lasts 30 days. It goes through the same issuance service as the API, records the
 admin as its issuer, and is printed once. A buyer admin of another buyer organisation is
 refused.
 
+Buyer admins manage tokens over the API too, with a user session (Agent tokens get 403):
+`GET /api/v1/agents`, `POST|GET /api/v1/agents/{agentId}/tokens` (scopes or a preset,
+`expiresInDays` 1–30, default 7), `DELETE /api/v1/agents/{agentId}/tokens/{jti}` and
+`POST /api/v1/agents/{agentId}/disable`. Revocation and disabling apply from the next
+request, and issuing, revoking and disabling are written to the audit trail.
+
 ## Valio Aimo API
 
 `saint_elmo_backend/valio_aimo/` is a thin async client for the Valio Aimo API (live

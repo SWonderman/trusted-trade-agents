@@ -5,3 +5,15 @@ class InvalidAgentTokenError(Exception):
 
     Deliberately one error: callers learn nothing about which check failed.
     """
+
+
+class AgentNotFoundError(Exception):
+    """
+    No agent with this public id in the buyer organization.
+    """
+
+
+class AgentCredentialNotFoundError(Exception):
+    """
+    The agent has no Agent token with this `jti`.
+    """

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ARRAY, DateTime, Enum, ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from saint_elmo_backend.accounts.models import Organization
+from saint_elmo_backend.accounts.models import Organization, User
 from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.db.base import Base
 from saint_elmo_backend.db.mixins import OrgOwnedMixin, PublicIdMixin, TimestampMixin
@@ -58,3 +58,4 @@ class AgentCredential(Base, TimestampMixin, OrgOwnedMixin):
     # The buyer admin who issued the token. RESTRICT: users are deactivated, never
     # deleted, so who granted an agent its authority stays on record
     created_by_user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
+    created_by: Mapped[User] = relationship()
