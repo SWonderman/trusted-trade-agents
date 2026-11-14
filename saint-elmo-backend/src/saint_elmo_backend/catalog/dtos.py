@@ -30,3 +30,17 @@ class ProductSearchResult:
     total: int
     hits: list[ProductSearchHit]
     provenance: CatalogProvenance
+
+
+@dataclass(frozen=True, slots=True)
+class CuratedSubstitute:
+    code: str
+    name: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class ProductDetail:
+    product: "Product"
+    name: str | None
+    curated_substitutes: list[CuratedSubstitute]
+    provenance: CatalogProvenance
