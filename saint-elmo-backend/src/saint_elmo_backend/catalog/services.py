@@ -3,10 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from saint_elmo_backend.catalog import crud
 from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
+    CuratedSubstitute,
+    ProductDetail,
     ProductSearchHit,
     ProductSearchResult,
 )
 from saint_elmo_backend.catalog.enums import Language
+from saint_elmo_backend.catalog.exceptions import ProductNotFoundError
 from saint_elmo_backend.catalog.models import Product
 from saint_elmo_backend.core.settings import get_settings
 
@@ -51,5 +54,27 @@ async def search_products(
             )
             for match in matches
         ],
+        provenance=catalog_provenance(),
+    )
+
+
+async def get_product(session: AsyncSession, *, code: str, language: Language) -> ProductDetail:
+    product = await crud.get_product_by_code(session, code)
+    if product is None:
+        raise ProductNotFoundError(code)
+
+    return ProductDetail(
+        product=product,
+        name=product_name(product, language),
+        curated_substitutes=sorted(
+            (
+                CuratedSubstitute(
+                    code=substitution.substitute.code,
+                    name=product_name(substitution.substitute, language),
+                )
+                for substitution in product.substitutions
+            ),
+            key=lambda substitute: substitute.code,
+        ),
         provenance=catalog_provenance(),
     )

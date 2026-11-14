@@ -7,7 +7,15 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from saint_elmo_backend.catalog.dtos import ProductMatch
 from saint_elmo_backend.catalog.enums import Language
-from saint_elmo_backend.catalog.models import Product, ProductTranslation
+from saint_elmo_backend.catalog.models import (
+    Product,
+    ProductAllergen,
+    ProductFishSpecies,
+    ProductIngredient,
+    ProductSafetySheet,
+    ProductSubstitution,
+    ProductTranslation,
+)
 
 # Each translation's search vector is built with its own language's configuration
 _SEARCH_CONFIGS: dict[Language, str] = {
@@ -105,3 +113,32 @@ async def count_products(session: AsyncSession, *, query: str | None) -> int:
         stmt = select(func.count()).select_from(_matching_product_ids(query).subquery())
 
     return (await session.execute(stmt)).scalar_one()
+
+
+async def get_product_by_code(session: AsyncSession, code: str) -> Product | None:
+    stmt = (
+        select(Product)
+        .where(Product.code == code)
+        .options(
+            selectinload(Product.allergens).joinedload(ProductAllergen.allergen),
+            selectinload(Product.nutrients),
+            selectinload(Product.ingredients).selectinload(ProductIngredient.origins),
+            selectinload(Product.packaging_levels),
+            selectinload(Product.producers),
+            selectinload(Product.fish_species).selectinload(ProductFishSpecies.catch_methods),
+            selectinload(Product.safety_sheets).selectinload(ProductSafetySheet.statements),
+            selectinload(Product.substitutions)
+            .joinedload(ProductSubstitution.substitute)
+            .selectinload(Product.translations),
+            selectinload(Product.translations),
+            selectinload(Product.units),
+            selectinload(Product.deposits),
+            selectinload(Product.claims),
+            selectinload(Product.diets),
+            selectinload(Product.labels),
+            joinedload(Product.category),
+            joinedload(Product.vendor),
+            joinedload(Product.brand),
+        )
+    )
+    return await session.scalar(stmt)
