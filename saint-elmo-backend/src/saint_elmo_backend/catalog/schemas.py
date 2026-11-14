@@ -5,7 +5,13 @@ from typing import Annotated, Any, Literal
 from pydantic import Field, StringConstraints
 
 from saint_elmo_backend.catalog.dtos import (
+    AllergenUsage,
     CatalogProvenance,
+    CatalogVocabulary,
+    CategoryUsage,
+    ClaimUsage,
+    CodeUsage,
+    GS1Code,
     ProductDetail,
     ProductFilters,
     ProductSearchHit,
@@ -422,3 +428,127 @@ class ProductDetailResponse(ProductSummary):
             ],
             provenance=Provenance.from_provenance(detail.provenance),
         )
+
+
+class VocabularyGS1Code(CamelBaseModel):
+    code: str
+    name: str | None = Field(
+        description="GS1 name; null for codes the data uses but GS1 does not list"
+    )
+    definition: str | None = Field(description="GS1 definition; null for non-standard codes")
+
+    @classmethod
+    def from_code(cls, code: GS1Code) -> "VocabularyGS1Code":
+        return cls(code=code.code, name=code.name, definition=code.definition)
+
+
+class VocabularyCode(VocabularyGS1Code):
+    product_count: int = Field(description="Number of products using the code")
+
+    @classmethod
+    def from_usage(cls, usage: CodeUsage) -> "VocabularyCode":
+        return cls(
+            code=usage.code,
+            name=usage.name,
+            definition=usage.definition,
+            product_count=usage.product_count,
+        )
+
+
+class AllergenStatusCounts(CamelBaseModel):
+    """
+    Products per GS1 level of containment; see the product detail's allergen containment.
+    """
+
+    contains: int
+    may_contain: int
+    undeclared: int = Field(
+        description="GS1 UNDECLARED; listed with the allergens, never a FREE_FROM claim"
+    )
+    free_from: int
+
+
+class VocabularyAllergen(VocabularyGS1Code):
+    product_count: int = Field(
+        description="Number of products declaring any status for the allergen, FREE_FROM "
+        "included; the sum of statusCounts"
+    )
+    status_counts: AllergenStatusCounts = Field(
+        description="Products per declared status. Products with no declaration have "
+        "unknown status and are not counted: absence of data is never FREE_FROM"
+    )
+
+    @classmethod
+    def from_allergen_usage(cls, usage: AllergenUsage) -> "VocabularyAllergen":
+        counts = usage.status_counts
+        return cls(
+            code=usage.code,
+            name=usage.name,
+            definition=usage.definition,
+            product_count=usage.product_count,
+            status_counts=AllergenStatusCounts(
+                contains=counts[AllergenContainment.CONTAINS],
+                may_contain=counts[AllergenContainment.MAY_CONTAIN],
+                undeclared=counts[AllergenContainment.UNDECLARED],
+                free_from=counts[AllergenContainment.FREE_FROM],
+            ),
+        )
+
+
+class VocabularyClaim(CamelBaseModel):
+    type: VocabularyGS1Code = Field(description="GS1 claim type, e.g. FREE_FROM")
+    element: VocabularyGS1Code = Field(description="GS1 claim element, e.g. LACTOSE")
+    product_count: int = Field(description="Number of products making this claim")
+
+    @classmethod
+    def from_usage(cls, usage: ClaimUsage) -> "VocabularyClaim":
+        return cls(
+            type=VocabularyGS1Code.from_code(usage.type),
+            element=VocabularyGS1Code.from_code(usage.element),
+            product_count=usage.product_count,
+        )
+
+
+class VocabularyCategory(CamelBaseModel):
+    code: str = Field(description="Category names are not in the source data")
+    product_count: int = Field(description="Number of products in the category")
+
+    @classmethod
+    def from_usage(cls, usage: CategoryUsage) -> "VocabularyCategory":
+        return cls(code=usage.code, product_count=usage.product_count)
+
+
+class VocabularyResponse(CamelBaseModel):
+    """
+    Valid filter codes, limited to those at least one product uses.
+    """
+
+    claims: list[VocabularyClaim] = Field(
+        description="Nutritional claims as the type + element pairs products make"
+    )
+    diets: list[VocabularyCode] = Field(description="GS1 diet types, e.g. VEGAN")
+    labels: list[VocabularyCode] = Field(
+        description="Packaging label accreditations, e.g. EU_ORGANIC_FARMING"
+    )
+    allergens: list[VocabularyAllergen] = Field(
+        description="GS1 allergen types, e.g. AM milk, with product counts per declared status"
+    )
+    categories: list[VocabularyCategory] = Field(
+        description="Category codes with their product counts; names are not in the source data"
+    )
+
+    @classmethod
+    def from_vocabulary(cls, vocabulary: CatalogVocabulary) -> "VocabularyResponse":
+        return cls(
+            claims=[VocabularyClaim.from_usage(usage) for usage in vocabulary.claims],
+            diets=_codes(vocabulary.diets),
+            labels=_codes(vocabulary.labels),
+            allergens=[
+                VocabularyAllergen.from_allergen_usage(usage) for usage in vocabulary.allergens
+            ],
+            categories=[VocabularyCategory.from_usage(usage) for usage in vocabulary.categories],
+        )
+
+
+def _codes(usages: list[CodeUsage]) -> list[VocabularyCode]:
+    return [VocabularyCode.from_usage(usage) for usage in usages]
