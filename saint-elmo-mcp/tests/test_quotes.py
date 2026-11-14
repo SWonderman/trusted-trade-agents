@@ -202,7 +202,12 @@ async def test_a_rejected_quote_is_a_normal_result_with_its_reasons(connect, bac
 
 async def test_a_revision_sends_its_substitute_and_previous_quote(connect, backend):
     previous = "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
-    substitute = {"productCode": "463040", "quantity": 1000, "unit": "L", "substitutesFor": "463038"}
+    substitute = {
+        "productCode": "463040",
+        "quantity": 1000,
+        "unit": "L",
+        "substitutesFor": "463038",
+    }
     backend.respond_json(201, {**MILK_QUOTE, "previousQuoteId": previous})
 
     async with connect({"X-Agent-Key": "k1"}) as client:
@@ -229,11 +234,13 @@ async def test_a_revision_sends_its_substitute_and_previous_quote(connect, backe
         pytest.param({"lines": [MILK_LINE] * 51}, id="51 lines"),
         pytest.param({"lines": [{"productCode": "463038"}]}, id="line without quantity"),
         pytest.param({"previousQuoteId": "not-a-uuid"}, id="malformed previousQuoteId"),
+        pytest.param(
+            {"lines": [{**MILK_LINE, "substitutesFor": "463038"}]},
+            id="line substitutes for its own product",
+        ),
     ],
 )
-async def test_out_of_bounds_input_is_rejected_without_a_backend_call(
-    connect, backend, overrides
-):
+async def test_out_of_bounds_input_is_rejected_without_a_backend_call(connect, backend, overrides):
     args = {k: v for k, v in create_args(**overrides).items() if v is not None}
 
     async with connect({"X-Agent-Key": "k1"}) as client:
@@ -254,18 +261,29 @@ async def test_text_of_exactly_2000_characters_is_accepted(connect, backend):
     assert not result.is_error, text(result)
 
 
-async def test_get_quote_reads_an_expired_quote_by_its_url_encoded_id(connect, backend):
+async def test_get_quote_reads_an_expired_quote_by_its_id(connect, backend):
     backend.respond_json(200, EXPIRED_QUOTE)
 
     async with connect({"X-Agent-Key": "k1"}) as client:
-        result = await client.call_tool("get_quote", {"quoteId": "a/b c"})
+        result = await client.call_tool("get_quote", {"quoteId": QUOTE_ID})
 
     assert not result.is_error, text(result)
     (request,) = backend.requests
     assert request.method == "GET"
-    assert request.url.raw_path == b"/api/v1/quotes/a%2Fb%20c"
+    assert request.url.raw_path == f"/api/v1/quotes/{QUOTE_ID}".encode()
     assert request.headers["authorization"] == "Bearer k1"
     assert result.structured_content == EXPIRED_QUOTE
+
+
+@pytest.mark.parametrize("quote_id", ["a/b c", "", QUOTE_ID[:-1]])
+async def test_get_quote_with_a_malformed_id_is_rejected_without_a_backend_call(
+    connect, backend, quote_id
+):
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        result = await client.call_tool("get_quote", {"quoteId": quote_id})
+
+    assert result.is_error
+    assert backend.requests == []
 
 
 async def test_get_quote_for_an_unknown_id_is_an_error(connect, backend):
@@ -285,7 +303,11 @@ async def test_get_quote_for_an_unknown_id_is_an_error(connect, backend):
     [
         (404, "PRODUCT_NOT_FOUND", "Unknown product codes: 999990, 999991"),
         (404, "QUOTE_NOT_FOUND", "No previous quote with this id in your buyer organisation"),
-        (409, "CUSTOMER_NUMBER_MISSING", "The buyer organisation has no Valio Aimo customer number"),
+        (
+            409,
+            "CUSTOMER_NUMBER_MISSING",
+            "The buyer organisation has no Valio Aimo customer number",
+        ),
         (503, "VALIO_AIMO_UNAVAILABLE", "The Valio Aimo price and availability API is unavailable"),
     ],
 )

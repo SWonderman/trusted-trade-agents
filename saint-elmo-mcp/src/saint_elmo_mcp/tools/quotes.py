@@ -47,6 +47,7 @@ and can't be ordered any more: create a new quote (with `previousQuoteId`).
 `QUOTE_NOT_FOUND`: no quote with this id in your organisation.
 """
 
+
 def register(mcp: MCPServer, backend: BackendClient) -> None:
     @mcp.tool(
         description=CREATE_QUOTE_DESCRIPTION,
@@ -63,7 +64,7 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
         deliverBy: Annotated[
             date,
             Field(
-                description='Delivery date as an ISO date (YYYY-MM-DD). Resolve relative '
+                description="Delivery date as an ISO date (YYYY-MM-DD). Resolve relative "
                 'dates like "by Monday" yourself.',
             ),
         ],
@@ -81,7 +82,7 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
                 min_length=1,
                 max_length=MAX_TEXT_LENGTH,
                 description="The buyer's need in their own words, e.g. \"1,000 litres of "
-                "lactose-free milk by Monday\". Shown to approvers; never affects the policy.",
+                'lactose-free milk by Monday". Shown to approvers; never affects the policy.',
             ),
         ],
         rationale: Annotated[
@@ -122,11 +123,9 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
     )
     async def get_quote(
         ctx: Context,
-        quoteId: Annotated[
-            str, Field(min_length=1, description="The quoteId from create_quote.")
-        ],
+        quoteId: Annotated[UUID, Field(description="The quoteId from create_quote.")],
     ) -> Quote:
         data = await backend.get(
-            f"/api/v1/quotes/{url_quote(quoteId, safe='')}", agent_key=agent_key(ctx)
+            f"/api/v1/quotes/{url_quote(str(quoteId), safe='')}", agent_key=agent_key(ctx)
         )
         return parse_response(Quote, data)

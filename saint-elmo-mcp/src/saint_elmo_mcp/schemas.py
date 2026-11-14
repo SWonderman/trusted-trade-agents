@@ -6,9 +6,9 @@ renamed field fails validation, which is how contract drift shows up in tests
 (ADR 0001).
 """
 
-from typing import Any, Literal
+from typing import Any, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
 # Mirrors the backend's catalog AllergenStrictness; search filter and mandate share it
@@ -500,7 +500,8 @@ class Mandate(CamelModel):
 
 
 # --- Quotes (POST /api/v1/quotes, GET /api/v1/quotes/{quoteId}, issue #14) ---
-# Every field of the backend's QuoteResponse. Outcomes and reason codes are
+# Every field of the backend's QuoteResponse, as #43 asks: the agent sees the quote
+# as approvers do (ADR 0002), buyerRequest and rationale included. Outcomes and reason codes are
 # Literals copied from the backend's policy catalogue (#13), so a new value fails
 # loudly.
 
@@ -528,6 +529,13 @@ class QuoteLineIn(CamelModel):
         description="The product code this line replaces, so the mandate's substitution "
         "rules and price-increase limit apply. Omit for a line that replaces nothing.",
     )
+
+    # Mirrors the backend's QuoteLineIn._not_its_own_substitute
+    @model_validator(mode="after")
+    def _not_its_own_substitute(self) -> Self:
+        if self.substitutes_for == self.product_code:
+            raise ValueError("a line can't substitute for its own product")
+        return self
 
 
 PolicyOutcome = Literal["AUTO_APPROVE", "NEEDS_HUMAN", "REJECT"]
