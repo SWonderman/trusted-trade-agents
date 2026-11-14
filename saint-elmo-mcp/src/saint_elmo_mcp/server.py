@@ -1,7 +1,7 @@
 from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
-from saint_elmo_mcp.tools import catalog, mandate, offers, quotes
+from saint_elmo_mcp.tools import catalog, mandate, offers, orders, quotes
 
 INSTRUCTIONS = """\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
@@ -21,8 +21,13 @@ The full flow (tools are added as the backend grows, so use the ones you have):
    buyerRequest (the buyer's words) and rationale (why these lines); approvers
    see both. Revise with previousQuoteId. get_quote re-reads a quote; EXPIRED
    means quote again.
-5. place_order: commit a quote. If it is pending approval, a human decides;
-   poll get_order_status. You can never approve your own orders.
+5. place_order: commit a quote before its expiresAt. Live data and your mandate
+   are re-checked, so read `changes` and `policy.reasons`. PLACED is done;
+   REJECTED is an answer with reasons. PENDING_APPROVAL means a human decides:
+   tell the buyer it is waiting for approval, then poll get_order_status no
+   sooner than checkAgainAfterSeconds until it is PLACED or REJECTED (the
+   approverNote says why). list_orders shows your recent orders.
+   You can never approve or reject your own orders, and no tool does.
 
 Rules of thumb:
 - Turn relative dates ("by Monday") into ISO dates yourself and check the date
@@ -47,4 +52,5 @@ def build_server(backend: BackendClient) -> MCPServer:
     catalog.register(mcp, backend)
     offers.register(mcp, backend)
     quotes.register(mcp, backend)
+    orders.register(mcp, backend)
     return mcp
