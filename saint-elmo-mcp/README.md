@@ -11,8 +11,9 @@ Built on the official MCP Python SDK v2 (`MCPServer`, which was called `FastMCP`
 | `search_products` | `POST /api/v1/products/search` (#2, #3, #4) | query, language, paging; filters `categoryCodes`, `vendors`, `requiredClaims`, `requiredDiets`, `requiredLabels`, `countriesOfOrigin`, `minDeliveryReliability`; allergen exclusion `excludedAllergens` + `allergenStrictness` (`contains` / `may_contain` / `declared_free`); per-hit `allergens` status (`UNKNOWN` = no data, not safe) |
 | `get_vocabulary` | `GET /api/v1/catalog/vocabulary` (#6) | optional `vocabularies` subset (`claims`, `diets`, `labels`, `allergens`, `categories`), trimmed on the MCP side; per entry GS1 `code`, `name` (null for non-GS1 codes), `definition`, `productCount`; claims as `type` + `element` pairs; allergens with `statusCounts`; categories as code + count only |
 | `get_product` | `GET /api/v1/products/{code}` (#5) | `code`, `language`; search summary plus full `allergens` (containment; unlisted = unknown, not safe), `ingredients` with origins, `nutrients`, `packagingLevels`, `deposits`, `producers`, `curatedSubstitutes`, `provenance`. `PRODUCT_NOT_FOUND` for an unknown code |
+| `get_offers` | `POST /api/v1/offers` (#12) | `deliverBy` (ISO date), `items` (1–50) of `productCode` + optional `quantity` / `unit` (`L`, `KG` or a sales unit code), optional `language`; per item live `price`, `availability` (`availableAmount` null = unknown, not zero), `quantity` with `conversion` (+ `crossCheck`), `salesUnits` and `lineTotal`, `reasonCodes` (e.g. `CLOSING_TIME_PASSED`) and `provenance` (`fetchedAt`, `validUntil`, `cached`). Errors `PRODUCT_NOT_FOUND`, `CUSTOMER_NUMBER_MISSING`, `VALIO_AIMO_UNAVAILABLE`. For demos against the live mock, run the backend with `OFFERS_IGNORE_CLOSING_TIME=true` |
 
-The remaining tools (`get_my_mandate`, `get_offers`, `find_substitutes`, `create_quote`, `place_order`, `get_order_status`) are added as their backend endpoints land. See issues #10–#16.
+The remaining tools (`get_my_mandate`, `find_substitutes`, `create_quote`, `place_order`, `get_order_status`) are added as their backend endpoints land. See issues #10–#16.
 
 ## Run
 
@@ -43,7 +44,7 @@ Policy outcomes (a rejection, needs approval, a shortfall) are normal tool resul
 | `MISSING_AGENT_KEY` | No key on the request. The backend was not called. |
 | `BACKEND_UNAVAILABLE` | Backend unreachable, or it failed without an error envelope. |
 | `BACKEND_CONTRACT_MISMATCH` | Backend response didn't match the tool's output model (a Saint Elmo bug). |
-| *backend codes* | Taken from the backend error envelope, e.g. `UNKNOWN_CODE`, `INVALID_CREDENTIALS`, `VALIDATION_ERROR`, with field details and the request id. |
+| *backend codes* | Taken from the backend error envelope, e.g. `UNKNOWN_CODE`, `PRODUCT_NOT_FOUND`, `CUSTOMER_NUMBER_MISSING`, `VALIO_AIMO_UNAVAILABLE`, `INVALID_CREDENTIALS`, `VALIDATION_ERROR`, with field details and the request id. |
 
 ## Tests
 
