@@ -12,4 +12,5 @@ router = APIRouter()
 async def search_products(
     data: ProductSearchRequest, session: ASession
 ) -> ProductSearchResponse:
-    return await services.search_products(session, data)
+    result = await services.search_products(session, limit=data.limit, offset=data.offset)
+    return ProductSearchResponse.from_result(result, data.language)

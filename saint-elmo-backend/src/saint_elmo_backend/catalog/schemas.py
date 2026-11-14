@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import Field
 
 from saint_elmo_backend.catalog.models import Product
+from saint_elmo_backend.catalog.dtos import CatalogProvenance, ProductSearchResult
 from saint_elmo_backend.core.schema import CamelBaseModel
 
 type Language = Literal["en", "fi", "sv"]
@@ -26,6 +27,13 @@ class Provenance(CamelBaseModel):
     source: str
     catalog_snapshot_date: date
 
+    @classmethod
+    def from_provenance(cls, provenance: CatalogProvenance) -> "Provenance":
+        return cls(
+            source=provenance.source,
+            catalog_snapshot_date=provenance.catalog_snapshot_date,
+        )
+
 
 class ProductHit(CamelBaseModel):
     code: str
@@ -41,3 +49,13 @@ class ProductSearchResponse(CamelBaseModel):
     total: int
     items: list[ProductHit]
     provenance: Provenance
+
+    @classmethod
+    def from_result(
+        cls, result: ProductSearchResult, language: Language
+    ) -> "ProductSearchResponse":
+        return cls(
+            total=result.total,
+            items=[ProductHit.from_product(product, language) for product in result.products],
+            provenance=Provenance.from_provenance(result.provenance),
+        )
