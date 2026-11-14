@@ -6,6 +6,7 @@ from sqlalchemy.orm import InstrumentedAttribute
 from saint_elmo_backend.catalog import crud
 from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
+    CatalogVocabulary,
     CuratedSubstitute,
     HitAllergen,
     ProductDetail,
@@ -23,6 +24,8 @@ from saint_elmo_backend.catalog.models import (
     Diet,
     Label,
     Product,
+    ProductDiet,
+    ProductLabel,
 )
 from saint_elmo_backend.core.settings import get_settings
 
@@ -148,4 +151,18 @@ async def get_product(session: AsyncSession, *, code: str, language: Language) -
             key=lambda substitute: substitute.code,
         ),
         provenance=catalog_provenance(),
+    )
+
+
+async def get_vocabulary(session: AsyncSession) -> CatalogVocabulary:
+    return CatalogVocabulary(
+        claims=await crud.used_claims(session),
+        diets=await crud.used_codes(
+            session, Diet, code=ProductDiet.diet_code, product_id=ProductDiet.product_id
+        ),
+        labels=await crud.used_codes(
+            session, Label, code=ProductLabel.label_code, product_id=ProductLabel.product_id
+        ),
+        allergens=await crud.used_allergens(session),
+        categories=await crud.used_categories(session),
     )
