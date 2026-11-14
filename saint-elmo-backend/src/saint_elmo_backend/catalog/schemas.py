@@ -13,6 +13,8 @@ from saint_elmo_backend.catalog.dtos import (
 )
 from saint_elmo_backend.catalog.enums import (
     AllergenContainment,
+    AllergenStatus,
+    AllergenStrictness,
     FishProductionMethod,
     Language,
     PackagingLevel,
@@ -62,6 +64,18 @@ class ProductSearchRequest(CamelBaseModel):
         le=1,
         description="Excludes products below this share and products with no delivery history",
     )
+    excluded_allergens: list[str] = Field(
+        default_factory=list,
+        description="GS1 allergen codes, e.g. AM milk, AW gluten cereals; "
+        "allergenStrictness sets which products they exclude",
+    )
+    allergen_strictness: AllergenStrictness = Field(
+        default=AllergenStrictness.CONTAINS,
+        description="contains: drop products declared CONTAINS; may_contain: also drop "
+        "MAY_CONTAIN; declared_free: keep only products declared FREE_FROM every "
+        "excluded allergen. Products with no data are kept unless declared_free. "
+        "Has no effect without excludedAllergens",
+    )
     limit: int = Field(default=20, ge=1, le=100)
     offset: int = Field(default=0, ge=0)
 
@@ -74,6 +88,8 @@ class ProductSearchRequest(CamelBaseModel):
             required_labels=tuple(self.required_labels),
             countries_of_origin=tuple(country.lower() for country in self.countries_of_origin),
             min_delivery_reliability=self.min_delivery_reliability,
+            excluded_allergens=tuple(self.excluded_allergens),
+            allergen_strictness=self.allergen_strictness,
         )
 
 
@@ -179,15 +195,34 @@ class ProductSummary(CamelBaseModel):
         }
 
 
+class HitAllergen(CamelBaseModel):
+    code: str = Field(description="GS1 allergen type, e.g. AM milk")
+    status: AllergenStatus = Field(
+        description="UNKNOWN when the product has no data for the allergen; "
+        "missing data is never reported as FREE_FROM"
+    )
+
+
 class ProductHit(ProductSummary):
     relevance: float | None = Field(
         description="Search score in [0, 1], higher is better: full-text matches score "
         "at least 0.5, typo-tolerant name matches below it; null when there was no query"
     )
+    allergens: list[HitAllergen] = Field(
+        description="Every allergen the request excluded, in request order, then every "
+        "other allergen the product CONTAINS"
+    )
 
     @classmethod
     def from_hit(cls, hit: ProductSearchHit) -> "ProductHit":
-        return cls(**cls.summary_fields(hit.product, hit.name), relevance=hit.relevance)
+        return cls(
+            **cls.summary_fields(hit.product, hit.name),
+            relevance=hit.relevance,
+            allergens=[
+                HitAllergen(code=allergen.code, status=allergen.status)
+                for allergen in hit.allergens
+            ],
+        )
 
 
 class ProductSearchResponse(CamelBaseModel):

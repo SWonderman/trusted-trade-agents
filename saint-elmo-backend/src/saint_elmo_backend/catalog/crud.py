@@ -1,5 +1,5 @@
 from collections.abc import Collection
-from typing import Any
+from typing import Any, assert_never
 
 from sqlalchemy import ColumnElement, Select, and_, case, cast, func, literal, null, or_, select
 from sqlalchemy.dialects.postgresql import REGCONFIG
@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute, joinedload, selectinload
 
 from saint_elmo_backend.catalog.dtos import ProductFilters, ProductMatch
-from saint_elmo_backend.catalog.enums import Language
+from saint_elmo_backend.catalog.enums import AllergenContainment, AllergenStrictness, Language
 from saint_elmo_backend.catalog.models import (
     Category,
     Product,
@@ -102,7 +102,53 @@ def _filter_conditions(filters: ProductFilters) -> list[ColumnElement[bool]]:
     if filters.min_delivery_reliability is not None:
         # NULL compares as unknown, so products without reliability data drop out
         conditions.append(Product.delivery_reliability >= filters.min_delivery_reliability)
+    conditions += _allergen_conditions(filters.excluded_allergens, filters.allergen_strictness)
+
     return conditions
+
+
+def _allergen_conditions(
+    allergens: tuple[str, ...], strictness: AllergenStrictness
+) -> list[ColumnElement[bool]]:
+    if not allergens:
+        return []
+    match strictness:
+        case AllergenStrictness.CONTAINS:
+            return [_contains_none_of(allergens, (AllergenContainment.CONTAINS,))]
+        case AllergenStrictness.MAY_CONTAIN:
+            return [
+                _contains_none_of(
+                    allergens, (AllergenContainment.CONTAINS, AllergenContainment.MAY_CONTAIN)
+                )
+            ]
+        case AllergenStrictness.DECLARED_FREE:
+            # A missing row is unknown, so every allergen needs its own FREE_FROM row
+            return [
+                Product.allergens.any(
+                    and_(
+                        ProductAllergen.allergen_code == allergen,
+                        ProductAllergen.containment == AllergenContainment.FREE_FROM,
+                    )
+                )
+                for allergen in allergens
+            ]
+        case _:
+            assert_never(strictness)
+
+
+def _contains_none_of(
+    allergens: tuple[str, ...], containments: tuple[AllergenContainment, ...]
+) -> ColumnElement[bool]:
+    """
+    No row declares any of the allergens with any of the containments; products
+    with no data pass.
+    """
+    return ~Product.allergens.any(
+        and_(
+            ProductAllergen.allergen_code.in_(allergens),
+            ProductAllergen.containment.in_(containments),
+        )
+    )
 
 
 async def search_products(
@@ -129,6 +175,7 @@ async def search_products(
         .limit(limit)
         .offset(offset)
         .options(
+            selectinload(Product.allergens),
             selectinload(Product.translations),
             selectinload(Product.units),
             selectinload(Product.deposits),
