@@ -234,3 +234,13 @@ async def test_missing_key_is_an_error_and_backend_is_not_called(connect, backen
     assert result.is_error
     assert "MISSING_AGENT_KEY" in text(result)
     assert backend.requests == []
+
+
+async def test_an_impossible_deliver_by_date_is_rejected_without_a_backend_call(connect, backend):
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        result = await client.call_tool(
+            "get_offers", {"deliverBy": "2026-13-45", "items": [{"productCode": "463038"}]}
+        )
+
+    assert result.is_error
+    assert backend.requests == []

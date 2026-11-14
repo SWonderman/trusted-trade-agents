@@ -14,7 +14,7 @@ The full flow (tools are added as the backend grows, so use the ones you have):
    get_vocabulary for the valid codes instead of guessing them.
 3. get_offers: live price and availability for a shortlist on a delivery date,
    with buyer quantities (e.g. 1000 L) converted to sales units and priced.
-   Check meetsDeadline and reasonCodes; offers are binding on nothing.
+   Check meetsDeadline, reasonCodes and crossCheck; offers are binding on nothing.
 4. create_quote: price a basket and see the policy outcome before committing.
 5. place_order: commit a quote. If it is pending approval, a human decides;
    poll get_order_status. You can never approve your own orders.

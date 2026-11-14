@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Annotated, Literal
 
 from mcp.server.mcpserver import Context, MCPServer
@@ -8,6 +9,7 @@ from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response
 from saint_elmo_mcp.schemas import OfferItem, Offers
 
+# Mirrors the backend's bound (offers/schemas.py MAX_ITEMS); change them together
 MAX_ITEMS = 50
 
 GET_OFFERS_DESCRIPTION = """\
@@ -47,9 +49,8 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
     async def get_offers(
         ctx: Context,
         deliverBy: Annotated[
-            str,
+            date,
             Field(
-                pattern=r"^\d{4}-\d{2}-\d{2}$",
                 description='Delivery date as an ISO date (YYYY-MM-DD). Resolve relative '
                 'dates like "by Monday" yourself.',
             ),
@@ -69,7 +70,7 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
         ] = None,
     ) -> Offers:
         body = {
-            "deliverBy": deliverBy,
+            "deliverBy": deliverBy.isoformat(),
             "items": [item.model_dump(by_alias=True, exclude_none=True) for item in items],
             "language": language,
         }

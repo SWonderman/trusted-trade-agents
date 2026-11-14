@@ -269,8 +269,9 @@ class Vocabulary(CamelModel):
 class OfferItem(CamelModel):
     """One requested product. Tool input, sent to the backend as given."""
 
+    # Bounds mirror the backend's OfferProductRequest
     product_code: str = Field(
-        min_length=1, description="Valio Aimo product code from search_products."
+        min_length=1, max_length=20, description="Valio Aimo product code from search_products."
     )
     quantity: float | None = Field(
         default=None,
@@ -280,6 +281,7 @@ class OfferItem(CamelModel):
     unit: str | None = Field(
         default=None,
         min_length=1,
+        max_length=10,
         description="Unit of `quantity`: L, KG, or one of the product's unit codes (e.g. KI, "
         "ST). Give L or KG to get the conversion to sales units. Omit for sales units. "
         "Needs `quantity`.",
@@ -360,6 +362,18 @@ class OfferProvenance(CamelModel):
     cached: bool
 
 
+OfferReasonCode = Literal[
+    "PARTIAL_AVAILABILITY",
+    "LATE_DELIVERY",
+    "NOT_DELIVERABLE",
+    "SALES_BLOCKED",
+    "NO_PRICE",
+    "CLOSING_TIME_PASSED",
+    "CONVERSION_UNAVAILABLE",
+    "CONVERSION_UNCERTAIN",
+]
+
+
 class Offer(CamelModel):
     product_code: str
     name: str | None
@@ -373,9 +387,9 @@ class Offer(CamelModel):
         description="Share of ordered quantity delivered, 0-1. null = no history."
     )
     carbon_footprint: CarbonFootprint | None
-    reason_codes: list[str] = Field(
-        description="Shortfalls and data gaps, e.g. PARTIAL_AVAILABILITY, LATE_DELIVERY, "
-        "CLOSING_TIME_PASSED, CONVERSION_UNCERTAIN. Empty = none."
+    reason_codes: list[OfferReasonCode] = Field(
+        description="Shortfalls and data gaps; empty = none. An offer only states them, "
+        "it judges nothing."
     )
     provenance: OfferProvenance
 
