@@ -71,6 +71,14 @@ def connect(backend: FakeBackend):
     return _connect
 
 
+def text(result) -> str:
+    return "\n".join(block.text for block in result.content if block.type == "text")
+
+
+async def tool_named(client: Client, name: str):
+    return next(t for t in (await client.list_tools()).tools if t.name == name)
+
+
 def search_response(*items: dict[str, Any], total: int | None = None) -> dict[str, Any]:
     return {
         "total": len(items) if total is None else total,
