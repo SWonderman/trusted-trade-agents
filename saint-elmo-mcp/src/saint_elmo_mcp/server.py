@@ -1,7 +1,7 @@
 from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
-from saint_elmo_mcp.tools import catalog, mandate, offers, orders, quotes
+from saint_elmo_mcp.tools import catalog, mandate, offers, orders, quotes, substitutes
 
 INSTRUCTIONS = """\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
@@ -16,12 +16,18 @@ The full flow (tools are added as the backend grows, so use the ones you have):
 3. get_offers: live price and availability for a shortlist on a delivery date,
    with buyer quantities (e.g. 1000 L) converted to sales units and priced.
    Check meetsDeadline, reasonCodes and crossCheck; offers are binding on nothing.
-4. create_quote: turn the chosen basket into a quote and see the policy outcome
+4. find_substitutes: on a shortfall (PARTIAL_AVAILABILITY, LATE_DELIVERY,
+   NOT_DELIVERABLE, SALES_BLOCKED), get ranked BEST / BETTER / GOOD
+   substitutes with their trade-offs and a policyPreview. Your mandate's
+   requirements still apply. Quote the chosen one with substitutesFor set to
+   the original code and explain the trade-off in rationale. No candidates
+   (NO_SUBSTITUTES_FOUND) is an answer: tell the buyer.
+5. create_quote: turn the chosen basket into a quote and see the policy outcome
    (AUTO_APPROVE, NEEDS_HUMAN or REJECT, with reasons) before committing. Give
    buyerRequest (the buyer's words) and rationale (why these lines); approvers
    see both. Revise with previousQuoteId. get_quote re-reads a quote; EXPIRED
    means quote again.
-5. place_order: commit a quote before its expiresAt. Live data and your mandate
+6. place_order: commit a quote before its expiresAt. Live data and your mandate
    are re-checked, so read `changes` and `policy.reasons`. PLACED is done;
    REJECTED is an answer with reasons. PENDING_APPROVAL means a human decides:
    tell the buyer it is waiting for approval, then poll get_order_status no
@@ -51,6 +57,7 @@ def build_server(backend: BackendClient) -> MCPServer:
     mandate.register(mcp, backend)
     catalog.register(mcp, backend)
     offers.register(mcp, backend)
+    substitutes.register(mcp, backend)
     quotes.register(mcp, backend)
     orders.register(mcp, backend)
     return mcp

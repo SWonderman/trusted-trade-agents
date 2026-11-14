@@ -717,3 +717,81 @@ class Order(CamelModel):
 class OrderList(CamelModel):
     total: int = Field(description="Orders matching the filter, across all pages.")
     items: list[Order] = Field(description="Most recent first.")
+
+
+# --- Ranked substitutes (POST /api/v1/products/{code}/substitutes, issue #16) ---
+# Every field of the backend's SubstitutesResponse. Tiers and reason codes are
+# Literals copied from the backend's substitutes enums, so a new value fails loudly.
+
+SubstituteTier = Literal["BEST", "BETTER", "GOOD"]
+
+SubstitutesReasonCode = Literal["NO_SUBSTITUTES_FOUND"]
+
+
+class SubstituteOriginal(CamelModel):
+    product_code: str
+    name: str | None
+    offer: Offer = Field(description="The original's live offer, with its shortfall.")
+
+
+class CarbonFootprintDelta(CamelModel):
+    value: float = Field(description="kg CO2-eq per kg, candidate minus original.")
+    basis: Literal["PRODUCT_GROUP_AVERAGE"] = Field(
+        description="Both values are product-group averages: an estimate, not a measurement."
+    )
+
+
+class TradeOffs(CamelModel):
+    """The candidate against the original. A delta is null when either side is unknown."""
+
+    price_per_buyer_unit_delta_pct: float | None = Field(
+        description="Percent; positive when the candidate costs more per buyer unit."
+    )
+    earliest_date_delta: int | None = Field(
+        description="Days; positive when the candidate arrives later."
+    )
+    reliability_delta: float | None = Field(
+        description="Delivery reliability, candidate minus original."
+    )
+    claims_kept: list[Claim] = Field(description="The original's claims the candidate carries.")
+    claims_lost: list[Claim] = Field(description="The original's claims the candidate lacks.")
+    labels_gained: list[str]
+    labels_lost: list[str]
+    carbon_footprint_delta: CarbonFootprintDelta | None
+
+
+class PolicyPreview(CamelModel):
+    outcome: PolicyOutcome = Field(
+        description="What quoting this candidate as a substitute for the original would give "
+        "now. A preview, not a commitment: create_quote judges for real."
+    )
+    reasons: list[PolicyReason]
+
+
+class SubstituteCandidate(CamelModel):
+    rank: int = Field(description="From 1.")
+    tier: SubstituteTier = Field(description="BEST, BETTER, then GOOD, in rank order.")
+    score: float = Field(
+        description="Out of 100. Delivery first, then price per buyer unit, reliability, "
+        "labels gained and CO2."
+    )
+    curated: bool = Field(description="A substitute Valio Aimo itself lists for the original.")
+    product_code: str
+    name: str | None
+    offer: Offer = Field(description="The candidate's live offer, as get_offers returns it.")
+    trade_offs: TradeOffs
+    policy_preview: PolicyPreview
+
+
+class Substitutes(CamelModel):
+    original: SubstituteOriginal
+    deliver_by: str = Field(description="The requested deliverBy, or the default used; check it.")
+    buyer_unit: str = Field(
+        description="The unit candidates were compared in: the requested unit, or without a "
+        "quantity the original's comparison unit (L or KG) or sales unit."
+    )
+    evaluated_at: str
+    candidates: list[SubstituteCandidate] = Field(description="In rank order, at most `limit`.")
+    reason_codes: list[SubstitutesReasonCode] = Field(
+        description="NO_SUBSTITUTES_FOUND when no candidate qualified: tell the buyer."
+    )
