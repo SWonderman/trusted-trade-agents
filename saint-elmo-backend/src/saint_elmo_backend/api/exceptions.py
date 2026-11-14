@@ -632,8 +632,8 @@ class SaintElmoErrorResponse(CamelBaseModel):
 
 def to_response_error(
     *exceptions: type[SaintElmoHTTPException],
-) -> dict[int, dict[str, Any]]:
-    result: dict[int, dict[str, Any]] = {}
+) -> dict[int | str, dict[str, Any]]:
+    result: dict[int | str, dict[str, Any]] = {}
 
     for exc in exceptions:
         instance: SaintElmoHTTPException = exc()  # type: ignore[call-arg]

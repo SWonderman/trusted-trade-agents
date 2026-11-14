@@ -11,9 +11,14 @@ from saint_elmo_backend.catalog.enums import Language
 from saint_elmo_backend.catalog.models import (
     Category,
     Product,
+    ProductAllergen,
     ProductClaim,
     ProductDiet,
+    ProductFishSpecies,
+    ProductIngredient,
     ProductLabel,
+    ProductSafetySheet,
+    ProductSubstitution,
     ProductTranslation,
     Vendor,
 )
@@ -162,3 +167,32 @@ async def existing_codes(
     if not codes:
         return set()
     return set((await session.scalars(select(column).where(column.in_(codes)))).all())
+
+
+async def get_product_by_code(session: AsyncSession, code: str) -> Product | None:
+    stmt = (
+        select(Product)
+        .where(Product.code == code)
+        .options(
+            selectinload(Product.allergens).joinedload(ProductAllergen.allergen),
+            selectinload(Product.nutrients),
+            selectinload(Product.ingredients).selectinload(ProductIngredient.origins),
+            selectinload(Product.packaging_levels),
+            selectinload(Product.producers),
+            selectinload(Product.fish_species).selectinload(ProductFishSpecies.catch_methods),
+            selectinload(Product.safety_sheets).selectinload(ProductSafetySheet.statements),
+            selectinload(Product.substitutions)
+            .joinedload(ProductSubstitution.substitute)
+            .selectinload(Product.translations),
+            selectinload(Product.translations),
+            selectinload(Product.units),
+            selectinload(Product.deposits),
+            selectinload(Product.claims),
+            selectinload(Product.diets),
+            selectinload(Product.labels),
+            joinedload(Product.category),
+            joinedload(Product.vendor),
+            joinedload(Product.brand),
+        )
+    )
+    return await session.scalar(stmt)

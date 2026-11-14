@@ -6,12 +6,14 @@ from sqlalchemy.orm import InstrumentedAttribute
 from saint_elmo_backend.catalog import crud
 from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
+    CuratedSubstitute,
+    ProductDetail,
     ProductFilters,
     ProductSearchHit,
     ProductSearchResult,
 )
 from saint_elmo_backend.catalog.enums import Language
-from saint_elmo_backend.catalog.exceptions import UnknownCodesError
+from saint_elmo_backend.catalog.exceptions import ProductNotFoundError, UnknownCodesError
 from saint_elmo_backend.catalog.models import (
     Category,
     ClaimElement,
@@ -99,5 +101,27 @@ async def search_products(
             )
             for match in matches
         ],
+        provenance=catalog_provenance(),
+    )
+
+
+async def get_product(session: AsyncSession, *, code: str, language: Language) -> ProductDetail:
+    product = await crud.get_product_by_code(session, code)
+    if product is None:
+        raise ProductNotFoundError(code)
+
+    return ProductDetail(
+        product=product,
+        name=product_name(product, language),
+        curated_substitutes=sorted(
+            (
+                CuratedSubstitute(
+                    code=substitution.substitute.code,
+                    name=product_name(substitution.substitute, language),
+                )
+                for substitution in product.substitutions
+            ),
+            key=lambda substitute: substitute.code,
+        ),
         provenance=catalog_provenance(),
     )

@@ -46,6 +46,7 @@ async def make_product(
     code: str | None = None,
     names: dict[str, str] | None = None,
     marketing_texts: dict[str, str] | None = None,
+    texts: dict[str, dict[str, str]] | None = None,
     category: str = "C100",
     vendor: str = "Test Vendor",
     brand: str | None = None,
@@ -63,11 +64,15 @@ async def make_product(
 ) -> Product:
     """
     One product with the given attributes; every other column is left at its
-    model default. Category, vendor and brand are reused by name.
+    model default. Category, vendor and brand are reused by name. `texts` sets any
+    other ProductTranslation column per language, e.g. {"fi": {"usage_instructions": ...}}.
+    Relations without a dedicated argument (nutrients, ingredients, ...) can be passed
+    as model instances through `fields`.
     """
     code = code or str(next(_codes))
     names = names or {"en": f"Test product {code}"}
     marketing_texts = marketing_texts or {}
+    texts = texts or {}
     units = units or {base_unit: Decimal("1")}
     unit_gtins = unit_gtins or {}
 
@@ -84,8 +89,9 @@ async def make_product(
                 language=language,
                 name=names.get(language),
                 marketing_text=marketing_texts.get(language),
+                **texts.get(language, {}),
             )
-            for language in names | marketing_texts
+            for language in names | marketing_texts | texts
         ],
         units=[
             ProductUnit(
