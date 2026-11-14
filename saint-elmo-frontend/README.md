@@ -1,46 +1,72 @@
 # Saint Elmo frontend
 
-The human side of Saint Elmo: a marketing page, and **agent control**, the console where a buyer organisation approves what its purchasing agents can't decide alone, sets their mandates and keys, and reads the audit trail. Valio Aimo staff get a read-only cross-customer view with demo controls.
+The human side of Saint Elmo: a marketing page, and **agent control**, the console where a buyer organisation approves what its purchasing agents can't decide alone, sets their mandates and Agent tokens, looks up the catalog to write mandates, and reads the audit trail. Valio Aimo staff get a read-only cross-customer view with demo controls.
 
-SvelteKit 3 (Svelte 5 runes), Tailwind CSS 4 and `adapter-node`. It runs as a backend-for-frontend, as described in `../design.md` §3.4: the browser only talks to SvelteKit, and SvelteKit's server side talks to FastAPI.
+SvelteKit 3 (Svelte 5 runes), Tailwind CSS 4, [shadcn-svelte](https://shadcn-svelte.com) components (`src/lib/components/ui`, generated, Vega style) and `adapter-node`. It runs as a backend-for-frontend, as described in `../design.md` §3.4: the browser only talks to SvelteKit, and SvelteKit's server side talks to FastAPI.
 
 ## Run it
 
+Demo data only, no backend needed:
+
 ```sh
 npm install
-cp .env.example .env        # API_MODE=mock works without the backend
+cp .env.example .env
 SESSION_COOKIE_SECURE=false npm run dev
 ```
 
-Open <http://localhost:5173>. In mock mode the login page lists the demo accounts; every password is `demo`.
+With the backend for sign-in and the catalog (start it first, see `../saint-elmo-backend/README.md`), set in `.env`:
 
-| Account                 | Sees                                                             |
-| ----------------------- | ---------------------------------------------------------------- |
-| `aino@kajohotels.demo`  | Kajo Hotels: approval inbox, `dairy-restock` and `event-planner` |
-| `mikael@merikoski.demo` | Merikoski Hospital kitchen: `ward-kitchen` with allergen rules   |
-| `satu@aimo-ops.demo`    | Valio Aimo operations: oversight feed and demo controls          |
+```sh
+API_MODE=mock
+API_MODE_AUTH=http
+API_MODE_CATALOG=http
+BACKEND_URL=http://localhost:8000
+SESSION_COOKIE_SECURE=false
+```
 
-Restart `npm run dev` after adding new route or component files. Otherwise the dev server can serve a stylesheet without their Tailwind classes.
+Open <http://localhost:5173>. The demo accounts match the backend seed, so they work in both setups; every password is `saint-elmo-demo`.
+
+| Account                                 | Sees                                                                |
+| --------------------------------------- | ------------------------------------------------------------------- |
+| `buyer.admin@aurora-hotels.example`     | Aurora Hotels: approvals, `dairy-restock` and `event-planner`       |
+| `buyer.admin@kuusikko-hospital.example` | Kuusikko Hospital Kitchen: `ward-kitchen` with allergen rules       |
+| `ops@valio-aimo.example`                | Valio Aimo operations: oversight feed and demo controls (mock only) |
+
+Restart `npm run dev` after adding new route or component files, or after changing `.env`.
+
+## Design
+
+One token system in `src/routes/layout.css` serves both halves. Its palette comes from the Grünewald panel the brand is cut from: lapis (primary), gold leaf (accent, used sparingly), vermilion (destructive and hard rejections) and vellum, on warm neutrals, with a light and a dark theme (`mode-watcher`, `.dark` class). Type: EB Garamond for display (a Renaissance Garamond, set tight), Inter for the UI, IBM Plex Mono for codes.
+
+- The marketing page uses the palette at full strength: a fixed night-lapis and vellum page, the painting in an arch.
+- The console is a quieter SaaS layout: inset sidebar, page headers in Garamond, shadcn components. Each page header says whether its data is **Live** (backend) or **Demo data** (mock), and the sidebar lists which areas are live.
+
+Add more shadcn components with `npx shadcn-svelte@1.8.1 add <name>`, then `npm run format`.
 
 ## Screens
 
-| Route                                         | What it's for                                                                                                                          |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                                           | Marketing page (prerendered)                                                                                                           |
-| `/login`                                      | Sign-in with environment and session status                                                                                            |
-| `/inbox`, `/inbox/[orderId]`                  | Approval inbox: the policy's reason codes next to the agent's note, unit conversions, live offer checks, approve or reject with a note |
-| `/agents`, `/agents/[agentId]`, `/agents/new` | Agents and mandates: spend, requirements, substitution rules; issue a key (shown once), revoke, disable                                |
-| `/audit`                                      | Append-only, hash-chained audit trail, filterable by agent, order, tool call or outcome; `/audit/export.json` downloads it             |
-| `/oversight`                                  | Valio Aimo staff only: cross-customer activity, stock and price overrides, simulate an agent order                                     |
+| Route                                         | What it's for                                                                                                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/`                                           | Marketing page (prerendered)                                                                                                                                             |
+| `/login`                                      | Sign-in, against the backend with `API_MODE_AUTH=http`                                                                                                                   |
+| `/inbox`, `/inbox/[orderId]`                  | Approvals: the policy's reason codes next to the agent's rationale, unit conversions, live offer checks, approve or reject with a note                                   |
+| `/agents`, `/agents/[agentId]`, `/agents/new` | Agents and mandates: spend, requirements, substitution rules; issue an Agent token (shown once), revoke, disable                                                         |
+| `/catalog`, `/catalog/[code]`                 | Read-only catalog, a reference for writing mandates: search by claim, allergen and category; product detail with allergens, nutrition, packaging and curated substitutes |
+| `/audit`                                      | Append-only, hash-chained audit trail, filterable by agent, order, tool call or outcome; `/audit/export.json` downloads it                                               |
+| `/oversight`                                  | Valio Aimo staff only: cross-customer activity, stock and price overrides, simulate an agent order                                                                       |
 
 ## Connecting to the backend
 
 Pages never call the backend directly. Server `load` functions and form actions use `api` from `src/lib/server/api`, which implements one interface (`client.ts`) in two ways:
 
-- `mock/`: in-memory fixtures that follow the demo seed in issue #11. Actions really change state, and every read is filtered by organisation, as row-level security will do.
-- `http/`: `fetch` to `BACKEND_URL` with the user's JWT as a bearer token. It turns the backend's `{ error: { code, message } }` envelope into form errors.
+- `mock/`: in-memory fixtures that follow the backend's demo seed (same organisations, people, agents and mandates; order lines use real catalog products). Actions really change state, until the server restarts. Every read is filtered by the caller's organisation, matched by id or, for a backend session, by name.
+- `http/`: `fetch` to `BACKEND_URL` with the user's JWT as a bearer token. Sign-in is the OAuth 2.0 password grant on `/api/v1/auth/token`, then `/api/v1/auth/me`. The backend's `{ error: { code, message } }` envelope becomes form errors.
 
-`API_MODE` picks the implementation, and `API_MODE_ORDERS`, `API_MODE_AGENTS` and the other per-area variables override it, so real endpoints can be switched on one at a time as issues #11, #13, #15 and #22 land. The shared types in `src/lib/api/types.ts` mirror those issues; replace them with types generated from FastAPI's `/openapi.json` once it publishes these routes.
+`API_MODE` picks the implementation, and `API_MODE_AUTH`, `API_MODE_CATALOG`, `API_MODE_ORDERS`, `API_MODE_AGENTS`, `API_MODE_AUDIT` and `API_MODE_OVERSIGHT` override it per area, so real endpoints can be switched on one at a time as issues #13, #15 and #22 land. Any `http` area needs `API_MODE_AUTH=http`, since the backend only accepts sessions it signed; the server refuses to start otherwise.
+
+Types for routes the backend serves come from its OpenAPI schema: `npm run gen:api` (with the backend running, `BACKEND_URL` defaults to `http://localhost:8000`) regenerates `src/lib/api/backend.d.ts`, and `src/lib/api/types.ts` re-exports them under short names. The rest of `types.ts` mirrors the open issues until those routes exist.
+
+Live offers (`POST /api/v1/offers`) stay agent-only by design: Saint Elmo is first a gateway for agents, and the console is where people manage those agents, their Agent tokens and mandates, not where they shop.
 
 ## Checks
 

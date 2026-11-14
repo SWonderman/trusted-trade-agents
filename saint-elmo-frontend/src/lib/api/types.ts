@@ -1,19 +1,33 @@
 /**
  * Shapes shared by the server and the pages.
  *
- * They mirror the backend contracts in GitHub issues #11 (mandate), #13 (policy),
- * #15 (orders), #22 (agent keys) and the MCP schemas in
- * saint-elmo-mcp/src/saint_elmo_mcp/schemas.py, under the same camelCase names.
- * When the backend publishes these routes, replace this file with types generated
- * from FastAPI's /openapi.json (openapi-typescript).
+ * Routes the backend already serves to people (sign-in, catalog) use types generated
+ * from its OpenAPI schema into `backend.d.ts` (`npm run gen:api`); they are
+ * re-exported below under short names. The rest mirror the contracts in GitHub
+ * issues #11 (mandate), #13 (policy), #15 (orders) and #22 (agent keys) until those
+ * routes land, then move to generated types too.
  */
+
+import type { components } from './backend';
+
+type Schemas = components['schemas'];
+
+// --- Generated from the backend --------------------------------------------
+
+export type BackendMe = Schemas['MeOutput'];
+export type ProductSearchRequest = Partial<Schemas['ProductSearchRequest']>;
+export type ProductSearchResponse = Schemas['ProductSearchResponse'];
+export type ProductHit = Schemas['ProductHit'];
+export type ProductDetail = Schemas['ProductDetailResponse'];
+export type Vocabulary = Schemas['VocabularyResponse'];
 
 export type Iso = string;
 export type Money = number; // EUR, excluding VAT
 
 // --- Principals -------------------------------------------------------------
 
-export type Role = 'buyer_admin' | 'approver' | 'aimo_staff';
+/** The backend's roles, plus Valio Aimo staff, which only the mock has so far. */
+export type Role = BackendMe['role'] | 'AIMO_STAFF';
 
 export interface BuyerOrganisation {
 	id: string;
@@ -28,7 +42,7 @@ export interface SessionUser {
 	email: string;
 	role: Role;
 	/** null for Valio Aimo staff, who belong to no buyer organisation */
-	organisation: BuyerOrganisation | null;
+	organisation: Pick<BuyerOrganisation, 'id' | 'name'> | null;
 }
 
 // --- Catalog and offers ------------------------------------------------------
@@ -114,7 +128,7 @@ export interface OrderLine {
 export interface StatusChange {
 	status: OrderStatus;
 	at: Iso;
-	by: string; // "agent:dairy-restock" | "user:Aino Virtanen" | "system"
+	by: string; // "agent:dairy-restock" | "user:Helmi Virtanen" | "system"
 	note?: string;
 }
 

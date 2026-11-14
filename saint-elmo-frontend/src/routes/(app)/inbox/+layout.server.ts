@@ -1,10 +1,10 @@
-import { api } from '#lib/server/api/index.js';
+import { api, apiModes } from '#lib/server/api/index.js';
 import { requireCaller, requireRole } from '#lib/server/session.js';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 	const caller = requireCaller(locals, url);
-	requireRole(caller, 'buyer_admin', 'approver');
+	requireRole(caller, 'BUYER_ADMIN', 'APPROVER');
 	depends('app:inbox');
 
 	const all = await api.orders.list(caller);
@@ -23,6 +23,7 @@ export const load: LayoutServerLoad = async ({ locals, url, depends }) => {
 	});
 
 	return {
+		source: apiModes.orders,
 		pending: all.filter((o) => o.status === 'PENDING_APPROVAL').map(summarise),
 		recent: all
 			.filter((o) => o.status !== 'PENDING_APPROVAL')

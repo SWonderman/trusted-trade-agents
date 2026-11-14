@@ -1,29 +1,39 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import CircleCheckBigIcon from '@lucide/svelte/icons/circle-check-big';
+	import ListChecksIcon from '@lucide/svelte/icons/list-checks';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import * as Empty from '#lib/components/ui/empty/index.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 </script>
 
-<div
-	class="grid h-full min-h-80 place-items-center rounded-md border border-dashed border-line-strong px-6 py-12 text-center"
->
-	<div class="max-w-[38ch]">
+<Empty.Root class="min-h-96 rounded-xl border border-dashed bg-card/50">
+	<Empty.Header>
+		<Empty.Media variant="icon">
+			{#if data.pending.length}<ListChecksIcon />{:else}<CircleCheckBigIcon />{/if}
+		</Empty.Media>
 		{#if data.pending.length}
-			<p class="font-semibold text-ink">Choose an order to review</p>
-			<p class="mt-1 text-sm text-muted">
+			<Empty.Title>Choose an order to review</Empty.Title>
+			<Empty.Description>
 				You’ll see the policy’s reasons next to the agent’s note, every line’s unit conversion, and
 				the live price and stock it was checked against.
-			</p>
-			<a href={resolve(`inbox/${data.pending.at(-1)?.orderId}`)} class="btn btn-primary mt-5">
-				Review the oldest first
-			</a>
+			</Empty.Description>
 		{:else}
-			<p class="font-semibold text-ink">You’re all caught up</p>
-			<p class="mt-1 text-sm text-muted">
-				To change what agents may decide alone, edit their mandates.
-			</p>
-			<a href={resolve('agents')} class="btn mt-5">Open agents and mandates</a>
+			<Empty.Title>You’re all caught up</Empty.Title>
+			<Empty.Description
+				>To change what agents may decide alone, edit their mandates.</Empty.Description
+			>
 		{/if}
-	</div>
-</div>
+	</Empty.Header>
+	<Empty.Content>
+		{#if data.pending.length}
+			<Button href={resolve(`inbox/${data.pending.at(-1)?.orderId}`)}
+				>Review the oldest first</Button
+			>
+		{:else}
+			<Button variant="outline" href={resolve('agents')}>Open agents & mandates</Button>
+		{/if}
+	</Empty.Content>
+</Empty.Root>

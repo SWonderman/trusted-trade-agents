@@ -14,6 +14,7 @@ export const variables = defineEnvVars({
 	API_MODE: { schema: (value) => apiMode(value) ?? 'mock' },
 	/** Per-namespace overrides, so real endpoints can be switched on one at a time. */
 	API_MODE_AUTH: { schema: apiMode },
+	API_MODE_CATALOG: { schema: apiMode },
 	API_MODE_ORDERS: { schema: apiMode },
 	API_MODE_AGENTS: { schema: apiMode },
 	API_MODE_AUDIT: { schema: apiMode },

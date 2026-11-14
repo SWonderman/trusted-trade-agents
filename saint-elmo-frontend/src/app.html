@@ -5,13 +5,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<script>
-			// Apply a saved theme before first paint, so dark mode doesn't flash.
-			try {
-				const t = localStorage.getItem('se-theme');
-				if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
-			} catch {}
-		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

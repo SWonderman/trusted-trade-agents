@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import BotIcon from '@lucide/svelte/icons/bot';
+	import CogIcon from '@lucide/svelte/icons/cog';
+	import UserIcon from '@lucide/svelte/icons/user';
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import type { AuditEvent } from '#lib/api/types.js';
 	import { date, time } from '#lib/format.js';
-	import OutcomeBadge from '../ui/OutcomeBadge.svelte';
+	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
+	import OutcomeBadge from '../app/OutcomeBadge.svelte';
 
 	let {
 		events,
@@ -20,81 +25,104 @@
 		return groups;
 	});
 
-	const actorLabel = { agent: 'Agent', user: 'Person', system: 'System' } as const;
+	// Marker icon and colour say who acted: agent, person or system.
+	const actor = {
+		agent: { label: 'Agent', icon: BotIcon, cls: 'bg-primary/10 text-primary ring-primary/20' },
+		user: { label: 'Person', icon: UserIcon, cls: 'bg-foreground text-background ring-foreground' },
+		system: { label: 'System', icon: CogIcon, cls: 'bg-muted text-muted-foreground ring-border' }
+	} as const;
 </script>
 
 <div class="space-y-8">
 	{#each days as group (group.day)}
 		<section aria-label={group.day}>
 			<h3
-				class="sticky top-14 z-[1] -mx-1 mb-2 bg-surface/95 px-1 py-1 text-xs font-semibold text-muted backdrop-blur"
+				class="sticky top-14 z-[1] -mx-2 mb-3 bg-card/95 px-2 py-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase backdrop-blur"
 			>
 				{group.day}
 			</h3>
-			<ol class="relative">
+			<ol>
 				{#each group.events as e (e.id)}
+					{@const a = actor[e.actor.kind]}
 					<li
-						class="event grid grid-cols-[4.5rem_1.25rem_1fr] gap-x-2 sm:grid-cols-[5.5rem_1.5rem_1fr]"
+						class="group/event grid grid-cols-[3.75rem_1.75rem_1fr] gap-x-3 sm:grid-cols-[4.5rem_1.75rem_1fr]"
 					>
-						<time datetime={e.at} class="tabular pt-0.5 text-right text-xs text-muted"
+						<time datetime={e.at} class="pt-1 text-right text-xs text-muted-foreground tabular"
 							>{time(e.at)}</time
 						>
-						<span class="rail" aria-hidden="true">
-							<span class={['marker', e.actor.kind]}></span>
+						<span class="relative flex justify-center" aria-hidden="true">
+							<span
+								class="absolute top-0 bottom-0 w-px bg-border group-last/event:bottom-auto group-last/event:h-3"
+							></span>
+							<span
+								class={[
+									'relative mt-0.5 grid size-6 place-items-center rounded-full ring-1 ring-inset',
+									a.cls
+								]}
+							>
+								<a.icon class="size-3.5" />
+							</span>
 						</span>
-						<div class="min-w-0 pb-5">
+						<div class="min-w-0 pb-6">
 							<p class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-								<span class="sr-only">{actorLabel[e.actor.kind]}</span>
-								<span
-									class={[
-										'font-semibold',
-										e.actor.kind === 'agent' ? 'code text-lapis' : 'text-ink'
-									]}
-								>
+								<span class="sr-only">{a.label}</span>
+								<span class={['font-medium', e.actor.kind === 'agent' && 'code text-primary']}>
 									{e.actor.name}
 								</span>
-								<span class="code text-xs text-muted">{e.tool ?? e.type}</span>
-								{#if showOrganisation}<span class="text-xs text-muted">{e.organisationName}</span
+								<span class="code text-xs text-muted-foreground">{e.tool ?? e.type}</span>
+								{#if showOrganisation}<span class="text-xs text-muted-foreground"
+										>· {e.organisationName}</span
 									>{/if}
 							</p>
-							<p class="mt-0.5 text-sm text-ink">{e.summary}</p>
-							{#if e.outcome || e.stateChange || e.orderId}
-								<div class="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
-									{#if e.outcome}<OutcomeBadge outcome={e.outcome} size="sm" />{/if}
+							<p class="mt-0.5 text-sm text-pretty">{e.summary}</p>
+							{#if e.outcome || e.stateChange || e.orderId || e.reasonCodes?.length}
+								<div class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+									{#if e.outcome}<OutcomeBadge outcome={e.outcome} />{/if}
 									{#each e.reasonCodes ?? [] as code (code)}
-										<span class="code rounded-sm bg-sunken px-1.5 py-0.5 text-ink">{code}</span>
+										<span class="rounded-md bg-muted px-1.5 py-0.5 code">{code}</span>
 									{/each}
 									{#if e.stateChange}
-										<span class="code text-muted">
+										<span class="code text-muted-foreground">
 											{e.stateChange.from ?? 'new'} →
-											<span class="text-ink">{e.stateChange.to}</span>
+											<span class="text-foreground">{e.stateChange.to}</span>
 										</span>
 									{/if}
 									{#if e.orderId}
 										{#if linkOrders}
 											<a
 												href={resolve(`inbox/${e.orderId}`)}
-												class="code text-lapis hover:underline">{e.orderId}</a
+												class="code text-primary underline-offset-2 hover:underline">{e.orderId}</a
 											>
 										{:else}
-											<span class="code text-muted">{e.orderId}</span>
+											<span class="code text-muted-foreground">{e.orderId}</span>
 										{/if}
 									{/if}
 								</div>
 							{/if}
-							<details class="mt-1 text-xs text-faint">
-								<summary class="cursor-pointer select-none hover:text-muted">Entry {e.id}</summary>
-								<dl class="code mt-1 grid grid-cols-[6rem_1fr] gap-x-2 gap-y-0.5 break-all">
-									<dt>hash</dt>
-									<dd class="text-muted">{e.hash}</dd>
-									<dt>previous</dt>
-									<dd class="text-muted">{e.prevHash}</dd>
-									{#if e.quoteId}<dt>quote</dt>
-										<dd class="text-muted">{e.quoteId}</dd>{/if}
-									<dt>recorded</dt>
-									<dd class="text-muted">{e.at}</dd>
-								</dl>
-							</details>
+							<Collapsible.Root class="mt-1.5 text-xs text-muted-foreground">
+								<Collapsible.Trigger
+									class="group/trigger inline-flex items-center gap-0.5 hover:text-foreground"
+								>
+									<ChevronRightIcon
+										class="size-3 transition-transform group-data-[state=open]/trigger:rotate-90"
+									/>
+									Entry {e.id}
+								</Collapsible.Trigger>
+								<Collapsible.Content>
+									<dl
+										class="mt-1.5 grid grid-cols-[5.5rem_1fr] gap-x-2 gap-y-0.5 rounded-md bg-muted/60 p-2 code break-all"
+									>
+										<dt>hash</dt>
+										<dd class="text-foreground/80">{e.hash}</dd>
+										<dt>previous</dt>
+										<dd class="text-foreground/80">{e.prevHash}</dd>
+										{#if e.quoteId}<dt>quote</dt>
+											<dd class="text-foreground/80">{e.quoteId}</dd>{/if}
+										<dt>recorded</dt>
+										<dd class="text-foreground/80">{e.at}</dd>
+									</dl>
+								</Collapsible.Content>
+							</Collapsible.Root>
 						</div>
 					</li>
 				{/each}
@@ -102,46 +130,3 @@
 		</section>
 	{/each}
 </div>
-
-<style>
-	.rail {
-		position: relative;
-		display: flex;
-		justify-content: center;
-	}
-	.rail::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 1px;
-		background: var(--se-line);
-	}
-	.event:last-child .rail::before {
-		bottom: auto;
-		height: 0.75rem;
-	}
-	/* Marker shape says who acted: ring = agent, filled = person, small dot = system. */
-	.marker {
-		position: relative;
-		margin-top: 0.3rem;
-		width: 0.625rem;
-		height: 0.625rem;
-		border-radius: 50%;
-		background: var(--se-surface);
-	}
-	.marker.agent {
-		border: 2px solid var(--se-lapis);
-	}
-	.marker.user {
-		background: var(--se-ink);
-		box-shadow: 0 0 0 3px var(--se-surface);
-	}
-	.marker.system {
-		margin-top: 0.45rem;
-		width: 0.375rem;
-		height: 0.375rem;
-		background: var(--se-faint);
-		box-shadow: 0 0 0 3px var(--se-surface);
-	}
-</style>

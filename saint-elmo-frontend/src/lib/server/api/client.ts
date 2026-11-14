@@ -8,9 +8,13 @@ import type {
 	NewAgentInput,
 	Order,
 	OrderStatus,
+	ProductDetail,
+	ProductSearchRequest,
+	ProductSearchResponse,
 	ScenarioKind,
 	ScenarioOverride,
-	SessionUser
+	SessionUser,
+	Vocabulary
 } from '#lib/api/types.js';
 
 /**
@@ -20,6 +24,7 @@ import type {
  */
 export interface SaintElmoApi {
 	auth: AuthApi;
+	catalog: CatalogApi;
 	orders: OrdersApi;
 	agents: AgentsApi;
 	audit: AuditApi;
@@ -33,12 +38,28 @@ export interface Caller {
 }
 
 export interface AuthApi {
-	/** POST /auth/login → signed JWT. */
-	login(email: string, password: string): Promise<{ token: string; user: SessionUser }>;
+	/** POST /api/v1/auth/token (OAuth 2.0 password grant), then GET /api/v1/auth/me. */
+	login(
+		email: string,
+		password: string
+	): Promise<{ token: string; user: SessionUser; expiresInSeconds: number }>;
 	/** Resolves a token to its user, or null if it is unknown or expired. */
 	session(token: string): Promise<SessionUser | null>;
 	/** Seeded accounts to show on the login page in demo mode; empty when live. */
 	demoAccounts(): Promise<{ email: string; password: string; label: string }[]>;
+}
+
+/**
+ * The catalog, read-only, as a reference for writing mandates. Live offers stay
+ * agent-only: people manage agents here, agents do the buying.
+ */
+export interface CatalogApi {
+	/** POST /api/v1/products/search */
+	search(caller: Caller, request: ProductSearchRequest): Promise<ProductSearchResponse>;
+	/** GET /api/v1/products/{code}, or null when there is no such product. */
+	product(caller: Caller, code: string): Promise<ProductDetail | null>;
+	/** GET /api/v1/catalog/vocabulary: the filter codes products actually use. */
+	vocabulary(caller: Caller): Promise<Vocabulary>;
 }
 
 export interface OrdersApi {
