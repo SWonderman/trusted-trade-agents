@@ -55,6 +55,12 @@ class BackendClient:
         raise _tool_error_from(response)
 
 
+def request_body(**fields: Any) -> dict[str, Any]:
+    """A JSON body of only the fields given: `None` means "not given", so the
+    backend applies its own default instead of receiving an explicit null."""
+    return {name: value for name, value in fields.items() if value is not None}
+
+
 def parse_response[M: BaseModel](model: type[M], data: Any) -> M:
     """Validate a backend response against a tool's output model.
 

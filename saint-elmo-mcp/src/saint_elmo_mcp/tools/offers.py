@@ -6,7 +6,7 @@ from mcp.types import ToolAnnotations
 from pydantic import Field
 
 from saint_elmo_mcp.auth import agent_key
-from saint_elmo_mcp.backend import BackendClient, parse_response
+from saint_elmo_mcp.backend import BackendClient, parse_response, request_body
 from saint_elmo_mcp.schemas import OfferItem, Offers
 
 # Mirrors the backend's bound (offers/schemas.py MAX_ITEMS); change them together
@@ -69,14 +69,13 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
             Field(description="Language of product names; defaults to en, falls back to fi."),
         ] = None,
     ) -> Offers:
-        body = {
-            "deliverBy": deliverBy.isoformat(),
-            "items": [item.model_dump(by_alias=True, exclude_none=True) for item in items],
-            "language": language,
-        }
         data = await backend.post(
             "/api/v1/offers",
             agent_key=agent_key(ctx),
-            json={k: v for k, v in body.items() if v is not None},
+            json=request_body(
+                deliverBy=deliverBy.isoformat(),
+                items=[item.model_dump(by_alias=True, exclude_none=True) for item in items],
+                language=language,
+            ),
         )
         return parse_response(Offers, data)

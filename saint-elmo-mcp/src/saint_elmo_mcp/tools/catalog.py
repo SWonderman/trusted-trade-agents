@@ -6,7 +6,7 @@ from mcp.types import ToolAnnotations
 from pydantic import Field, WithJsonSchema
 
 from saint_elmo_mcp.auth import agent_key
-from saint_elmo_mcp.backend import BackendClient, parse_response
+from saint_elmo_mcp.backend import BackendClient, parse_response, request_body
 from saint_elmo_mcp.schemas import (
     AllergenStrictness,
     CatalogVocabulary,
@@ -158,29 +158,28 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
             Field(json_schema_extra=lambda schema: schema.update(default="contains")),
         ] = None,
     ) -> ProductSearchResult:
-        body = {
-            "query": query,
-            "language": language,
-            "limit": limit,
-            "offset": offset,
-            "categoryCodes": categoryCodes,
-            "vendors": vendors,
-            "requiredClaims": (
-                None
-                if requiredClaims is None
-                else [c.model_dump(by_alias=True) for c in requiredClaims]
-            ),
-            "requiredDiets": requiredDiets,
-            "requiredLabels": requiredLabels,
-            "countriesOfOrigin": countriesOfOrigin,
-            "minDeliveryReliability": minDeliveryReliability,
-            "excludedAllergens": excludedAllergens,
-            "allergenStrictness": allergenStrictness,
-        }
         data = await backend.post(
             "/api/v1/products/search",
             agent_key=agent_key(ctx),
-            json={k: v for k, v in body.items() if v is not None},
+            json=request_body(
+                query=query,
+                language=language,
+                limit=limit,
+                offset=offset,
+                categoryCodes=categoryCodes,
+                vendors=vendors,
+                requiredClaims=(
+                    None
+                    if requiredClaims is None
+                    else [c.model_dump(by_alias=True) for c in requiredClaims]
+                ),
+                requiredDiets=requiredDiets,
+                requiredLabels=requiredLabels,
+                countriesOfOrigin=countriesOfOrigin,
+                minDeliveryReliability=minDeliveryReliability,
+                excludedAllergens=excludedAllergens,
+                allergenStrictness=allergenStrictness,
+            ),
         )
         return parse_response(ProductSearchResult, data)
 
