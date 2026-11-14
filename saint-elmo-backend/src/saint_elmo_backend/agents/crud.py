@@ -14,3 +14,14 @@ async def get_credential_by_jti(session: AsyncSession, jti: UUID) -> AgentCreden
         .where(AgentCredential.jti == jti)
     )
     return await session.scalar(stmt)
+
+
+async def get_agent_by_name(
+    session: AsyncSession, *, organization_id: int, name: str
+) -> Agent | None:
+    stmt = (
+        select(Agent)
+        .options(joinedload(Agent.organization))
+        .where(Agent.org_id == organization_id, Agent.name == name)
+    )
+    return await session.scalar(stmt)

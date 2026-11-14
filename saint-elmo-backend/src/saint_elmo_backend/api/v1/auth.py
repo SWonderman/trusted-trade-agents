@@ -56,7 +56,7 @@ agent_token_scheme = HTTPBearer(
 @dataclass(frozen=True, slots=True)
 class Principal:
     """
-    Who is calling: a user or an agent, always within exactly one buyer organisation.
+    Who is calling: a user or an agent, always within exactly one buyer organization.
 
     Services take `organization.id` from here as a required argument (ADR 0004).
     """

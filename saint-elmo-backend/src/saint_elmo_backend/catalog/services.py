@@ -7,6 +7,7 @@ from saint_elmo_backend.catalog import crud
 from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
     CatalogVocabulary,
+    ClaimCode,
     CuratedSubstitute,
     HitAllergen,
     ProductDetail,
@@ -63,11 +64,28 @@ def hit_allergens(product: Product, excluded: Sequence[str]) -> list[HitAllergen
     ]
 
 
-async def _unknown_codes(
+async def unknown_codes(
     session: AsyncSession, column: InstrumentedAttribute[str], codes: Sequence[str]
 ) -> list[str]:
+    """
+    The codes `column` (e.g. Diet.code) lacks, in the order given, without duplicates.
+    """
     known = await crud.existing_codes(session, column, codes)
     return list(dict.fromkeys(code for code in codes if code not in known))
+
+
+async def unknown_claim_codes(session: AsyncSession, claims: Sequence[ClaimCode]) -> list[str]:
+    """
+    The claim types and elements of `claims` that their code lists lack.
+    """
+    claim_types = [claim.type for claim in claims]
+    claim_elements = [claim.element for claim in claims]
+    return list(
+        dict.fromkeys(
+            await unknown_codes(session, ClaimType.code, claim_types)
+            + await unknown_codes(session, ClaimElement.code, claim_elements)
+        )
+    )
 
 
 async def _unknown_filter_codes(
@@ -78,18 +96,12 @@ async def _unknown_filter_codes(
     when its code list has it, even if no product uses it. Vendors and countries are
     not checked.
     """
-    claim_types = [claim_type for claim_type, _ in filters.required_claims]
-    claim_elements = [element for _, element in filters.required_claims]
-    unknown_claim_codes = await _unknown_codes(
-        session, ClaimType.code, claim_types
-    ) + await _unknown_codes(session, ClaimElement.code, claim_elements)
-
     unknown = {
-        "category_codes": await _unknown_codes(session, Category.code, filters.category_codes),
-        "required_claims": list(dict.fromkeys(unknown_claim_codes)),
-        "required_diets": await _unknown_codes(session, Diet.code, filters.required_diets),
-        "required_labels": await _unknown_codes(session, Label.code, filters.required_labels),
-        "excluded_allergens": await _unknown_codes(
+        "category_codes": await unknown_codes(session, Category.code, filters.category_codes),
+        "required_claims": await unknown_claim_codes(session, filters.required_claims),
+        "required_diets": await unknown_codes(session, Diet.code, filters.required_diets),
+        "required_labels": await unknown_codes(session, Label.code, filters.required_labels),
+        "excluded_allergens": await unknown_codes(
             session, Allergen.code, filters.excluded_allergens
         ),
     }

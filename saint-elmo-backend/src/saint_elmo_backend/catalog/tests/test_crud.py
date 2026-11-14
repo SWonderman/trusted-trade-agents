@@ -7,7 +7,7 @@ from decimal import Decimal
 import pytest
 
 from saint_elmo_backend.catalog import crud
-from saint_elmo_backend.catalog.dtos import ProductFilters
+from saint_elmo_backend.catalog.dtos import ClaimCode, ProductFilters
 from saint_elmo_backend.catalog.tests.factories import make_product
 
 
@@ -267,7 +267,9 @@ async def test_claim_filter_requires_every_claim_as_a_type_element_pair(referenc
     # Same codes, swapped pairs: carries neither required claim
     await make_product(session, claims=[("FREE_FROM", "FIBRE"), ("HIGH", "LACTOSE")])
 
-    filters = ProductFilters(required_claims=(("FREE_FROM", "LACTOSE"), ("HIGH", "FIBRE")))
+    filters = ProductFilters(
+        required_claims=(ClaimCode("FREE_FROM", "LACTOSE"), ClaimCode("HIGH", "FIBRE"))
+    )
 
     assert await _matching_ids(session, filters) == {both.id}
 
@@ -334,7 +336,7 @@ async def test_filters_combine_with_each_other_and_with_the_query(reference_data
     )
 
     filters = ProductFilters(
-        required_claims=(("FREE_FROM", "LACTOSE"),), countries_of_origin=("fi",)
+        required_claims=(ClaimCode("FREE_FROM", "LACTOSE"),), countries_of_origin=("fi",)
     )
 
     assert await _matching_ids(session, filters, query="milk") == {match.id}

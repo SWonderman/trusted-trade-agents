@@ -9,6 +9,7 @@ from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
     CatalogVocabulary,
     CategoryUsage,
+    ClaimCode,
     ClaimUsage,
     CodeUsage,
     GS1Code,
@@ -89,7 +90,9 @@ class ProductSearchRequest(CamelBaseModel):
         return ProductFilters(
             category_codes=tuple(self.category_codes),
             vendors=tuple(self.vendors),
-            required_claims=tuple((claim.type, claim.element) for claim in self.required_claims),
+            required_claims=tuple(
+                ClaimCode(type=claim.type, element=claim.element) for claim in self.required_claims
+            ),
             required_diets=tuple(self.required_diets),
             required_labels=tuple(self.required_labels),
             countries_of_origin=tuple(country.lower() for country in self.countries_of_origin),

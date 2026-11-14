@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ARRAY, DateTime, Enum, ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -8,6 +9,9 @@ from saint_elmo_backend.accounts.models import Organization
 from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.db.base import Base
 from saint_elmo_backend.db.mixins import OrgOwnedMixin, PublicIdMixin, TimestampMixin
+
+if TYPE_CHECKING:
+    from saint_elmo_backend.mandates.models import Mandate
 
 
 class Agent(Base, PublicIdMixin, TimestampMixin, OrgOwnedMixin):
@@ -20,6 +24,7 @@ class Agent(Base, PublicIdMixin, TimestampMixin, OrgOwnedMixin):
 
     organization: Mapped[Organization] = relationship()
     credentials: Mapped[list["AgentCredential"]] = relationship(back_populates="agent")
+    mandate: Mapped["Mandate | None"] = relationship(back_populates="agent")
 
 
 class AgentCredential(Base, TimestampMixin, OrgOwnedMixin):

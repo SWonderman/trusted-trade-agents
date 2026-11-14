@@ -109,11 +109,11 @@ def _filter_conditions(filters: ProductFilters) -> list[ColumnElement[bool]]:
     conditions += [
         Product.claims.any(
             and_(
-                ProductClaim.claim_type_code == claim_type,
-                ProductClaim.claim_element_code == element,
+                ProductClaim.claim_type_code == claim.type,
+                ProductClaim.claim_element_code == claim.element,
             )
         )
-        for claim_type, element in filters.required_claims
+        for claim in filters.required_claims
     ]
     conditions += [
         Product.diets.any(ProductDiet.diet_code == diet) for diet in filters.required_diets

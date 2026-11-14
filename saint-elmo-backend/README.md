@@ -18,6 +18,29 @@ test, so the seeded dev database is never touched.
   with `catalog/tests/factories.py`, and buyer organisations and users with
   `accounts/tests/factories.py`.
 
+## Demo data
+
+`uv run python -m saint_elmo_backend.db.seeders.runner` loads the GS1 code lists, the
+catalogue and then two demo buyer organisations (`db/seeders/demo.py`), skipping what is
+already there:
+
+| Buyer organisation        | Buyer admin                             | Agent           |
+| ------------------------- | --------------------------------------- | --------------- |
+| Aurora Hotels             | `buyer.admin@aurora-hotels.example`     | `dairy-restock` |
+| Kuusikko Hospital Kitchen | `buyer.admin@kuusikko-hospital.example` | `ward-kitchen`  |
+
+Both buyer admins log in with the dev password `saint-elmo-demo`, which the seeder also
+prints. No Agent tokens are seeded. Issue one from the repo root with
+
+```sh
+just issue-agent-token dairy-restock buyer.admin@aurora-hotels.example [preset]
+```
+
+The preset is `Purchasing` (all scopes, the default) or `"Research only"`, and the token
+lasts 30 days. It goes through the same issuance service as the API, records the buyer
+admin as its issuer, and is printed once. A buyer admin of another buyer organisation is
+refused.
+
 ## Valio Aimo API
 
 `saint_elmo_backend/valio_aimo/` is a thin async client for the Valio Aimo API (live

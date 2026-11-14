@@ -1,6 +1,6 @@
 from collections.abc import Collection
 from datetime import UTC, datetime, timedelta
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,8 @@ from saint_elmo_backend.agents.dtos import AuthenticatedAgent, IssuedAgentToken
 from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.agents.exceptions import InvalidAgentTokenError
 from saint_elmo_backend.agents.models import Agent, AgentCredential
+from saint_elmo_backend.mandates import crud as mandate_crud
+from saint_elmo_backend.mandates.exceptions import MandateNotFoundError
 
 
 async def issue_agent_token(
@@ -19,17 +21,21 @@ async def issue_agent_token(
     label: str,
     scopes: Collection[Scope],
     lifetime: timedelta,
-    mandate_public_id: UUID,
     created_by_user_id: int,
 ) -> IssuedAgentToken:
     """
-    Sign an Agent token for `agent` and record its credential row, issued by the buyer
-    admin `created_by_user_id`.
+    Sign an Agent token for `agent`, naming its mandate, and record its credential row,
+    issued by the buyer admin `created_by_user_id`.
 
     A composable building block: the caller owns the commit.
     """
 
-    # TODO(#11): take the mandate from the agent once mandates exist, not from the caller
+    mandate = await mandate_crud.get_mandate_for_agent(
+        session, organization_id=agent.org_id, agent_id=agent.id
+    )
+    if mandate is None:
+        raise MandateNotFoundError()
+
     now = datetime.now(UTC)
     jti = uuid4()
     expires_at = now + lifetime
@@ -51,7 +57,7 @@ async def issue_agent_token(
         jti=jti,
         agent_public_id=agent.public_id,
         organization_public_id=agent.organization.public_id,
-        mandate_public_id=mandate_public_id,
+        mandate_public_id=mandate.public_id,
         scopes=scopes,
         issued_at=now,
         expires_at=expires_at,

@@ -8,7 +8,6 @@ verification together.
 from collections.abc import Collection
 from datetime import timedelta
 from itertools import count
-from uuid import uuid4
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +17,9 @@ from saint_elmo_backend.agents import services
 from saint_elmo_backend.agents.dtos import IssuedAgentToken
 from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.agents.models import Agent
+from saint_elmo_backend.mandates import services as mandate_services
+from saint_elmo_backend.mandates.dtos import MandateTerms
+from saint_elmo_backend.mandates.tests.factories import make_terms
 
 _numbers = count(1)
 
@@ -28,7 +30,12 @@ async def make_agent(
     *,
     name: str | None = None,
     status: AgentStatus = AgentStatus.ACTIVE,
+    mandate: MandateTerms | None = None,
 ) -> Agent:
+    """
+    With `mandate`, or `make_terms()` when not given: every agent has one.
+    """
+
     agent = Agent(
         name=name or f"agent-{next(_numbers)}",
         status=status,
@@ -36,6 +43,7 @@ async def make_agent(
     )
     session.add(agent)
     await session.flush()
+    await mandate_services.write_mandate(session, agent, mandate or make_terms())
     return agent
 
 
@@ -57,7 +65,6 @@ async def issue_token(
         label="test token",
         scopes=scopes,
         lifetime=lifetime,
-        mandate_public_id=uuid4(),
         created_by_user_id=issuer.id,
     )
 

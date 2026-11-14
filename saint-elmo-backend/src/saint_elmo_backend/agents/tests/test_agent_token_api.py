@@ -9,13 +9,11 @@ import base64
 import json
 from collections.abc import Callable
 from datetime import UTC, datetime
-from typing import Annotated, Any
+from typing import Any
 
 import jwt
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from fastapi import Depends, FastAPI
-from httpx import ASGITransport, AsyncClient
 from sqlalchemy import select
 
 from saint_elmo_backend.accounts.tests.factories import (
@@ -26,12 +24,11 @@ from saint_elmo_backend.accounts.tests.factories import (
 from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.agents.models import AgentCredential
 from saint_elmo_backend.agents.tests.factories import bearer, issue_token, make_agent
-from saint_elmo_backend.api.error_handlers import register_error_handlers
-from saint_elmo_backend.api.v1.auth import Principal, authenticate
 from saint_elmo_backend.core.settings import get_settings
 
 SEARCH_URL = "/api/v1/products/search"
 ME_URL = "/api/v1/auth/me"
+MANDATE_URL = "/api/v1/agents/me/mandate"
 
 
 def _signing_key() -> Ed25519PrivateKey:
@@ -217,28 +214,13 @@ async def test_agent_token_is_not_a_user_session(clean_db, session, client):
 
 
 async def test_user_session_is_not_an_agent_token(clean_db, session, client):
-    """
-    No agent-only route exists yet (#11 brings the first), so one is mounted here.
-    """
-
-    agent_only = FastAPI()
-    register_error_handlers(agent_only)
-
-    @agent_only.get("/agent-only")
-    async def _route(
-        _principal: Annotated[Principal, Depends(authenticate(agent_scope=Scope.MANDATE_READ))],
-    ) -> None:
-        return None
-
     user = await make_user(session, await make_organization(session))
     await session.commit()
 
-    async with AsyncClient(
-        transport=ASGITransport(app=agent_only), base_url="http://test"
-    ) as agent_only_client:
-        response = await agent_only_client.get("/agent-only", headers=user_session_headers(user))
-
-    _assert_permission_denied(response, "only available to agents")
+    _assert_permission_denied(
+        await client.get(MANDATE_URL, headers=user_session_headers(user)),
+        "only available to agents",
+    )
 
 
 async def test_jwks_verifies_an_issued_token_with_standard_tooling(clean_db, session, client):

@@ -20,6 +20,16 @@ class CatalogProvenance:
 
 
 @dataclass(frozen=True, slots=True)
+class ClaimCode:
+    """
+    A GS1 claim: a claim type and the element it is about, e.g. FREE_FROM + LACTOSE.
+    """
+
+    type: str
+    element: str
+
+
+@dataclass(frozen=True, slots=True)
 class ProductFilters:
     """
     Structured search filters, ANDed together. An empty tuple or None leaves that
@@ -28,8 +38,8 @@ class ProductFilters:
 
     category_codes: tuple[str, ...] = ()
     vendors: tuple[str, ...] = ()
-    # (claim type, claim element) pairs; a product must carry all of them
-    required_claims: tuple[tuple[str, str], ...] = ()
+    # A product must carry all of them
+    required_claims: tuple[ClaimCode, ...] = ()
     required_diets: tuple[str, ...] = ()
     required_labels: tuple[str, ...] = ()
     # ISO 3166-1 alpha-2, lowercase; a product must come from any of them

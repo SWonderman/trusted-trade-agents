@@ -82,6 +82,9 @@ class ErrorCode(StrEnum):
     DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
     UNKNOWN_CODE = "UNKNOWN_CODE"
 
+    # Mandates
+    MANDATE_NOT_FOUND = "MANDATE_NOT_FOUND"
+
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
     DUPLICATE_LOCATION = "DUPLICATE_LOCATION"
@@ -605,6 +608,15 @@ class UnknownFilterCodes(SaintElmoHTTPException):
         """
         listed = ", ".join(f"{field}=[{', '.join(codes)}]" for field, codes in unknown.items())
         return cls(f"Unknown codes: {listed}")
+
+
+class MandateNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "This agent has no mandate; ask a buyer admin to set one"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.MANDATE_NOT_FOUND,
+            detail=detail,
+        )
 
 
 class LocationNotFound(SaintElmoHTTPException):

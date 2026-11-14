@@ -17,3 +17,22 @@ class Scope(StrEnum):
     QUOTE_CREATE = "quote:create"
     ORDER_PLACE = "order:place"
     ORDER_READ = "order:read"
+
+
+class ScopePreset(StrEnum):
+    """
+    A named set of scopes to issue an Agent token with.
+    """
+
+    RESEARCH_ONLY = "Research only"
+    PURCHASING = "Purchasing"
+
+    @property
+    def scopes(self) -> frozenset[Scope]:
+        match self:
+            case ScopePreset.RESEARCH_ONLY:
+                return frozenset(
+                    {Scope.CATALOG_READ, Scope.OFFERS_READ, Scope.MANDATE_READ, Scope.ORDER_READ}
+                )
+            case ScopePreset.PURCHASING:
+                return frozenset(Scope)

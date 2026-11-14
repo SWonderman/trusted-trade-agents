@@ -10,9 +10,10 @@ class ProductNotFoundError(Exception):
 
 class UnknownCodesError(Exception):
     """
-    Search filters name codes the catalog does not know, so they could never match.
+    Codes the catalog does not know, so they could never match a product.
 
-    `unknown` maps each ProductFilters field to its unknown codes, in request order.
+    `unknown` maps each field that names codes (e.g. of ProductFilters) to its unknown
+    codes, in the order given.
     """
 
     def __init__(self, unknown: dict[str, list[str]]) -> None:
