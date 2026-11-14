@@ -1,26 +1,15 @@
-from typing import Literal
-
-from pydantic import Field
-
 from fastapi import APIRouter
 
-type Language = Literal["en", "fi", "sv"]
+from saint_elmo_backend.api.annotations import ASession
+from saint_elmo_backend.catalog import services
+from saint_elmo_backend.catalog.schemas import ProductSearchRequest, ProductSearchResponse
 
 router = APIRouter()
 
 
 # TODO(#7): require auth once the auth ticket lands; the catalogue is global, non-tenant data
-@router.post("/search")
+@router.post("/search", response_model=ProductSearchResponse)
 async def search_products(
-    query: str | None = Field(
-        default=None,
-        description="Free text matched against fi, sv and en names and texts at once",
-    ),
-    language: Language = Field(
-        default="en",
-        description="Language of the returned texts; falls back to fi when missing",
-    ),
-    limit: int = Field(default=20, ge=1, le=100),
-    offset: int = Field(default=0, ge=0)
-):
-    pass
+    data: ProductSearchRequest, session: ASession
+) -> ProductSearchResponse:
+    return await services.search_products(session, data)
