@@ -398,3 +398,99 @@ class Offers(CamelModel):
     deliver_by: str = Field(description="The delivery date the offers are for; check it.")
     evaluated_at: str
     items: list[Offer] = Field(description="One per requested item, in request order.")
+
+
+# --- Agent mandate (GET /api/v1/agents/me/mandate, issue #11) ---
+# Every field of the backend's MandateResponse, nothing hidden (ADR 0002). The
+# enums are Literals copied from the backend, so a new value fails loudly.
+
+
+class MandateAgent(CamelModel):
+    id: str
+    name: str
+
+
+class MandateBuyerOrganisation(CamelModel):
+    name: str
+
+
+class CategorySpendCap(CamelModel):
+    category_code: str
+    cap: float = Field(description="EUR excluding VAT, per spend period.")
+
+
+class PeriodSpend(CamelModel):
+    period_start: str = Field(description="Start of the current spend period, inclusive.")
+    period_end: str = Field(description="End of the current spend period, exclusive.")
+    committed: float = Field(
+        description="Total of your placed, approved and pending-approval orders in the period."
+    )
+    remaining: float = Field(description="periodSpendCap minus committed, at least 0.")
+
+
+class Mandate(CamelModel):
+    id: str
+    version: int = Field(
+        description="Increments on every edit; quotes and orders record the version they "
+        "were judged against."
+    )
+    agent: MandateAgent
+    buyer_organisation: MandateBuyerOrganisation
+    currency: Literal["EUR"] = Field(
+        default="EUR", description="Every amount is in this currency, excluding VAT."
+    )
+
+    # Spend
+    max_order_total: float = Field(description="Maximum total of one order.")
+    period_spend_cap: float = Field(
+        description="Maximum your orders may commit in one spend period."
+    )
+    spend_period: Literal["WEEK", "MONTH"] = Field(
+        description="WEEK runs Monday to Sunday, MONTH a calendar month, both in "
+        "Europe/Helsinki time."
+    )
+    category_spend_caps: list[CategorySpendCap] = Field(
+        description="Maximum per category per spend period."
+    )
+
+    # Assortment
+    allowed_category_codes: list[str] = Field(description="Empty allows every category.")
+    blocked_category_codes: list[str]
+    allowed_vendors: list[str] = Field(description="Vendor names; empty allows every vendor.")
+    blocked_vendors: list[str]
+    allowed_countries_of_origin: list[str] = Field(
+        description="ISO 3166-1 alpha-2, lowercase; empty allows every origin."
+    )
+
+    # Requirements
+    required_claims: list[Claim] = Field(description="Every product must carry all of these.")
+    required_labels: list[str] = Field(description="Every product must carry all of these.")
+    required_diets: list[str] = Field(description="Every product must carry all of these.")
+    excluded_allergens: list[str] = Field(description="GS1 allergen codes.")
+    allergen_strictness: Literal["contains", "may_contain", "declared_free"] = Field(
+        description="contains: a product declared CONTAINS is excluded; may_contain: "
+        "MAY_CONTAIN too; declared_free: only products declared FREE_FROM every excluded "
+        "allergen are allowed."
+    )
+
+    # Substitution
+    substitution_policy: Literal["NEVER", "IF_REQUIREMENTS_HOLD", "ALWAYS_NEEDS_APPROVAL"]
+    max_substitute_price_increase_pct: float = Field(
+        description="How much more a substitute may cost than the product it replaces, in %."
+    )
+
+    # Delivery
+    later_delivery_needs_approval: bool = Field(
+        description="A delivery later than requested needs a human."
+    )
+    min_delivery_reliability: float | None = Field(
+        description="0-1; products below it, or without delivery history, need a human. "
+        "null = no minimum."
+    )
+
+    # Approval
+    auto_approve_up_to: float = Field(
+        description="A compliant order below this total needs no human; at most maxOrderTotal."
+    )
+
+    period_spend: PeriodSpend

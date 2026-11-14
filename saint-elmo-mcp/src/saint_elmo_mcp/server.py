@@ -1,7 +1,7 @@
 from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
-from saint_elmo_mcp.tools import catalog, offers
+from saint_elmo_mcp.tools import catalog, mandate, offers
 
 INSTRUCTIONS = """\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
@@ -9,6 +9,7 @@ order products from Valio Aimo within the mandate your organisation set for you.
 
 The full flow (tools are added as the backend grows, so use the ones you have):
 1. get_my_mandate: read your limits and requirements before proposing anything.
+   Pass its requirements (requiredClaims etc.) as search_products filters.
 2. search_products: narrow the catalog to candidates (no live prices or stock).
    Before filtering on claims, diets, labels, allergens or categories, call
    get_vocabulary for the valid codes instead of guessing them.
@@ -38,6 +39,7 @@ def build_server(backend: BackendClient) -> MCPServer:
         instructions=INSTRUCTIONS,
         version="0.1.0",
     )
+    mandate.register(mcp, backend)
     catalog.register(mcp, backend)
     offers.register(mcp, backend)
     return mcp
