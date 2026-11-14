@@ -23,6 +23,7 @@ from saint_elmo_backend.catalog.models import Category
 from saint_elmo_backend.mandates.dtos import CategorySpendCap
 from saint_elmo_backend.mandates.enums import SpendPeriod, SubstitutionPolicy
 from saint_elmo_backend.mandates.models import Mandate
+from saint_elmo_backend.mandates.services import write_mandate
 from saint_elmo_backend.mandates.tests.factories import make_terms
 
 MANDATE_URL = "/api/v1/agents/me/mandate"
@@ -84,6 +85,22 @@ async def test_agent_reads_its_own_mandate_and_never_another(reference_data, ses
     assert ward_mandate["allergenStrictness"] == "declared_free"
     assert ward_mandate["substitutionPolicy"] == "ALWAYS_NEEDS_APPROVAL"
     assert ward_mandate["requiredClaims"] == []
+
+
+async def test_mandate_edit_applies_to_a_live_token_on_its_next_request(
+    reference_data, session, client
+):
+    agent = await make_agent(session, await make_organization(session))
+    token = await issue_token(session, agent, scopes=[Scope.MANDATE_READ])
+    await session.commit()
+    assert (await client.get(MANDATE_URL, headers=bearer(token))).json()["version"] == 1
+
+    await write_mandate(session, agent, replace(make_terms(), max_order_total=Decimal("750")))
+    await session.commit()
+
+    mandate = (await client.get(MANDATE_URL, headers=bearer(token))).json()
+    assert mandate["maxOrderTotal"] == 750
+    assert mandate["version"] == 2
 
 
 async def test_token_without_mandate_read_is_forbidden(clean_db, session, client):
