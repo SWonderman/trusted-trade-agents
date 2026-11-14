@@ -179,3 +179,85 @@ class ProductDetail(ProductSummary):
         description="Replacements Valio Aimo itself lists for this product."
     )
     provenance: Provenance
+
+
+# --- Catalog vocabulary (GET /api/v1/catalog/vocabulary, issue #6) ---
+
+
+def _is_none(value: object) -> bool:
+    return value is None
+
+
+class VocabularyGS1Code(CamelModel):
+    code: str
+    # Required though nullable, as in the backend: a dropped field is contract drift
+    name: str | None = Field(
+        description="GS1 name; null for codes the data uses but GS1 doesn't list."
+    )
+    definition: str | None
+
+
+class VocabularyCode(VocabularyGS1Code):
+    product_count: int = Field(description="Number of products using the code.")
+
+
+class AllergenStatusCounts(CamelModel):
+    contains: int
+    may_contain: int
+    undeclared: int
+    free_from: int
+
+
+class VocabularyAllergen(VocabularyGS1Code):
+    product_count: int = Field(
+        description="Products declaring any status for the allergen (sum of statusCounts)."
+    )
+    status_counts: AllergenStatusCounts = Field(
+        description="Products per declared status. Products with no declaration are unknown "
+        "and not counted: no data is never FREE_FROM."
+    )
+
+
+class VocabularyClaim(CamelModel):
+    type: VocabularyGS1Code = Field(description="GS1 claim type, e.g. FREE_FROM.")
+    element: VocabularyGS1Code = Field(description="GS1 claim element, e.g. LACTOSE.")
+    product_count: int = Field(description="Number of products making this claim.")
+
+
+class VocabularyCategory(CamelModel):
+    code: str = Field(description="Category code; names are not in the source data.")
+    product_count: int
+
+
+class CatalogVocabulary(CamelModel):
+    """The backend's full reply. Every vocabulary is required, so drift fails loudly."""
+
+    claims: list[VocabularyClaim]
+    diets: list[VocabularyCode]
+    labels: list[VocabularyCode]
+    allergens: list[VocabularyAllergen]
+    categories: list[VocabularyCategory]
+
+
+class Vocabulary(CamelModel):
+    """Tool output: valid filter codes. A vocabulary that wasn't asked for is left out."""
+
+    claims: list[VocabularyClaim] | None = Field(
+        default=None,
+        exclude_if=_is_none,
+        description="Claim type + element pairs, for requiredClaims.",
+    )
+    diets: list[VocabularyCode] | None = Field(
+        default=None, exclude_if=_is_none, description="GS1 diet codes, for requiredDiets."
+    )
+    labels: list[VocabularyCode] | None = Field(
+        default=None, exclude_if=_is_none, description="Label codes, for requiredLabels."
+    )
+    allergens: list[VocabularyAllergen] | None = Field(
+        default=None,
+        exclude_if=_is_none,
+        description="GS1 allergen codes, for excludedAllergens.",
+    )
+    categories: list[VocabularyCategory] | None = Field(
+        default=None, exclude_if=_is_none, description="Category codes, for categoryCodes."
+    )

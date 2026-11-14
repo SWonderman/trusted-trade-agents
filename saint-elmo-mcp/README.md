@@ -9,9 +9,10 @@ Built on the official MCP Python SDK v2 (`MCPServer`, which was called `FastMCP`
 | Tool | Backend endpoint | Status |
 |---|---|---|
 | `search_products` | `POST /api/v1/products/search` (#2, #3, #4) | query, language, paging; filters `categoryCodes`, `vendors`, `requiredClaims`, `requiredDiets`, `requiredLabels`, `countriesOfOrigin`, `minDeliveryReliability`; allergen exclusion `excludedAllergens` + `allergenStrictness` (`contains` / `may_contain` / `declared_free`); per-hit `allergens` status (`UNKNOWN` = no data, not safe) |
+| `get_vocabulary` | `GET /api/v1/catalog/vocabulary` (#6) | optional `vocabularies` subset (`claims`, `diets`, `labels`, `allergens`, `categories`), trimmed on the MCP side; per entry GS1 `code`, `name` (null for non-GS1 codes), `definition`, `productCount`; claims as `type` + `element` pairs; allergens with `statusCounts`; categories as code + count only |
 | `get_product` | `GET /api/v1/products/{code}` (#5) | `code`, `language`; search summary plus full `allergens` (containment; unlisted = unknown, not safe), `ingredients` with origins, `nutrients`, `packagingLevels`, `deposits`, `producers`, `curatedSubstitutes`, `provenance`. `PRODUCT_NOT_FOUND` for an unknown code |
 
-The remaining tools (`get_vocabulary`, `get_my_mandate`, `get_offers`, `find_substitutes`, `create_quote`, `place_order`, `get_order_status`) are added as their backend endpoints land. See issues #10–#16.
+The remaining tools (`get_my_mandate`, `get_offers`, `find_substitutes`, `create_quote`, `place_order`, `get_order_status`) are added as their backend endpoints land. See issues #10–#16.
 
 ## Run
 

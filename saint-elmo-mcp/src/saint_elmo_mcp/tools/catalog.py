@@ -7,7 +7,13 @@ from pydantic import Field, WithJsonSchema
 
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response
-from saint_elmo_mcp.schemas import Claim, ProductDetail, ProductSearchResult
+from saint_elmo_mcp.schemas import (
+    CatalogVocabulary,
+    Claim,
+    ProductDetail,
+    ProductSearchResult,
+    Vocabulary,
+)
 
 SEARCH_PRODUCTS_DESCRIPTION = """\
 Search the Valio Aimo product catalog (about 17,500 food-service products).
@@ -44,6 +50,21 @@ curated substitutes, before quoting. Like search, it has NO live prices or stock
 - `curatedSubstitutes` are replacements Valio Aimo itself lists for the product.
 - `PRODUCT_NOT_FOUND` means the code isn't in the catalog; search again.
 """
+
+GET_VOCABULARY_DESCRIPTION = """\
+Call this before using claim, diet, label, allergen or category filters on
+search_products. Only codes that at least one product uses are listed.
+
+- Each entry has its GS1 `name`, `definition` and `productCount`. A null name
+  means the data uses a code GS1 doesn't list; it's still a valid filter code.
+- Claims are `type` + `element` pairs: pass both codes to requiredClaims.
+- Allergen `statusCounts` count only declared statuses. Products with no data
+  are unknown, NOT free from the allergen.
+- Category names aren't in the source data, only codes and counts.
+- Pass `vocabularies` to get only the ones you need and save context.
+"""
+
+VocabularyName = Literal["claims", "diets", "labels", "allergens", "categories"]
 
 CODES_HINT = "Valid codes: see get_vocabulary."
 
@@ -191,3 +212,25 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
             params={"language": language},
         )
         return parse_response(ProductDetail, data)
+
+    @mcp.tool(
+        description=GET_VOCABULARY_DESCRIPTION,
+        annotations=ToolAnnotations(
+            title="Get filter vocabulary",
+            read_only_hint=True,
+            idempotent_hint=True,
+            open_world_hint=False,
+        ),
+    )
+    async def get_vocabulary(
+        ctx: Context,
+        vocabularies: Annotated[
+            list[VocabularyName] | None,
+            Field(min_length=1, description="Only these vocabularies. Omit for all five."),
+        ] = None,
+    ) -> Vocabulary:
+        data = await backend.get("/api/v1/catalog/vocabulary", agent_key=agent_key(ctx))
+        catalog_vocabulary = parse_response(CatalogVocabulary, data)
+        # The backend has no subset parameter (#6); trimming the reply is presentation only
+        wanted: set[str] = set(vocabularies or get_args(VocabularyName))
+        return Vocabulary.model_validate(catalog_vocabulary.model_dump(include=wanted))
