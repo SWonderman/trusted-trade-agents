@@ -8,14 +8,16 @@ from saint_elmo_backend.catalog.dtos import (
     CatalogProvenance,
     CatalogVocabulary,
     CuratedSubstitute,
+    HitAllergen,
     ProductDetail,
     ProductFilters,
     ProductSearchHit,
     ProductSearchResult,
 )
-from saint_elmo_backend.catalog.enums import Language
+from saint_elmo_backend.catalog.enums import AllergenContainment, AllergenStatus, Language
 from saint_elmo_backend.catalog.exceptions import ProductNotFoundError, UnknownCodesError
 from saint_elmo_backend.catalog.models import (
+    Allergen,
     Category,
     ClaimElement,
     ClaimType,
@@ -41,6 +43,24 @@ def product_name(product: Product, language: Language) -> str | None:
     names = {translation.language: translation.name for translation in product.translations}
     # Fall back to Finnish when no name was found
     return names.get(language) or names.get(Language.FI)
+
+
+def hit_allergens(product: Product, excluded: Sequence[str]) -> list[HitAllergen]:
+    """
+    Every excluded allergen, in request order, with UNKNOWN where the product has no
+    row for it; then every other allergen the product CONTAINS, by code, so the agent
+    sees what it is buying around.
+    """
+    containments = {allergen.allergen_code: allergen.containment for allergen in product.allergens}
+    contained = sorted(
+        code
+        for code, containment in containments.items()
+        if containment is AllergenContainment.CONTAINS and code not in excluded
+    )
+    return [
+        HitAllergen(code=code, status=AllergenStatus.of(containments.get(code)))
+        for code in [*dict.fromkeys(excluded), *contained]
+    ]
 
 
 async def _unknown_codes(
@@ -69,6 +89,9 @@ async def _unknown_filter_codes(
         "required_claims": list(dict.fromkeys(unknown_claim_codes)),
         "required_diets": await _unknown_codes(session, Diet.code, filters.required_diets),
         "required_labels": await _unknown_codes(session, Label.code, filters.required_labels),
+        "excluded_allergens": await _unknown_codes(
+            session, Allergen.code, filters.excluded_allergens
+        ),
     }
     return {name: codes for name, codes in unknown.items() if codes}
 
@@ -101,6 +124,7 @@ async def search_products(
                 product=match.product,
                 name=product_name(match.product, language),
                 relevance=match.relevance,
+                allergens=hit_allergens(match.product, filters.excluded_allergens),
             )
             for match in matches
         ],

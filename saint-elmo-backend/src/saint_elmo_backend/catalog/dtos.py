@@ -3,7 +3,11 @@ from datetime import date
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from saint_elmo_backend.catalog.enums import AllergenContainment
+from saint_elmo_backend.catalog.enums import (
+    AllergenContainment,
+    AllergenStatus,
+    AllergenStrictness,
+)
 
 if TYPE_CHECKING:
     from saint_elmo_backend.catalog.models import Product
@@ -32,6 +36,9 @@ class ProductFilters:
     countries_of_origin: tuple[str, ...] = ()
     # Products without reliability data never pass this filter
     min_delivery_reliability: Decimal | None = None
+    # GS1 allergen codes; how strictly they are excluded is set by allergen_strictness
+    excluded_allergens: tuple[str, ...] = ()
+    allergen_strictness: AllergenStrictness = AllergenStrictness.CONTAINS
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,10 +48,17 @@ class ProductMatch:
 
 
 @dataclass(frozen=True, slots=True)
+class HitAllergen:
+    code: str
+    status: AllergenStatus
+
+
+@dataclass(frozen=True, slots=True)
 class ProductSearchHit:
     product: "Product"
     name: str | None
     relevance: float | None
+    allergens: list[HitAllergen]
 
 
 @dataclass(frozen=True, slots=True)
