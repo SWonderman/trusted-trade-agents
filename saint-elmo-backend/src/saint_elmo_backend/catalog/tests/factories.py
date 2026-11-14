@@ -44,6 +44,7 @@ async def make_product(
     *,
     code: str | None = None,
     names: dict[str, str] | None = None,
+    marketing_texts: dict[str, str] | None = None,
     category: str = "C100",
     vendor: str = "Test Vendor",
     brand: str | None = None,
@@ -63,6 +64,7 @@ async def make_product(
     """
     code = code or str(next(_codes))
     names = names or {"en": f"Test product {code}"}
+    marketing_texts = marketing_texts or {}
     units = units or {base_unit: Decimal("1")}
 
     product = Product(
@@ -74,8 +76,12 @@ async def make_product(
         vendor=await _get_or_create(session, Vendor, name=vendor),
         brand=await _get_or_create(session, Brand, name=brand) if brand else None,
         translations=[
-            ProductTranslation(language=language, name=name)
-            for language, name in names.items()
+            ProductTranslation(
+                language=language,
+                name=names.get(language),
+                marketing_text=marketing_texts.get(language),
+            )
+            for language in names | marketing_texts
         ],
         units=[
             ProductUnit(unit_code=unit_code, size_in_base_units=size)

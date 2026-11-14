@@ -27,15 +27,24 @@ def product_name(product: Product, language: Language) -> str | None:
 
 
 async def search_products(
-    session: AsyncSession, *, language: Language, limit: int, offset: int
+    session: AsyncSession,
+    *,
+    query: str | None,
+    language: Language,
+    limit: int,
+    offset: int,
 ) -> ProductSearchResult:
-    products = await crud.search_products(session, limit=limit, offset=offset)
-    total = await crud.count_products(session)
+    matches = await crud.search_products(session, query=query, limit=limit, offset=offset)
+    total = await crud.count_products(session, query=query)
     return ProductSearchResult(
         total=total,
         hits=[
-            ProductSearchHit(product=product, name=product_name(product, language))
-            for product in products
+            ProductSearchHit(
+                product=match.product,
+                name=product_name(match.product, language),
+                relevance=match.relevance,
+            )
+            for match in matches
         ],
         provenance=catalog_provenance(),
     )

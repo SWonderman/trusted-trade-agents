@@ -4,6 +4,8 @@ POST /api/v1/products/search, exercised over HTTP.
 
 from decimal import Decimal
 
+import pytest
+
 from saint_elmo_backend.catalog.tests.factories import make_product
 from saint_elmo_backend.core.settings import get_settings
 
@@ -78,6 +80,54 @@ async def test_missing_translation_falls_back_to_finnish(reference_data, session
     response = await client.post(SEARCH_URL, json={"language": "sv"})
 
     assert response.json()["items"][0]["name"] == "Maito"
+
+
+@pytest.mark.parametrize("query", ["milk", "maito", "mjölk"], ids=["en", "fi", "sv"])
+async def test_query_finds_a_product_by_its_name_in_each_language(
+    reference_data, session, client, query
+):
+    await make_product(
+        session,
+        code="100001",
+        names={"en": "Lactose free milk", "fi": "Laktoositon maito", "sv": "Laktosfri mjölk"},
+    )
+    await make_product(session, code="100002", names={"en": "Butter", "fi": "Voi", "sv": "Smör"})
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"query": query})
+
+    body = response.json()
+    assert body["total"] == 1
+    assert [item["code"] for item in body["items"]] == ["100001"]
+
+
+async def test_query_results_are_ordered_by_relevance(reference_data, session, client):
+    await make_product(
+        session,
+        code="100001",
+        names={"en": "Cocoa drink"},
+        marketing_texts={"en": "Tastes best with cold milk"},
+        delivery_reliability=Decimal("0.99"),
+    )
+    await make_product(
+        session, code="100002", names={"en": "Whole milk"}, delivery_reliability=Decimal("0.10")
+    )
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={"query": "milk"})
+
+    items = response.json()["items"]
+    assert [item["code"] for item in items] == ["100002", "100001"]
+    assert items[0]["relevance"] > items[1]["relevance"]
+
+
+async def test_browse_hits_have_no_relevance(reference_data, session, client):
+    await make_product(session)
+    await session.commit()
+
+    response = await client.post(SEARCH_URL, json={})
+
+    assert response.json()["items"][0]["relevance"] is None
 
 
 async def test_empty_body_is_a_valid_browse_request(client):

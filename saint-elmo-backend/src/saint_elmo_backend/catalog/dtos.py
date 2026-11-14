@@ -13,9 +13,16 @@ class CatalogProvenance:
 
 
 @dataclass(frozen=True, slots=True)
+class ProductMatch:
+    product: "Product"
+    relevance: float | None
+
+
+@dataclass(frozen=True, slots=True)
 class ProductSearchHit:
     product: "Product"
     name: str | None
+    relevance: float | None
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,23 +1,72 @@
-from sqlalchemy import func, select
+from sqlalchemy import Select, cast, func, literal, null, select
+from sqlalchemy.dialects.postgresql import REGCONFIG
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from saint_elmo_backend.catalog.models import Product
+from saint_elmo_backend.catalog.dtos import ProductMatch
+from saint_elmo_backend.catalog.models import Product, ProductTranslation
+
+# Each translation's search vector is built with its own language's configuration
+_SEARCH_CONFIGS = ("pg_catalog.finnish", "pg_catalog.swedish", "pg_catalog.english")
+
+
+def _text_query(query: str):
+    """
+    The query parsed once per language and ORed (`||`), so a single tsquery matches
+    fi, sv and en translations at once and the search vector's GIN index applies.
+    """
+    tsqueries = [
+        func.websearch_to_tsquery(cast(literal(config), REGCONFIG), query)
+        for config in _SEARCH_CONFIGS
+    ]
+    combined = tsqueries[0]
+    for tsquery in tsqueries[1:]:
+        combined = combined.op("||")(tsquery)
+    return combined
+
+
+def _matching_product_ids(query: str) -> Select:
+    """
+    (product_id, relevance) for every product with a matching translation; a product
+    matching in several languages keeps its best rank.
+    """
+    text_query = _text_query(query)
+    return (
+        select(
+            ProductTranslation.product_id,
+            func.max(func.ts_rank(ProductTranslation.search_vector, text_query)).label(
+                "relevance"
+            ),
+        )
+        .where(ProductTranslation.search_vector.bool_op("@@")(text_query))
+        .group_by(ProductTranslation.product_id)
+    )
 
 
 async def search_products(
-    session: AsyncSession, *, limit: int, offset: int
-) -> list[Product]:
-    stmt = (
-        select(Product)
-        .order_by(Product.delivery_reliability.desc().nulls_last(), Product.code)
-        .limit(limit)
-        .offset(offset)
-        .options(selectinload(Product.translations))
-    )
-    return list((await session.execute(stmt)).scalars().all())
+    session: AsyncSession, *, query: str | None, limit: int, offset: int
+) -> list[ProductMatch]:
+    if query is None:
+        stmt = select(Product, null().label("relevance")).order_by(
+            Product.delivery_reliability.desc().nulls_last(), Product.code
+        )
+    else:
+        matches = _matching_product_ids(query).subquery()
+        stmt = (
+            select(Product, matches.c.relevance)
+            .join(matches, matches.c.product_id == Product.id)
+            .order_by(matches.c.relevance.desc(), Product.code)
+        )
+    stmt = stmt.limit(limit).offset(offset).options(selectinload(Product.translations))
+    return [
+        ProductMatch(product=product, relevance=relevance)
+        for product, relevance in (await session.execute(stmt)).all()
+    ]
 
 
-async def count_products(session: AsyncSession) -> int:
-    stmt = select(func.count()).select_from(Product)
+async def count_products(session: AsyncSession, *, query: str | None) -> int:
+    if query is None:
+        stmt = select(func.count()).select_from(Product)
+    else:
+        stmt = select(func.count()).select_from(_matching_product_ids(query).subquery())
     return (await session.execute(stmt)).scalar_one()

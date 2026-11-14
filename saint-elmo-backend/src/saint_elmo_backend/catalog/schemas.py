@@ -39,10 +39,13 @@ class Provenance(CamelBaseModel):
 class ProductHit(CamelBaseModel):
     code: str
     name: str | None
+    relevance: float | None = Field(
+        description="Text search rank, higher is better; null when there was no query"
+    )
 
     @classmethod
     def from_hit(cls, hit: ProductSearchHit) -> "ProductHit":
-        return cls(code=hit.product.code, name=hit.name)
+        return cls(code=hit.product.code, name=hit.name, relevance=hit.relevance)
 
 
 class ProductSearchResponse(CamelBaseModel):
