@@ -2,14 +2,12 @@
 	import { resolve } from '$app/paths';
 	import Roundel from '#lib/components/Roundel.svelte';
 	import OrderJourney from '#lib/components/marketing/OrderJourney.svelte';
+	import MandatePlayground from '#lib/components/marketing/MandatePlayground.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import ScaleIcon from '@lucide/svelte/icons/scale';
 	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
 	import UserCheckIcon from '@lucide/svelte/icons/user-check';
-	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
-	import HandIcon from '@lucide/svelte/icons/hand';
-	import OctagonXIcon from '@lucide/svelte/icons/octagon-x';
 	import PlugIcon from '@lucide/svelte/icons/plug';
 	import BracesIcon from '@lucide/svelte/icons/braces';
 	import KeyRoundIcon from '@lucide/svelte/icons/key-round';
@@ -31,30 +29,6 @@
 			text: 'Every tool call, decision and approval goes into an append-only audit trail that both the buyer and Valio Aimo can read.'
 		}
 	];
-
-	const outcomes = [
-		{
-			code: 'AUTO_APPROVE',
-			tone: 'ok',
-			icon: CircleCheckIcon,
-			title: 'The agent decides alone',
-			text: 'Orders within the spend it was given, for products that meet every requirement, delivered on time.'
-		},
-		{
-			code: 'NEEDS_HUMAN',
-			tone: 'hold',
-			icon: HandIcon,
-			title: 'A person decides',
-			text: 'Orders over the auto-approve limit, substitutes the mandate asks to see, late deliveries, partial stock, products missing a required claim.'
-		},
-		{
-			code: 'REJECT',
-			tone: 'stop',
-			icon: OctagonXIcon,
-			title: 'Nobody can order it',
-			text: 'A declared allergen the kitchen excludes, a blocked category, a passed closing time, or a total over the hard limit.'
-		}
-	] as const;
 
 	const doors = [
 		{
@@ -276,24 +250,15 @@
 							What an agent may do alone, and what waits for a person
 						</h2>
 						<p class="body">
-							A buyer admin writes each agent’s mandate once: what it may spend, what it may buy,
-							which claims and allergens matter, and how it may substitute. The agent can read its
-							mandate. It can never change it, and nothing it writes can talk its way past it.
+							A buyer admin writes each agent’s mandate once. Plain code judges every order against
+							it, the same way every time. Try it: change the mandate below and watch the verdicts
+							move.
 						</p>
 					</div>
 
-					<ul class="outcomes" {@attach reveal}>
-						{#each outcomes as o (o.code)}
-							<li class="outcome outcome-{o.tone}">
-								<span class="outcome-icon"><o.icon aria-hidden="true" /></span>
-								<div>
-									<p class="outcome-code code">{o.code}</p>
-									<h3>{o.title}</h3>
-									<p>{o.text}</p>
-								</div>
-							</li>
-						{/each}
-					</ul>
+					<div {@attach reveal}>
+						<MandatePlayground />
+					</div>
 
 					<p class="body fine" {@attach reveal}>
 						Every figure an agent is shown carries its provenance. Stock from Valio Aimo’s own
@@ -968,59 +933,6 @@
 	.fine {
 		font-size: 0.9375rem;
 	}
-	.outcomes {
-		display: grid;
-		gap: 0.75rem;
-		margin-top: 2.5rem;
-	}
-	.outcome {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 1rem;
-		padding: 1.25rem 1.375rem;
-		border-radius: 1rem;
-		background: oklch(1 0 0 / 0.035);
-		border: 1px solid oklch(1 0 0 / 0.08);
-		border-left: 3px solid var(--tone);
-	}
-	.outcome-ok {
-		--tone: var(--ok-tone);
-	}
-	.outcome-hold {
-		--tone: var(--hold-tone);
-	}
-	.outcome-stop {
-		--tone: var(--stop-tone);
-	}
-	.outcome-icon {
-		display: grid;
-		place-items: center;
-		width: 2.25rem;
-		height: 2.25rem;
-		border-radius: 50%;
-		background: color-mix(in oklch, var(--tone) 16%, transparent);
-		color: var(--tone);
-	}
-	.outcome-icon :global(svg) {
-		width: 1.125rem;
-		height: 1.125rem;
-	}
-	.outcome-code {
-		font-size: 0.6875rem;
-		color: var(--tone);
-	}
-	.outcome h3 {
-		margin-top: 0.125rem;
-		font-size: 1.0625rem;
-		font-weight: 600;
-	}
-	.outcome p:last-child {
-		margin-top: 0.25rem;
-		font-size: 0.9375rem;
-		line-height: 1.6;
-		color: var(--on-night-soft);
-	}
-
 	/* Developers */
 	.open {
 		padding-block: 6.5rem;
