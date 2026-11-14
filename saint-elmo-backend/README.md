@@ -22,7 +22,7 @@ test, so the seeded dev database is never touched.
 
 `saint_elmo_backend/valio_aimo/` is a thin async client for the Valio Aimo API (live
 price and availability, `openapi.json` at the repo root): `price`, `availability` and
-`ping`. It only talks to the API. Caching and domain rules belong to the offers layer.
+`ping`. It only talks to the API. Caching and domain rules belong to the offers layer (below).
 
 ### Settings
 
@@ -68,3 +68,30 @@ set.
   results.
 - **A product the API leaves out is simply absent** from the result mapping.
 - **Dates and times stay strings.** The spec doesn't fix their format.
+
+## Offers
+
+`POST /api/v1/offers` (Agent token, `offers:read`) returns live price and availability
+for up to 50 products on `deliverBy`, priced for the caller's buyer organisation (its
+`customer_number`; the request has no customer field). `saint_elmo_backend/offers/`
+interprets the client's raw values: `999999` and TERMINAL become an unknown amount,
+`error: true` or a product missing from the price answer becomes `NO_PRICE`, empty
+schedule lines or a product missing from the availability answer become
+`NOT_DELIVERABLE`.
+
+- **Quantity conversion** (`offers/quantity.py`, reused by quotes): `L`/`KG` per sales
+  unit = catalog price / comparison price, cross-checked against the size in the
+  product name and the declared packaging (within 5%). When it agrees, the packaged
+  amount is used, since the price ratio carries cent rounding (31.31 / 1.57 = 19.94 L
+  for a 2 × 10 l case). Quantities round up to whole sales units, then to the lot size.
+- **Cache** (`offers/cache.py`, in process): per customer number, product and date. A
+  price is reused within its `validFrom`/`validTo`; availability for
+  `OFFERS_AVAILABILITY_CACHE_SECONDS` (default `60`). Failed lookups are never cached.
+- **Demo flag** `OFFERS_IGNORE_CLOSING_TIME` (default `false`): the live mock ignores
+  `requestedDate` and answers a frozen snapshot whose closing times have passed, while its
+  `timeNow` is real, so every live offer would carry `CLOSING_TIME_PASSED` (a REJECT in the
+  policy). With `true`, a passed closing time is still reported but neither fails
+  `meetsDeadline` nor limits `validUntil`. Never enable it against a real system.
+- The API still failing after the client's retries, or not being configured, answers
+  503 `VALIO_AIMO_UNAVAILABLE`. A buyer organisation without a customer number answers
+  409 `CUSTOMER_NUMBER_MISSING`.

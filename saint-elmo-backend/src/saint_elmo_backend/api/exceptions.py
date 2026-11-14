@@ -82,6 +82,10 @@ class ErrorCode(StrEnum):
     DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
     UNKNOWN_CODE = "UNKNOWN_CODE"
 
+    # Offers (Valio Aimo API)
+    VALIO_AIMO_UNAVAILABLE = "VALIO_AIMO_UNAVAILABLE"
+    CUSTOMER_NUMBER_MISSING = "CUSTOMER_NUMBER_MISSING"
+
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
     DUPLICATE_LOCATION = "DUPLICATE_LOCATION"
@@ -605,6 +609,43 @@ class UnknownFilterCodes(SaintElmoHTTPException):
         """
         listed = ", ".join(f"{field}=[{', '.join(codes)}]" for field, codes in unknown.items())
         return cls(f"Unknown codes: {listed}")
+
+
+class UnknownProducts(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Unknown product codes: 999990"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.PRODUCT_NOT_FOUND,
+            detail=detail,
+        )
+
+    @classmethod
+    def for_codes(cls, codes: list[str]) -> "UnknownProducts":
+        return cls(f"Unknown product codes: {', '.join(codes)}")
+
+
+class ValioAimoApiUnavailable(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "The Valio Aimo price and availability API is unavailable; try again later",
+    ):
+        super().__init__(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            error_code=ErrorCode.VALIO_AIMO_UNAVAILABLE,
+            detail=detail,
+        )
+
+
+class CustomerNumberMissing(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "The buyer organisation has no Valio Aimo customer number, so it can't be priced",
+    ):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.CUSTOMER_NUMBER_MISSING,
+            detail=detail,
+        )
 
 
 class LocationNotFound(SaintElmoHTTPException):

@@ -43,6 +43,8 @@ LATE_PRODUCT = "900004"
 # Cannot be ordered right now: `salesBlock` on the product and its schedule line, with
 # an available date weeks away (like 463989 live).
 BLOCKED_PRODUCT = "900005"
+# Stock arriving in two schedule lines: 10 two days before the requested date, 60 on it.
+RESTOCKED_PRODUCT = "900006"
 # Not in the fake catalogue: the API leaves it out of every response.
 UNKNOWN_PRODUCT = "999990"
 
@@ -138,6 +140,30 @@ def _available(
     }
 
 
+def _restocked(product_id: str, on: date) -> dict[str, Any]:
+    early = on - timedelta(days=2)
+    return {
+        "productId": product_id,
+        "closingTime": _timestamp(early - timedelta(days=1), "15:00:00"),
+        "salesBlock": False,
+        "logisticModel": "Stock",
+        "scheduleLines": [
+            {
+                "salesBlock": False,
+                "availableAmount": 60.0,
+                "availableDate": on.isoformat(),
+                "salesUnit": "KI",
+            },
+            {
+                "salesBlock": False,
+                "availableAmount": 10.0,
+                "availableDate": early.isoformat(),
+                "salesUnit": "KI",
+            },
+        ],
+    }
+
+
 def _undeliverable(product_id: str) -> dict[str, Any]:
     # Live, an undeliverable product has no closing time and no logistic model either
     return {
@@ -156,6 +182,7 @@ _SCRIPTED_PRICES: dict[str, Callable[[str], dict[str, Any]]] = {
     UNDELIVERABLE_PRODUCT: lambda p: _priced(p, 8.00, 4.00, "KG"),
     LATE_PRODUCT: lambda p: _priced(p, 8.00, 4.00, "KG"),
     BLOCKED_PRODUCT: lambda p: _priced(p, 5.20, 10.40, "KG"),
+    RESTOCKED_PRODUCT: lambda p: _priced(p, 8.00, 4.00, "KG"),
 }
 
 _SCRIPTED_AVAILABILITY: dict[str, Callable[[str, date], dict[str, Any]]] = {
@@ -163,6 +190,7 @@ _SCRIPTED_AVAILABILITY: dict[str, Callable[[str, date], dict[str, Any]]] = {
     TERMINAL_PRODUCT: lambda p, d: _available(p, amount=999999.0, on=d, logistic_model="Terminal"),
     PRICE_ERROR_PRODUCT: lambda p, d: _available(p, amount=120.0, on=d),
     UNDELIVERABLE_PRODUCT: lambda p, _d: _undeliverable(p),
+    RESTOCKED_PRODUCT: _restocked,
     LATE_PRODUCT: lambda p, d: _available(p, amount=40.0, on=d + LATE_PRODUCT_DELAY),
     BLOCKED_PRODUCT: lambda p, d: _available(
         p,

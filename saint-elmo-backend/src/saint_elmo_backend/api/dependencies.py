@@ -4,6 +4,7 @@ from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from saint_elmo_backend.db.engine import get_sessionmaker
+from saint_elmo_backend.offers.cache import OfferCache
 from saint_elmo_backend.valio_aimo.client import ValioAimoClient
 
 
@@ -19,3 +20,10 @@ def get_valio_aimo_client(request: Request) -> ValioAimoClient:
     The client `lifespan` created. Tests override this with `valio_aimo.testing`.
     """
     return request.app.state.valio_aimo_client
+
+
+def get_offer_cache(request: Request) -> OfferCache:
+    """
+    The app-wide offer cache `lifespan` created. Tests override this with a fresh one.
+    """
+    return request.app.state.offer_cache
