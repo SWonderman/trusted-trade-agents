@@ -671,7 +671,7 @@ class StatusChange(CamelModel):
     status: OrderStatus
     at: str
     by: str = Field(
-        description='Who caused it: "agent:<name>", "user:<name>" (an approver), or '
+        description='Who caused it: "agent:<name>", "user:<first and last name>" (an approver), or '
         '"system" for placing a confirmed or approved order.'
     )
 

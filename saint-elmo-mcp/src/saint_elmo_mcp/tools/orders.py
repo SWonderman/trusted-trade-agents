@@ -10,7 +10,8 @@ from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response, request_body
 from saint_elmo_mcp.schemas import Order, OrderList, OrderStatus
 
-# Mirror the backend's list_orders query bounds; change them together
+# Mirror the backend's list_orders query bounds (api/v1/routes/orders.py); change
+# them together
 MAX_LIMIT = 100
 
 # There is deliberately no approve or reject tool: approval is user-only (#15), and
@@ -33,6 +34,10 @@ the idempotency key, so one quote never gives two orders.
 - `QUOTE_ALREADY_ORDERED`: this quote already has an order. Use the `orderId` in
   the error with get_order_status instead of ordering again.
 - `QUOTE_NOT_FOUND`: no quote of yours with this id.
+- `PRODUCT_NOT_FOUND`: a quoted product left the catalog; quote again without it.
+- `MANDATE_NOT_FOUND`, `CUSTOMER_NUMBER_MISSING` or `PERMISSION_DENIED`: your
+  setup doesn't allow ordering. You can't fix this; tell the buyer to contact a
+  buyer admin.
 - `VALIO_AIMO_UNAVAILABLE`: the Valio Aimo API is down. Try again later.
 """
 
