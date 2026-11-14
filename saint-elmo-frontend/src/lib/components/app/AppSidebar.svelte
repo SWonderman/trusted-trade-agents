@@ -12,6 +12,7 @@
 	import * as Avatar from '#lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import * as Tooltip from '#lib/components/ui/tooltip/index.js';
 	import type { SessionUser } from '#lib/api/types.js';
 
 	type Area = 'auth' | 'catalog' | 'orders' | 'agents' | 'audit' | 'oversight';
@@ -124,18 +125,29 @@
 	</Sidebar.Content>
 
 	<Sidebar.Footer>
-		<div
-			class="mx-2 mb-1 rounded-lg border border-sidebar-border bg-background/60 px-3 py-2.5 text-xs group-data-[collapsible=icon]:hidden"
-		>
-			<p class="font-medium text-foreground">
-				{liveAreas.length ? 'Connected to the backend' : 'Demo mode'}
-			</p>
-			<p class="mt-0.5 text-muted-foreground">
+		<!-- One quiet line about where the data comes from; the details are in the tooltip. -->
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<button
+						{...props}
+						type="button"
+						class="mx-3 mb-1 flex w-fit items-center gap-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden"
+					>
+						<span
+							class={['size-1.5 rounded-full', liveAreas.length ? 'bg-ok' : 'bg-gold-deep']}
+							aria-hidden="true"
+						></span>
+						{liveAreas.length ? 'Connected to the backend' : 'Demo mode'}
+					</button>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content side="right" class="max-w-60">
 				{liveAreas.length
 					? `Live: sign-in, ${liveAreas.join(', ')}. The rest is demo data until its API lands.`
 					: 'Everything here is built-in demo data.'}
-			</p>
-		</div>
+			</Tooltip.Content>
+		</Tooltip.Root>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
 				<DropdownMenu.Root>

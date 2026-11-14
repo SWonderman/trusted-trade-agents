@@ -27,5 +27,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	return resolve(event);
+	// The signed-in console has its own theme; set it before first paint (see layout.css).
+	const inConsole = event.route.id?.startsWith('/(app)');
+	return resolve(event, {
+		transformPageChunk: inConsole
+			? ({ html }) => html.replace('<html lang="en"', '<html lang="en" class="console"')
+			: undefined
+	});
 };

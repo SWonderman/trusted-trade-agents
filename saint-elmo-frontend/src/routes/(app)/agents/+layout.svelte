@@ -6,6 +6,10 @@
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import OutcomeBadge from '#lib/components/app/OutcomeBadge.svelte';
 	import PageHeader from '#lib/components/app/PageHeader.svelte';
+	import AgentCanvas from '#lib/components/app/AgentCanvas.svelte';
+	import * as Tabs from '#lib/components/ui/tabs/index.js';
+	import ListIcon from '@lucide/svelte/icons/list';
+	import WorkflowIcon from '@lucide/svelte/icons/workflow';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Empty from '#lib/components/ui/empty/index.js';
@@ -15,6 +19,9 @@
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
+
+	// Agents as nodes wired through Saint Elmo; the list is there for when there are many.
+	let view = $state<'nodes' | 'list'>('nodes');
 
 	const substitution = {
 		NEVER: 'Never',
@@ -31,6 +38,12 @@
 	description="Each agent works on one task, under one mandate that only people here can change. An agent can read its mandate but never widen it."
 >
 	{#snippet actions()}
+		<Tabs.Root bind:value={view}>
+			<Tabs.List aria-label="View">
+				<Tabs.Trigger value="nodes"><WorkflowIcon /> Nodes</Tabs.Trigger>
+				<Tabs.Trigger value="list"><ListIcon /> List</Tabs.Trigger>
+			</Tabs.List>
+		</Tabs.Root>
 		<Button href={resolve('agents/new')}><PlusIcon /> New agent</Button>
 	{/snippet}
 </PageHeader>
@@ -48,6 +61,8 @@
 			<Button href={resolve('agents/new')}><PlusIcon /> New agent</Button>
 		</Empty.Content>
 	</Empty.Root>
+{:else if view === 'nodes'}
+	<AgentCanvas agents={data.agents} waiting={data.waitingByAgent} />
 {:else}
 	<div class="overflow-hidden rounded-xl border bg-card shadow-xs">
 		<Table.Root class="min-w-[58rem]">

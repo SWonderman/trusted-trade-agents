@@ -31,6 +31,12 @@
 	let crumbs = $derived(page.url.pathname.split('/').filter(Boolean));
 	let section = $derived(crumbs[0] ?? '');
 
+	// Keep the console theme on <html> across client-side navigation (the server sets it on load).
+	$effect(() => {
+		document.documentElement.classList.add('console');
+		return () => document.documentElement.classList.remove('console');
+	});
+
 	// Approvals arrive from agents at any time: poll while the tab is visible.
 	// Server-sent events are the next step (design.md §3.4).
 	$effect(() => {
