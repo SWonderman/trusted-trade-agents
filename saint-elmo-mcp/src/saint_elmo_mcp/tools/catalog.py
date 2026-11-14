@@ -1,8 +1,8 @@
-from typing import Annotated, Literal
+from typing import Annotated, Literal, get_args
 
 from mcp.server.mcpserver import Context, MCPServer
 from mcp.types import ToolAnnotations
-from pydantic import Field
+from pydantic import Field, WithJsonSchema
 
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response
@@ -21,11 +21,22 @@ those for a shortlist with get_offers before you compare or order.
 - `carbonFootprint` is a product-group average, not a product-level figure.
 - A claim, diet or label that isn't listed is unknown, NOT absent: never treat
   a missing allergen or claim as "free from".
+- Each hit's `allergens` lists every excluded allergen, then every other
+  allergen the product CONTAINS. `UNKNOWN` means there's no data, NOT safe. For
+  strict kitchens use `declared_free`, which keeps only products explicitly
+  declared free of every excluded allergen.
 - If you get `UNKNOWN_CODE`, correct the listed codes (see `get_vocabulary`);
   don't drop the filter.
 """
 
 CODES_HINT = "Valid codes: see get_vocabulary."
+
+AllergenStrictness = Literal["contains", "may_contain", "declared_free"]
+ALLERGEN_STRICTNESS_DESCRIPTION = (
+    "How excludedAllergens filter. contains: drop products declared CONTAINS. "
+    "may_contain: also drop MAY_CONTAIN. declared_free: keep only products declared "
+    "FREE_FROM every excluded allergen. Products with no data are kept unless declared_free."
+)
 
 
 def register(mcp: MCPServer, backend: BackendClient) -> None:
@@ -89,6 +100,26 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
                 "products with no delivery history.",
             ),
         ] = None,
+        excludedAllergens: Annotated[
+            list[str] | None,
+            Field(
+                description="GS1 allergen codes to exclude, e.g. AM milk, AW gluten cereals; "
+                f"allergenStrictness sets how. {CODES_HINT}"
+            ),
+        ] = None,
+        # None means "not given": it's left out and the backend applies its default
+        allergenStrictness: Annotated[
+            AllergenStrictness | None,
+            WithJsonSchema(
+                {
+                    "type": "string",
+                    "enum": list(get_args(AllergenStrictness)),
+                    "description": ALLERGEN_STRICTNESS_DESCRIPTION,
+                }
+            ),
+            # Advertise the backend's default, not the Python sentinel
+            Field(json_schema_extra=lambda schema: schema.update(default="contains")),
+        ] = None,
     ) -> ProductSearchResult:
         body = {
             "query": query,
@@ -106,6 +137,8 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
             "requiredLabels": requiredLabels,
             "countriesOfOrigin": countriesOfOrigin,
             "minDeliveryReliability": minDeliveryReliability,
+            "excludedAllergens": excludedAllergens,
+            "allergenStrictness": allergenStrictness,
         }
         data = await backend.post(
             "/api/v1/products/search",
