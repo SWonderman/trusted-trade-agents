@@ -13,6 +13,7 @@ from saint_elmo_backend.valio_aimo.testing import (
     EILA_10L,
     LATE_PRODUCT,
     PRICE_ERROR_PRODUCT,
+    RESTOCKED_PRODUCT,
     TERMINAL_PRODUCT,
     UNDELIVERABLE_PRODUCT,
     FakeValioAimoApi,
@@ -296,3 +297,16 @@ async def test_the_endpoint_and_its_errors_are_documented(client):
 
     assert {"200", "401", "403", "404", "409", "422", "503"} <= set(operation["responses"])
     assert operation["security"] == [{"AgentToken": ["offers:read"]}]
+
+
+async def test_stock_is_what_is_available_by_deliver_by_not_on_the_earliest_date(
+    scripted_products, client
+):
+    # 10 KI two days early, 60 KI on the delivery date: 50 KI are covered
+    body = await _offers(client, {"productCode": RESTOCKED_PRODUCT, "quantity": 50})
+
+    item = _item(body, RESTOCKED_PRODUCT)
+    assert item["availability"]["earliestDate"] == "2030-06-01"
+    assert item["availability"]["availableAmount"] == 60.0
+    assert item["quantity"]["coveredByAvailability"] is True
+    assert item["reasonCodes"] == []

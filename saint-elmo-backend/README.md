@@ -79,7 +79,7 @@ interprets the client's raw values: `999999` and TERMINAL become an unknown amou
 schedule lines or a product missing from the availability answer become
 `NOT_DELIVERABLE`.
 
-- **Quantity normaliser** (`offers/quantity.py`, reused by quotes): `L`/`KG` per sales
+- **Quantity conversion** (`offers/quantity.py`, reused by quotes): `L`/`KG` per sales
   unit = catalog price / comparison price, cross-checked against the size in the
   product name and the declared packaging (within 5%). When it agrees, the packaged
   amount is used, since the price ratio carries cent rounding (31.31 / 1.57 = 19.94 L

@@ -4,14 +4,14 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from saint_elmo_backend.offers.enums import LogisticModel, OfferReasonCode
-from saint_elmo_backend.offers.quantity import NormalisedQuantity
+from saint_elmo_backend.offers.quantity import ConvertedQuantity
 
 if TYPE_CHECKING:
     from saint_elmo_backend.catalog.models import Product
 
 
 @dataclass(frozen=True, slots=True)
-class OfferItem:
+class RequestedProduct:
     """
     One requested product. `quantity` None asks for price and availability only;
     `unit` None means the quantity is in the product's sales unit.
@@ -57,7 +57,7 @@ class OfferAvailability:
 
 @dataclass(frozen=True, slots=True)
 class OfferQuantity:
-    normalised: NormalisedQuantity
+    converted: ConvertedQuantity
     line_total: Money | None
     # None when the available amount is unknown or the quantity couldn't be converted
     covered_by_availability: bool | None

@@ -49,7 +49,7 @@ async def get_offers(
             cache,
             organization_id=principal.organization.id,
             deliver_by=data.deliver_by,
-            items=[item.to_item() for item in data.items],
+            requested=[item.to_requested_product() for item in data.items],
             language=data.language,
             now=datetime.now(UTC),
         )

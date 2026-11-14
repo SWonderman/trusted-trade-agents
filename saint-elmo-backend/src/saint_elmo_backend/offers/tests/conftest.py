@@ -18,6 +18,7 @@ from saint_elmo_backend.valio_aimo.testing import (
     EILA_10L,
     LATE_PRODUCT,
     PRICE_ERROR_PRODUCT,
+    RESTOCKED_PRODUCT,
     TERMINAL_PRODUCT,
     UNDELIVERABLE_PRODUCT,
     FakeValioAimoApi,
@@ -90,6 +91,7 @@ async def scripted_products(reference_data, session: AsyncSession) -> None:
         (UNDELIVERABLE_PRODUCT, "Undeliverable butter 2 kg"),
         (LATE_PRODUCT, "Late quark 2 kg"),
         (BLOCKED_PRODUCT, "Blocked cream 500 g"),
+        (RESTOCKED_PRODUCT, "Restocked quark 2 kg"),
     ]:
         await make_product(
             session,

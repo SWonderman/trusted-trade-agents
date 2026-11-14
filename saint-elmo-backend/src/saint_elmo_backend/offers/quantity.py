@@ -1,5 +1,5 @@
 """
-The quantity normaliser (#12, shared with quotes #14): turns a quantity in buyer units
+Quantity conversion (#12, shared with quotes #14): turns a quantity in buyer units
 (L, KG) or in one of the product's units into whole sales units and the lot size.
 
 For L and KG the amount per sales unit comes from the price: catalog price divided by
@@ -91,7 +91,7 @@ class Conversion:
 
 
 @dataclass(frozen=True, slots=True)
-class NormalisedQuantity:
+class ConvertedQuantity:
     """
     `sales_units`, `rounded_up` and `delivered_*` are None when the quantity could not
     be converted (`CONVERSION_UNAVAILABLE`).
@@ -108,17 +108,17 @@ class NormalisedQuantity:
     reason_codes: tuple[OfferReasonCode, ...] = ()
 
 
-def normalise_quantity(
+def convert_quantity(
     quantity: Decimal,
     unit: str | None,
     product: ProductMeasures,
     price: PriceComparison | None,
-) -> NormalisedQuantity:
+) -> ConvertedQuantity:
     """
     `unit` None means the quantity is already in the product's sales unit.
     """
     requested_unit = (unit or product.sales_unit).upper()
-    unavailable = NormalisedQuantity(
+    unavailable = ConvertedQuantity(
         requested_value=quantity,
         requested_unit=requested_unit,
         lot_size=product.lot_size,
@@ -138,14 +138,14 @@ def normalise_quantity(
     if conversion is not None and conversion.cross_check is not CrossCheck.AGREES:
         reasons = (OfferReasonCode.CONVERSION_UNCERTAIN,)
 
-    return NormalisedQuantity(
+    return ConvertedQuantity(
         requested_value=quantity,
         requested_unit=requested_unit,
         lot_size=product.lot_size,
         conversion=conversion,
         sales_units=sales_units,
         rounded_up=sales_units > exact,
-        delivered_value=_normalize(sales_units * per_sales_unit),
+        delivered_value=_strip_zeros(sales_units * per_sales_unit),
         delivered_unit=requested_unit,
         reason_codes=reasons,
     )
@@ -170,7 +170,7 @@ def _conversion(
     if not sales_size or not unit_size:
         return None
     return Conversion(
-        per_sales_unit=_normalize(sales_size / unit_size),
+        per_sales_unit=_strip_zeros(sales_size / unit_size),
         unit=unit,
         basis=ConversionBasis.PACKAGING_UNITS,
         cross_check=CrossCheck.AGREES,
@@ -201,7 +201,7 @@ def _buyer_unit_conversion(
         cross_check = CrossCheck.DISAGREES if candidates else CrossCheck.UNCHECKED
 
     return Conversion(
-        per_sales_unit=_normalize(per_sales_unit),
+        per_sales_unit=_strip_zeros(per_sales_unit),
         unit=unit,
         basis=ConversionBasis.PRICE_COMPARISON,
         cross_check=cross_check,
@@ -229,7 +229,7 @@ def _cross_check_candidates(unit: str, product: ProductMeasures) -> list[Decimal
         (per_case if level.level == "CASE" else per_base_or_sales).append(amount)
 
     candidates = [a * sales_size for a in per_base_or_sales] + per_base_or_sales + per_case
-    return list(dict.fromkeys(_normalize(c) for c in candidates if c > 0))
+    return list(dict.fromkeys(_strip_zeros(c) for c in candidates if c > 0))
 
 
 def _name_amount(unit: str, name: str | None) -> Decimal | None:
@@ -258,10 +258,10 @@ def _round_up(value: Decimal, step: Decimal) -> Decimal:
     """
     if step <= 0:
         return value
-    return _normalize((value / step).to_integral_value(rounding=ROUND_CEILING) * step)
+    return _strip_zeros((value / step).to_integral_value(rounding=ROUND_CEILING) * step)
 
 
-def _normalize(value: Decimal) -> Decimal:
+def _strip_zeros(value: Decimal) -> Decimal:
     """
     Drop trailing zeros without switching to an exponent (20.000 -> 20, not 2E+1).
     """

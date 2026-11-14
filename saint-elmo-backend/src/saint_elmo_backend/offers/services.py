@@ -23,12 +23,12 @@ from saint_elmo_backend.offers.cache import Cached, OfferCache
 from saint_elmo_backend.offers.dtos import (
     Money,
     OfferAvailability,
-    OfferItem,
     OfferLine,
     OfferPrice,
     OfferProvenance,
     OfferQuantity,
     Offers,
+    RequestedProduct,
 )
 from saint_elmo_backend.offers.enums import LogisticModel, OfferReasonCode
 from saint_elmo_backend.offers.exceptions import CustomerNumberMissingError, UnknownProductsError
@@ -36,14 +36,13 @@ from saint_elmo_backend.offers.quantity import (
     PackagingMeasure,
     PriceComparison,
     ProductMeasures,
-    normalise_quantity,
+    convert_quantity,
 )
 from saint_elmo_backend.offers.timestamps import parse_date, parse_timestamp
 from saint_elmo_backend.valio_aimo.client import ValioAimoClient
 from saint_elmo_backend.valio_aimo.schemas import ProductAvailability, ProductPrice
 
 OFFER_SOURCE = "Valio Aimo price and availability API"
-MAX_ITEMS = 50
 
 # The API's placeholder for an amount it doesn't know (TERMINAL products)
 UNKNOWN_AMOUNT = Decimal("999999")
@@ -57,7 +56,7 @@ async def get_offers(
     *,
     organization_id: int,
     deliver_by: date,
-    items: Sequence[OfferItem],
+    requested: Sequence[RequestedProduct],
     language: Language,
     now: datetime,
 ) -> Offers:
@@ -65,7 +64,7 @@ async def get_offers(
     Raises `UnknownProductsError` listing every unknown code, `CustomerNumberMissingError`,
     and lets the client's `ValioAimoError` through when the API stays unavailable.
     """
-    codes = list(dict.fromkeys(item.product_code for item in items))
+    codes = list(dict.fromkeys(product_request.product_code for product_request in requested))
     products = {p.code: p for p in await catalog_crud.get_products_by_codes(session, codes)}
     if unknown := [code for code in codes if code not in products]:
         raise UnknownProductsError(unknown)
@@ -83,15 +82,15 @@ async def get_offers(
         evaluated_at=now,
         lines=[
             _offer_line(
-                item,
-                products[item.product_code],
-                prices.get(item.product_code),
-                availability.get(item.product_code),
+                product_request,
+                products[product_request.product_code],
+                prices.get(product_request.product_code),
+                availability.get(product_request.product_code),
                 deliver_by=deliver_by,
                 language=language,
                 now=now,
             )
-            for item in items
+            for product_request in requested
         ],
     )
 
@@ -139,7 +138,7 @@ async def _availability(
 
 
 def _offer_line(
-    item: OfferItem,
+    product_request: RequestedProduct,
     product: Product,
     price_entry: tuple[Cached[ProductPrice], bool] | None,
     availability_entry: tuple[Cached[ProductAvailability], bool] | None,
@@ -165,9 +164,9 @@ def _offer_line(
         reasons.append(OfferReasonCode.NOT_DELIVERABLE)
 
     quantity = None
-    if item.quantity is not None:
-        quantity = _offer_quantity(item, product, price, availability)
-        reasons += quantity.normalised.reason_codes
+    if product_request.quantity is not None:
+        quantity = _offer_quantity(product_request, product, price, availability)
+        reasons += quantity.converted.reason_codes
         if quantity.covered_by_availability is False:
             reasons.append(OfferReasonCode.PARTIAL_AVAILABILITY)
 
@@ -212,13 +211,16 @@ def _offer_availability(
     closing_time = parse_timestamp(availability.closing_time)
     closing_passed = closing_time is not None and closing_time <= now
 
-    # The earliest schedule line is the soonest the product can arrive
     lines = sorted(
         availability.schedule_lines,
         key=lambda line: parse_date(line.available_date) or date.max,
     )
-    line = lines[0] if lines else None
-    earliest = parse_date(line.available_date) if line else None
+    # The earliest schedule line is the soonest the product can arrive
+    earliest = parse_date(lines[0].available_date) if lines else None
+    # Stock is what's available by deliverBy: the last line on or before it. When every
+    # line is late, the earliest one is the best the API offers.
+    on_time = [line for line in lines if (d := parse_date(line.available_date)) and d <= deliver_by]
+    line = on_time[-1] if on_time else (lines[0] if lines else None)
     sales_blocked = availability.sales_block or bool(line and line.sales_block)
 
     amount = None
@@ -253,12 +255,12 @@ def _offer_availability(
 
 
 def _offer_quantity(
-    item: OfferItem,
+    product_request: RequestedProduct,
     product: Product,
     price: OfferPrice | None,
     availability: OfferAvailability | None,
 ) -> OfferQuantity:
-    assert item.quantity is not None
+    assert product_request.quantity is not None
     comparison = (
         PriceComparison(
             catalog_price=price.per_sales_unit.net,
@@ -268,9 +270,11 @@ def _offer_quantity(
         if price is not None and price.comparison_value is not None
         else None
     )
-    normalised = normalise_quantity(item.quantity, item.unit, product_measures(product), comparison)
+    converted = convert_quantity(
+        product_request.quantity, product_request.unit, product_measures(product), comparison
+    )
 
-    sales_units = normalised.sales_units
+    sales_units = converted.sales_units
     line_total = None
     if price is not None and sales_units is not None:
         line_total = Money(
@@ -283,13 +287,13 @@ def _offer_quantity(
         covered = availability.available_amount >= sales_units
 
     return OfferQuantity(
-        normalised=normalised, line_total=line_total, covered_by_availability=covered
+        converted=converted, line_total=line_total, covered_by_availability=covered
     )
 
 
 def product_measures(product: Product) -> ProductMeasures:
     """
-    The catalog facts the quantity normaliser needs. Load units, packaging levels and
+    The catalog facts Quantity conversion needs. Load units, packaging levels and
     translations first.
     """
     return ProductMeasures(

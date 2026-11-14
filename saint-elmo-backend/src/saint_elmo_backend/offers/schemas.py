@@ -10,12 +10,12 @@ from saint_elmo_backend.core.schema import CamelBaseModel, DecimalNumber
 from saint_elmo_backend.offers.dtos import (
     Money,
     OfferAvailability,
-    OfferItem,
     OfferLine,
     OfferPrice,
     OfferProvenance,
     OfferQuantity,
     Offers,
+    RequestedProduct,
 )
 from saint_elmo_backend.offers.enums import (
     ConversionBasis,
@@ -23,12 +23,13 @@ from saint_elmo_backend.offers.enums import (
     LogisticModel,
     OfferReasonCode,
 )
-from saint_elmo_backend.offers.services import MAX_ITEMS
 
 # Request
 
+MAX_ITEMS = 50
 
-class OfferItemRequest(CamelBaseModel):
+
+class OfferProductRequest(CamelBaseModel):
     product_code: str = Field(min_length=1, max_length=20, examples=["463038"])
     quantity: Decimal | None = Field(
         default=None,
@@ -51,8 +52,8 @@ class OfferItemRequest(CamelBaseModel):
             raise ValueError("unit is only meaningful together with quantity")
         return self
 
-    def to_item(self) -> OfferItem:
-        return OfferItem(
+    def to_requested_product(self) -> RequestedProduct:
+        return RequestedProduct(
             product_code=self.product_code,
             quantity=self.quantity,
             unit=self.unit.upper() if self.unit else None,
@@ -63,7 +64,7 @@ class OffersRequest(CamelBaseModel):
     deliver_by: date = Field(
         description="Delivery date, already resolved by the agent (e.g. 'by Monday')"
     )
-    items: list[OfferItemRequest] = Field(min_length=1, max_length=MAX_ITEMS)
+    items: list[OfferProductRequest] = Field(min_length=1, max_length=MAX_ITEMS)
     language: Language = Field(
         default=Language.EN, description="Language of product names; falls back to fi"
     )
@@ -172,7 +173,7 @@ class QuantityOut(CamelBaseModel):
 
     @classmethod
     def from_quantity(cls, quantity: OfferQuantity) -> "QuantityOut":
-        n = quantity.normalised
+        n = quantity.converted
         return cls(
             requested=Measure(value=n.requested_value, unit=n.requested_unit),
             conversion=(
