@@ -1,4 +1,5 @@
 from typing import Annotated, Literal, get_args
+from urllib.parse import quote
 
 from mcp.server.mcpserver import Context, MCPServer
 from mcp.types import ToolAnnotations
@@ -6,7 +7,7 @@ from pydantic import Field, WithJsonSchema
 
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response
-from saint_elmo_mcp.schemas import Claim, ProductSearchResult
+from saint_elmo_mcp.schemas import Claim, ProductDetail, ProductSearchResult
 
 SEARCH_PRODUCTS_DESCRIPTION = """\
 Search the Valio Aimo product catalog (about 17,500 food-service products).
@@ -27,6 +28,21 @@ those for a shortlist with get_offers before you compare or order.
   declared free of every excluded allergen.
 - If you get `UNKNOWN_CODE`, correct the listed codes (see `get_vocabulary`);
   don't drop the filter.
+"""
+
+GET_PRODUCT_DESCRIPTION = """\
+Get the full catalog detail of one product by its Valio Aimo `code` (from
+search_products).
+
+Use it on a shortlisted product to check allergens or ingredients, or to see
+curated substitutes, before quoting. Like search, it has NO live prices or stock.
+
+- `allergens` lists every allergen with a declared status. An allergen that
+  isn't listed is unknown, NOT absent: never treat it as "free from".
+- Any other missing data (no ingredients, nutrients, origins) is likewise
+  unknown, NOT absent.
+- `curatedSubstitutes` are replacements Valio Aimo itself lists for the product.
+- `PRODUCT_NOT_FOUND` means the code isn't in the catalog; search again.
 """
 
 CODES_HINT = "Valid codes: see get_vocabulary."
@@ -146,3 +162,32 @@ def register(mcp: MCPServer, backend: BackendClient) -> None:
             json={k: v for k, v in body.items() if v is not None},
         )
         return parse_response(ProductSearchResult, data)
+
+    @mcp.tool(
+        description=GET_PRODUCT_DESCRIPTION,
+        annotations=ToolAnnotations(
+            title="Get product",
+            read_only_hint=True,
+            idempotent_hint=True,
+            open_world_hint=False,
+        ),
+    )
+    async def get_product(
+        ctx: Context,
+        code: Annotated[
+            str, Field(description="Valio Aimo product code from search_products.")
+        ],
+        language: Annotated[
+            Literal["en", "fi", "sv"],
+            Field(
+                description="Language of the product name; falls back to fi. Ingredient "
+                "names come in every available language."
+            ),
+        ] = "en",
+    ) -> ProductDetail:
+        data = await backend.get(
+            f"/api/v1/products/{quote(code, safe='')}",
+            agent_key=agent_key(ctx),
+            params={"language": language},
+        )
+        return parse_response(ProductDetail, data)

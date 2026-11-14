@@ -53,7 +53,9 @@ class HitAllergen(CamelModel):
     )
 
 
-class ProductHit(CamelModel):
+class ProductSummary(CamelModel):
+    """Fields shared by a search hit and the product detail."""
+
     code: str = Field(description="Valio Aimo product code; use it with every other tool.")
     name: str | None = None
     gtin: str | None = None
@@ -77,6 +79,9 @@ class ProductHit(CamelModel):
         description="Share of ordered quantity delivered, 0-1. null = no history, NOT unreliable.",
     )
     carbon_footprint: CarbonFootprint | None = None
+
+
+class ProductHit(ProductSummary):
     relevance: float | None = None
     allergens: list[HitAllergen] = Field(
         description="Every excluded allergen, in request order, then every other allergen "
@@ -87,4 +92,90 @@ class ProductHit(CamelModel):
 class ProductSearchResult(CamelModel):
     total: int = Field(description="Number of matching products across all pages.")
     items: list[ProductHit]
+    provenance: Provenance
+
+
+# --- Product detail (GET /api/v1/products/{code}, issue #5) ---
+
+
+class Allergen(CamelModel):
+    code: str = Field(description="GS1 allergen type code, e.g. AM milk.")
+    name: str | None = None
+    containment: Literal["CONTAINS", "MAY_CONTAIN", "UNDECLARED", "FREE_FROM"] = Field(
+        description="An allergen missing from the list is UNKNOWN, NOT free from it."
+    )
+
+
+class Nutrient(CamelModel):
+    code: str = Field(description="GS1 nutrient type, e.g. FAT, ENER-, LACS (lactose).")
+    value: float
+    unit: str = Field(description="GS1 measurement unit, e.g. GRM, KJO.")
+    precision: str | None = Field(default=None, description="e.g. APPROXIMATELY, LESS_THAN.")
+    basis_quantity: float | None = Field(
+        default=None, description="The value is per this quantity, usually 100."
+    )
+    basis_unit: str | None = None
+    daily_value_percent: float | None = None
+    serving_size: float | None = None
+    serving_size_unit: str | None = None
+
+
+class IngredientOrigin(CamelModel):
+    stage: str = Field(description="GS1 production stage, e.g. FARMING, MILKING.")
+    country: str = Field(description="ISO 3166-1 numeric, or NON_EU.")
+
+
+class Ingredient(CamelModel):
+    sequence: int = Field(description="Position in the ingredient list, from 1.")
+    percentage: float | None = None
+    names: dict[str, str] = Field(
+        description="Name per ISO 639-1 language, every language available (not only the "
+        "requested one)."
+    )
+    origins: list[IngredientOrigin] = []
+
+
+class PackagingLevelDimensions(CamelModel):
+    level: Literal["BASE_UNIT_OR_EACH", "CASE", "PALLET"]
+    length_mm: float | None = None
+    width_mm: float | None = None
+    height_mm: float | None = None
+    gross_weight_g: float | None = None
+    net_weight_g: float | None = None
+    volume_value: float | None = None
+    volume_unit: str | None = Field(
+        default=None, description="As declared: may be a volume, weight or count unit."
+    )
+
+
+class Deposit(CamelModel):
+    material_code: str = Field(description="Deposit material code; not a catalog product.")
+    quantity: float = Field(description="Deposit units per sales unit.")
+    unit: str
+
+
+class Producer(CamelModel):
+    name: str
+    gln: str = Field(description="GS1 Global Location Number of the manufacturer.")
+
+
+class CuratedSubstitute(CamelModel):
+    code: str = Field(description="Valio Aimo product code of the substitute.")
+    name: str | None = None
+
+
+class ProductDetail(ProductSummary):
+    allergens: list[Allergen] = Field(
+        description="Every allergen with a declared status. One not listed is UNKNOWN, NOT safe."
+    )
+    ingredients: list[Ingredient] = Field(description="In ingredient list order.")
+    nutrients: list[Nutrient]
+    packaging_levels: list[PackagingLevelDimensions] = Field(
+        description="Manufacturer-declared dimensions and weights, in mm and grams."
+    )
+    deposits: list[Deposit]
+    producers: list[Producer]
+    curated_substitutes: list[CuratedSubstitute] = Field(
+        description="Replacements Valio Aimo itself lists for this product."
+    )
     provenance: Provenance

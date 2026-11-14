@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from conftest import MILK_HIT, search_response
+from conftest import MILK_HIT, search_response, text, tool_named
 
 
 FILTERS = {
@@ -19,16 +19,12 @@ FILTERS = {
 }
 
 
-def text(result) -> str:
-    return "\n".join(block.text for block in result.content if block.type == "text")
-
-
-async def test_lists_only_search_products_with_rest_field_names(connect):
+async def test_lists_catalog_tools_and_search_uses_rest_field_names(connect):
     async with connect({"X-Agent-Key": "k1"}) as client:
         tools = (await client.list_tools()).tools
 
-    assert [t.name for t in tools] == ["search_products"]
-    tool = tools[0]
+    assert sorted(t.name for t in tools) == ["get_product", "search_products"]
+    tool = next(t for t in tools if t.name == "search_products")
     assert set(tool.input_schema["properties"]) == {"query", "language", "limit", "offset"} | FILTERS
     assert tool.output_schema is not None
     assert {"total", "items", "provenance"} <= set(tool.output_schema["properties"])
@@ -37,7 +33,7 @@ async def test_lists_only_search_products_with_rest_field_names(connect):
 
 async def test_required_claims_items_are_typed_type_and_element(connect):
     async with connect({"X-Agent-Key": "k1"}) as client:
-        (tool,) = (await client.list_tools()).tools
+        tool = await tool_named(client, "search_products")
 
     schema = tool.input_schema
     items = schema["properties"]["requiredClaims"]["anyOf"][0]["items"]
@@ -51,7 +47,7 @@ async def test_required_claims_items_are_typed_type_and_element(connect):
 
 async def test_allergen_strictness_is_an_enum_defaulting_to_contains(connect):
     async with connect({"X-Agent-Key": "k1"}) as client:
-        (tool,) = (await client.list_tools()).tools
+        tool = await tool_named(client, "search_products")
 
     strictness = tool.input_schema["properties"]["allergenStrictness"]
     assert strictness["enum"] == ["contains", "may_contain", "declared_free"]
