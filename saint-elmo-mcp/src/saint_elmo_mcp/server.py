@@ -1,7 +1,7 @@
 from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
-from saint_elmo_mcp.tools import catalog
+from saint_elmo_mcp.tools import catalog, offers
 
 INSTRUCTIONS = """\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
@@ -12,7 +12,9 @@ The full flow (tools are added as the backend grows, so use the ones you have):
 2. search_products: narrow the catalog to candidates (no live prices or stock).
    Before filtering on claims, diets, labels, allergens or categories, call
    get_vocabulary for the valid codes instead of guessing them.
-3. get_offers: live price and availability for a shortlist.
+3. get_offers: live price and availability for a shortlist on a delivery date,
+   with buyer quantities (e.g. 1000 L) converted to sales units and priced.
+   Check meetsDeadline and reasonCodes; offers are binding on nothing.
 4. create_quote: price a basket and see the policy outcome before committing.
 5. place_order: commit a quote. If it is pending approval, a human decides;
    poll get_order_status. You can never approve your own orders.
@@ -37,4 +39,5 @@ def build_server(backend: BackendClient) -> MCPServer:
         version="0.1.0",
     )
     catalog.register(mcp, backend)
+    offers.register(mcp, backend)
     return mcp

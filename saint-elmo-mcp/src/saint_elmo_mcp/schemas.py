@@ -261,3 +261,126 @@ class Vocabulary(CamelModel):
     categories: list[VocabularyCategory] | None = Field(
         default=None, exclude_if=_is_none, description="Category codes, for categoryCodes."
     )
+
+
+# --- Live offers (POST /api/v1/offers, issue #12) ---
+
+
+class OfferItem(CamelModel):
+    """One requested product. Tool input, sent to the backend as given."""
+
+    product_code: str = Field(
+        min_length=1, description="Valio Aimo product code from search_products."
+    )
+    quantity: float | None = Field(
+        default=None,
+        gt=0,
+        description="Optional. With it, the line is converted to sales units and priced.",
+    )
+    unit: str | None = Field(
+        default=None,
+        min_length=1,
+        description="Unit of `quantity`: L, KG, or one of the product's unit codes (e.g. KI, "
+        "ST). Give L or KG to get the conversion to sales units. Omit for sales units. "
+        "Needs `quantity`.",
+    )
+
+
+class Money(CamelModel):
+    net: float
+    gross: float
+
+
+class Measure(CamelModel):
+    value: float
+    unit: str
+
+
+class OfferPrice(CamelModel):
+    per_sales_unit: Money
+    tax_rate: float | None = Field(description="Percent, e.g. 14.0.")
+    currency: str
+    comparison_price: Measure | None = Field(description="Price per litre or kilogram.")
+    customer_specific: bool = Field(
+        description="A price negotiated for your buyer organisation."
+    )
+    valid_from: str | None
+    valid_to: str | None
+
+
+class OfferAvailability(CamelModel):
+    logistic_model: Literal["STOCK", "TERMINAL"] | None = Field(
+        description="STOCK from Valio Aimo's warehouse, TERMINAL shipped by a supplier."
+    )
+    available_amount: float | None = Field(
+        description="In sales units. null = unknown (always for TERMINAL), NOT zero."
+    )
+    available_amount_known: bool
+    earliest_date: str | None = Field(description="Soonest delivery date; null if none.")
+    closing_time: str | None = Field(description="Order cut-off for the date.")
+    sales_blocked: bool
+    meets_deadline: bool = Field(
+        description="Deliverable by deliverBy and the closing time has not passed."
+    )
+
+
+class OfferConversion(CamelModel):
+    per_sales_unit: Measure = Field(description="Requested units in one sales unit.")
+    basis: Literal["PRICE_COMPARISON", "PACKAGING_UNITS"]
+    cross_check: Literal["AGREES", "DISAGREES", "UNCHECKED"] = Field(
+        description="Whether the product name or packaging agrees with the conversion. "
+        "DISAGREES: verify before ordering."
+    )
+
+
+class OfferQuantity(CamelModel):
+    requested: Measure
+    conversion: OfferConversion | None = Field(
+        description="null when the quantity was in sales units or couldn't be converted."
+    )
+    sales_units: float | None = Field(
+        description="Rounded up to whole sales units, then to the lot size; null if the "
+        "quantity couldn't be converted."
+    )
+    lot_size: float
+    rounded_up: bool | None
+    delivered: Measure | None = Field(description="What the buyer gets, in the requested unit.")
+    line_total: Money | None = Field(description="null without a price or sales units.")
+    covered_by_availability: bool | None = Field(
+        description="null when the available amount is unknown, NOT uncovered."
+    )
+
+
+class OfferProvenance(CamelModel):
+    source: str
+    fetched_at: str
+    valid_until: str | None = Field(
+        description="The earliest of the price's validTo and the closing time."
+    )
+    cached: bool
+
+
+class Offer(CamelModel):
+    product_code: str
+    name: str | None
+    sales_unit: str
+    price: OfferPrice | None = Field(description="null when there is no price (NO_PRICE).")
+    availability: OfferAvailability | None = Field(
+        description="null when the product can't be delivered (NOT_DELIVERABLE)."
+    )
+    quantity: OfferQuantity | None = Field(description="null when no quantity was given.")
+    delivery_reliability: float | None = Field(
+        description="Share of ordered quantity delivered, 0-1. null = no history."
+    )
+    carbon_footprint: CarbonFootprint | None
+    reason_codes: list[str] = Field(
+        description="Shortfalls and data gaps, e.g. PARTIAL_AVAILABILITY, LATE_DELIVERY, "
+        "CLOSING_TIME_PASSED, CONVERSION_UNCERTAIN. Empty = none."
+    )
+    provenance: OfferProvenance
+
+
+class Offers(CamelModel):
+    deliver_by: str = Field(description="The delivery date the offers are for; check it.")
+    evaluated_at: str
+    items: list[Offer] = Field(description="One per requested item, in request order.")
