@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { replaceState } from '$app/navigation';
+	import { untrack } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
@@ -23,25 +24,33 @@
 	let rows = $derived(view === 'waiting' ? waiting : view === 'decided' ? decided : data.orders);
 	let selected = $derived(page.params.orderId ?? null);
 
+	// The ?done= value last announced. Dropping it from the address bar is a shallow
+	// navigation, which leaves page.url as it was, so this stops it being announced again.
+	let announced: string | null = null;
+
 	// After a decision the server sends ?done=<orderId>:PLACED; say so once, then tidy the URL.
 	$effect(() => {
 		const done = page.url.searchParams.get('done');
-		if (!done) return;
-		const [id, status] = done.split(':');
-		const orderId = shortId(id);
-		if (status === 'PLACED') {
-			toast.success(`${orderId} approved and placed`, {
-				description: 'The agent sees it on its next status check.'
-			});
-		} else {
-			toast(`${orderId} rejected`, {
-				description: 'The agent sees the rejection and your note on its next status check.'
-			});
-		}
-		const url = new URL(page.url.href);
-		url.searchParams.delete('done');
-		// eslint-disable-next-line svelte/no-navigation-without-resolve -- same page, only drops ?done
-		replaceState(url, page.state);
+		if (!done || done === announced) return;
+		announced = done;
+		// Untracked: the navigation below replaces page.state, which must not re-run this
+		untrack(() => {
+			const [id, status] = done.split(':');
+			const orderId = shortId(id);
+			if (status === 'PLACED') {
+				toast.success(`${orderId} approved and placed`, {
+					description: 'The agent sees it on its next status check.'
+				});
+			} else {
+				toast(`${orderId} rejected`, {
+					description: 'The agent sees the rejection and your note on its next status check.'
+				});
+			}
+			const url = new URL(page.url.href);
+			url.searchParams.delete('done');
+			// eslint-disable-next-line svelte/no-navigation-without-resolve -- same page, only drops ?done
+			goto(url, { state: page.state, shallow: true, replace: true });
+		});
 	});
 </script>
 

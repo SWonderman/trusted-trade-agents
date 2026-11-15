@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
-	import { goto, replaceState } from '$app/navigation';
+	import { untrack } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import KeyRoundIcon from '@lucide/svelte/icons/key-round';
@@ -39,16 +40,25 @@
 	let active = $derived(data.keys.filter((k) => tokenState(k) === 'active'));
 	let past = $derived(data.keys.filter((k) => tokenState(k) !== 'active'));
 
+	// The agent last announced as created. Dropping ?created from the address bar is a
+	// shallow navigation, which leaves page.url as it was, so this stops a second toast.
+	let announcedCreated: string | null = null;
+
 	// A new agent arrives here with ?created: say so once, as a toast.
 	$effect(() => {
 		if (!data.created || !page.url.searchParams.has('created')) return;
-		toast.success(`${agent.name} created with mandate v1`, {
-			description: 'Issue an Agent token to connect it.'
+		if (announcedCreated === agent.id) return;
+		announcedCreated = agent.id;
+		// Untracked: the navigation below replaces page.state, which must not re-run this
+		untrack(() => {
+			toast.success(`${agent.name} created with mandate v1`, {
+				description: 'Issue an Agent token to connect it.'
+			});
+			const url = new URL(page.url.href);
+			url.searchParams.delete('created');
+			// eslint-disable-next-line svelte/no-navigation-without-resolve -- same page, only drops ?created
+			goto(url, { state: page.state, shallow: true, replace: true });
 		});
-		const url = new URL(page.url.href);
-		url.searchParams.delete('created');
-		// eslint-disable-next-line svelte/no-navigation-without-resolve -- same page, only drops ?created
-		replaceState(url, page.state);
 	});
 	$effect(() => {
 		if (form && 'revoked' in form) {
