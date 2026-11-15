@@ -122,10 +122,10 @@
 									<dl
 										class="mt-1.5 grid grid-cols-[5.5rem_1fr] gap-x-2 gap-y-0.5 rounded-md bg-muted/60 p-2 code break-all"
 									>
-										<dt>hash</dt>
-										<dd class="text-foreground/80">{e.hash}</dd>
-										<dt>previous</dt>
-										<dd class="text-foreground/80">{e.prevHash}</dd>
+										{#if e.hash}<dt>hash</dt>
+											<dd class="text-foreground/80">{e.hash}</dd>{/if}
+										{#if e.prevHash}<dt>previous</dt>
+											<dd class="text-foreground/80">{e.prevHash}</dd>{/if}
 										{#if e.quoteId}<dt>quote</dt>
 											<dd class="text-foreground/80">{e.quoteId}</dd>{/if}
 										<dt>recorded</dt>

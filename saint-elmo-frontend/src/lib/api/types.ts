@@ -20,6 +20,10 @@ export type ProductSearchResponse = Schemas['ProductSearchResponse'];
 export type ProductHit = Schemas['ProductHit'];
 export type ProductDetail = Schemas['ProductDetailResponse'];
 export type Vocabulary = Schemas['VocabularyResponse'];
+export type BackendAuditEvent = Schemas['AuditEventOut'];
+export type BackendAuditEventType = Schemas['AuditEventType'];
+export type BackendAuditEventList = Schemas['AuditEventListResponse'];
+export type BackendOrderTrail = Schemas['OrderTrailResponse'];
 
 export type Iso = string;
 export type Money = number; // EUR, excluding VAT
@@ -245,8 +249,13 @@ export interface AuditEvent {
 	organisationId: string;
 	organisationName: string;
 	actor: { kind: ActorKind; name: string };
-	type: string; // TOOL_CALL, QUOTE_CREATED, ORDER_PENDING_APPROVAL, ORDER_APPROVED, KEY_ISSUED…
-	tool?: string; // search_products, find_substitutes, create_quote, place_order…
+	/**
+	 * QUOTE_CREATED, ORDER_PENDING_APPROVAL, AGENT_TOKEN_ISSUED… (`BackendAuditEventType`);
+	 * the mock adds TOOL_CALL, KEY_ISSUED and others the backend does not record.
+	 */
+	type: string;
+	tool?: string; // search_products, find_substitutes, create_quote, place_order… (mock only)
+	/** One plain English sentence; the backend renders it when the event is read. */
 	summary: string;
 	orderId?: string;
 	quoteId?: string;
@@ -254,9 +263,14 @@ export interface AuditEvent {
 	outcome?: PolicyOutcome;
 	reasonCodes?: string[];
 	stateChange?: { from: string | null; to: string };
-	/** Hash of the previous event, so tampering with history is detectable. */
-	prevHash: string;
-	hash: string;
+	/** The event's recorded data, unchanged (backend only). */
+	payload?: Record<string, unknown>;
+	/**
+	 * Hash of the previous event, so tampering with history is detectable. Only the mock
+	 * chains its entries so far; the backend's events carry no hash.
+	 */
+	prevHash?: string;
+	hash?: string;
 }
 
 export interface AuditFilter {
