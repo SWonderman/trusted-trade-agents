@@ -63,13 +63,17 @@ export interface CatalogApi {
 }
 
 export interface OrdersApi {
-	/** GET /api/v1/orders?status= */
+	/** GET /api/v1/orders?status=: most recent first; every order in that status, or the 100 most recent. */
 	list(caller: Caller, filter?: { status?: OrderStatus }): Promise<Order[]>;
-	/** GET /api/v1/orders/{orderId} */
+	/** GET /api/v1/orders/{orderId}, or null when the caller's organisation has no such order. */
 	get(caller: Caller, orderId: string): Promise<Order | null>;
-	/** POST /api/v1/orders/{orderId}/approve (user scheme only) */
+	/**
+	 * POST /api/v1/orders/{orderId}/approve (people only). Re-checks live data first, so
+	 * the order comes back PLACED, REJECTED by a hard rule that now applies, or still
+	 * PENDING_APPROVAL with reasons or a total the approver hasn't seen.
+	 */
 	approve(caller: Caller, orderId: string, note?: string): Promise<Order>;
-	/** POST /api/v1/orders/{orderId}/reject (user scheme only) */
+	/** POST /api/v1/orders/{orderId}/reject (people only) */
 	reject(caller: Caller, orderId: string, note?: string): Promise<Order>;
 }
 
@@ -101,7 +105,10 @@ export interface OversightApi {
 		input: { productCode: string; kind: ScenarioKind; detail: string }
 	): Promise<ScenarioOverride>;
 	/** Demo only: inject an order as if an agent had placed it through MCP. */
-	simulateAgentOrder(caller: Caller, organisationId: string): Promise<Order>;
+	simulateAgentOrder(
+		caller: Caller,
+		organisationId: string
+	): Promise<{ orderId: string; organisationName: string }>;
 }
 
 /** A failure the UI can explain. `code` follows the backend's error codes. */

@@ -1,11 +1,11 @@
 /**
  * Shapes shared by the server and the pages.
  *
- * Routes the backend already serves to people (sign-in, catalog) use types generated
- * from its OpenAPI schema into `backend.d.ts` (`npm run gen:api`); they are
- * re-exported below under short names. The rest mirror the contracts in GitHub
- * issues #11 (mandate), #13 (policy), #15 (orders) and #22 (agent keys) until those
- * routes land, then move to generated types too.
+ * Routes the backend already serves to people (sign-in, catalog, orders, audit) use
+ * types generated from its OpenAPI schema into `backend.d.ts` (`npm run gen:api`);
+ * they are re-exported below under short names. The rest mirror the contracts in
+ * GitHub issues #11 (mandate) and #22 (agent keys) until those routes land, then move
+ * to generated types too.
  */
 
 import type { components } from './backend';
@@ -20,10 +20,26 @@ export type ProductSearchResponse = Schemas['ProductSearchResponse'];
 export type ProductHit = Schemas['ProductHit'];
 export type ProductDetail = Schemas['ProductDetailResponse'];
 export type Vocabulary = Schemas['VocabularyResponse'];
+/** What an order's lines show about a product beyond what the order carries. */
+export type ProductFacts = Pick<ProductDetail, 'name' | 'vendor' | 'claims' | 'diets' | 'labels'>;
 export type BackendAuditEvent = Schemas['AuditEventOut'];
 export type BackendAuditEventType = Schemas['AuditEventType'];
 export type BackendAuditEventList = Schemas['AuditEventListResponse'];
 export type BackendOrderTrail = Schemas['OrderTrailResponse'];
+
+// Orders (#15) and the policy's judgement of them (#13)
+export type Order = Schemas['OrderResponse'];
+export type OrderList = Schemas['OrderListResponse'];
+export type OrderStatus = Schemas['OrderStatus'];
+/** A quoted line: its live offer at the latest re-check, and the policy's judgement. */
+export type OrderLine = Schemas['JudgedLineOut'];
+export type OrderChange = Schemas['OrderChange'];
+export type StatusChange = Schemas['StatusChangeOut'];
+export type Measure = Schemas['Measure'];
+export type PolicyOutcome = Schemas['PolicyOutcome'];
+export type PolicyReason = Schemas['PolicyReasonOut'];
+export type PolicyReasonCode = Schemas['PolicyReasonCode'];
+export type OfferReasonCode = Schemas['OfferReasonCode'];
 
 export type Iso = string;
 export type Money = number; // EUR, excluding VAT
@@ -49,7 +65,7 @@ export interface SessionUser {
 	organisation: Pick<BuyerOrganisation, 'id' | 'name'> | null;
 }
 
-// --- Catalog and offers ------------------------------------------------------
+// --- Catalog (mock fixtures) ---------------------------------------------------
 
 export interface Claim {
 	type: string; // GS1 claim type, e.g. FREE_FROM
@@ -74,94 +90,10 @@ export interface ProductRef {
 	claimsSource: 'SYNKKA' | 'MISSING';
 }
 
-export interface Conversion {
-	requested: { amount: number; unit: 'L' | 'KG' | 'PCS' };
-	buyerUnitsPerSalesUnit: number; // e.g. 20 (L per KI)
-	salesUnits: number; // after rounding to lot size
-	lotSize: number;
-	rounded: boolean;
-	method: 'COMPARISON_PRICE' | 'UNIT_CONVERSIONS' | 'NAME';
-	crossCheck: 'AGREES' | 'DISAGREES' | 'UNCHECKED';
-}
-
-export interface OfferSnapshot {
-	unitPrice: Money; // per sales unit
-	comparisonPrice: Money; // per L or KG
-	comparisonUnit: 'L' | 'KG';
-	logisticModel: 'STOCK' | 'TERMINAL';
-	availableAmount: number | null; // null = TERMINAL, quantity unknown
-	availableDate: Iso; // ISO date
-	closingTime: Iso; // ISO datetime
-	priceValidTo: Iso;
-	fetchedAt: Iso;
-}
-
 // --- Policy (#13) ------------------------------------------------------------
 
-export type PolicyOutcome = 'AUTO_APPROVE' | 'NEEDS_HUMAN' | 'REJECT';
+/** A reason's `Severity`, widened to every outcome so one label table serves both. */
 export type ReasonSeverity = PolicyOutcome | 'INFO';
-
-export interface PolicyReason {
-	code: string;
-	severity: ReasonSeverity;
-	lineRef?: string;
-	message: string;
-	facts: Record<string, string | number | boolean | null>;
-}
-
-export interface PolicyResult {
-	outcome: PolicyOutcome;
-	reasons: PolicyReason[];
-	mandateVersion: number;
-}
-
-// --- Orders (#15) ------------------------------------------------------------
-
-export type OrderStatus = 'PENDING_APPROVAL' | 'CONFIRMED' | 'APPROVED' | 'PLACED' | 'REJECTED';
-
-export interface OrderLine {
-	ref: string; // "L1", "L2"
-	product: ProductRef;
-	quantity: number; // sales units
-	conversion: Conversion | null;
-	offer: OfferSnapshot;
-	lineTotal: Money;
-	substitutesFor: ProductRef | null;
-}
-
-export interface StatusChange {
-	status: OrderStatus;
-	at: Iso;
-	by: string; // "agent:dairy-restock" | "user:Helmi Virtanen" | "system"
-	note?: string;
-}
-
-export interface LiveChange {
-	lineRef: string;
-	field: string;
-	quoted: string | number;
-	now: string | number;
-}
-
-export interface Order {
-	orderId: string;
-	quoteId: string;
-	organisationId: string;
-	organisationName: string;
-	agent: { id: string; name: string };
-	status: OrderStatus;
-	buyerRequest: string | null;
-	rationale: string | null;
-	deliverBy: Iso;
-	lines: OrderLine[];
-	totals: { net: Money; vat: Money; gross: Money; deposits: Money };
-	policy: PolicyResult;
-	changes: LiveChange[];
-	statusHistory: StatusChange[];
-	createdAt: Iso;
-	checkAgainAfterSeconds: number | null;
-	approverNote: string | null;
-}
 
 // --- Mandates (#11) ----------------------------------------------------------
 

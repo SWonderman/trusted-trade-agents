@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type {
 	AgentKey,
 	AgentSummary,
@@ -6,6 +6,7 @@ import type {
 	KeyPreset,
 	Mandate,
 	Order,
+	PolicyReason,
 	ScenarioOverride,
 	SessionUser
 } from '#lib/api/types.js';
@@ -19,8 +20,12 @@ import {
 	USERS,
 	buildOrders,
 	daysFromNow,
-	minutesAgo
+	judged,
+	minutesAgo,
+	withTax,
+	type MockOrder
 } from './fixtures';
+import { shortId } from '#lib/format.js';
 import { mockCatalog } from './catalog';
 
 /**
@@ -34,7 +39,7 @@ import { mockCatalog } from './catalog';
 type AgentRow = (typeof AGENTS)[number] & { mandate: Mandate };
 
 interface Store {
-	orders: Order[];
+	orders: MockOrder[];
 	agents: AgentRow[];
 	keys: Record<string, AgentKey[]>;
 	audit: AuditEvent[];
@@ -81,12 +86,12 @@ function orgName(id: string) {
 	return ORGS.find((o) => o.id === id)?.name ?? id;
 }
 
-function seedOrderTrail(s: Store, o: Order) {
+function seedOrderTrail(s: Store, o: MockOrder) {
 	const t0 = new Date(o.createdAt).getTime();
 	const at = (minBefore: number) => new Date(t0 - minBefore * 60_000).toISOString();
 	const base = {
 		organisationId: o.organisationId,
-		organisationName: o.organisationName,
+		organisationName: orgName(o.organisationId),
 		actor: { kind: 'agent' as const, name: o.agent.name },
 		agentId: o.agent.id
 	};
@@ -97,7 +102,7 @@ function seedOrderTrail(s: Store, o: Order) {
 		at: at(4),
 		type: 'TOOL_CALL',
 		tool: 'search_products',
-		summary: `Searched the catalog for “${o.lines[0].product.name.split(' ').slice(0, 3).join(' ')}…”`
+		summary: `Searched the catalog for “${(o.lines[0].name ?? o.lines[0].productCode).split(' ').slice(0, 3).join(' ')}…”`
 	});
 	append(s, {
 		...base,
@@ -112,7 +117,7 @@ function seedOrderTrail(s: Store, o: Order) {
 			at: at(2),
 			type: 'TOOL_CALL',
 			tool: 'find_substitutes',
-			summary: `Asked for substitutes for ${sub.substitutesFor!.code}`
+			summary: `Asked for substitutes for ${sub.substitutesFor}`
 		});
 	}
 	append(s, {
@@ -121,7 +126,7 @@ function seedOrderTrail(s: Store, o: Order) {
 		type: 'QUOTE_CREATED',
 		tool: 'create_quote',
 		quoteId: o.quoteId,
-		summary: `Quote ${o.quoteId} for €${o.totals.net.toLocaleString('en-GB')}, judged against mandate v${o.policy.mandateVersion}`,
+		summary: `Quote ${shortId(o.quoteId)} for €${o.totals.net.toLocaleString('en-GB')}, judged against mandate v${o.policy.mandateVersion}`,
 		outcome: o.policy.outcome,
 		reasonCodes: o.policy.reasons.map((r) => r.code)
 	});
@@ -132,7 +137,7 @@ function seedOrderTrail(s: Store, o: Order) {
 		tool: 'place_order',
 		quoteId: o.quoteId,
 		orderId: o.orderId,
-		summary: `Placed order from ${o.quoteId}; live price and availability re-checked`,
+		summary: `Placed order from quote ${shortId(o.quoteId)}; live price and availability re-checked`,
 		outcome: o.policy.outcome,
 		reasonCodes: o.policy.reasons.map((r) => r.code),
 		stateChange: { from: null, to: o.statusHistory[0].status }
@@ -261,75 +266,141 @@ function findAgent(s: Store, caller: Caller, agentId: string) {
 	return a;
 }
 
+/** An order as the backend returns it, without the buyer organisation the mock files it under. */
+function toOrder({ organisationId, ...order }: MockOrder): Order {
+	void organisationId;
+	return structuredClone(order);
+}
+
+/**
+ * The live re-check on approval, as the backend runs it (#15), on the data the mock
+ * can change: a passed closing time rejects the order, and an active PRICE_CHANGE
+ * scenario raises a line's price by 8%, which keeps the order pending at its new total.
+ */
+function recheck(s: Store, o: MockOrder): MockOrder {
+	const now = Date.now();
+	const changes = [...o.changes];
+	const lines = o.lines.map((l) => {
+		const line = structuredClone(l);
+		const closing = line.availability?.closingTime;
+		if (closing && new Date(closing).getTime() < now && line.price) {
+			line.reasons = [
+				...line.reasons.filter((r) => r.code !== 'CLOSING_TIME_PASSED'),
+				{
+					code: 'CLOSING_TIME_PASSED',
+					severity: 'REJECT',
+					lineRef: String(line.position),
+					message: 'The order cut-off for the delivery date has passed.',
+					facts: { closingTime: closing }
+				}
+			];
+			line.outcome = 'REJECT';
+		}
+		const rise = s.scenarios.find(
+			(sc) => sc.active && sc.kind === 'PRICE_CHANGE' && sc.productCode === line.productCode
+		);
+		const lineRef = String(line.position);
+		const quoted = changes.find((c) => c.lineRef === lineRef && c.field === 'unitPrice');
+		if (rise && line.price && line.quantity?.salesUnits && !quoted) {
+			const before = line.price.perSalesUnit.net;
+			const after = Math.round(before * 108) / 100;
+			line.price.perSalesUnit = withTax(after);
+			line.quantity.lineTotal = withTax(after * line.quantity.salesUnits);
+			changes.push({ lineRef, field: 'unitPrice', quoted: before, now: after });
+		}
+		return line;
+	});
+	const orderReasons: PolicyReason[] = o.policy.reasons.filter((r) => r.lineRef === null);
+	return judged({ ...o, changes }, lines, orderReasons);
+}
+
 function decide(caller: Caller, orderId: string, approve: boolean, note?: string) {
 	const s = store();
 	requireBuyer(caller);
-	const o = visible(caller, s.orders).find((x) => x.orderId === orderId);
-	if (!o) throw new ApiError(404, 'NOT_FOUND', 'No such order in your organisation.');
-	if (o.status !== 'PENDING_APPROVAL') {
+	const before = visible(caller, s.orders).find((x) => x.orderId === orderId);
+	if (!before) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+	if (before.status !== 'PENDING_APPROVAL') {
 		throw new ApiError(
 			409,
 			'ORDER_NOT_PENDING',
-			`This order is already ${o.status.toLowerCase()}.`
+			`The order is ${before.status}, not PENDING_APPROVAL`
 		);
 	}
 	const by = `user:${caller.user.name}`;
 	const now = new Date().toISOString();
 	const base = {
-		organisationId: o.organisationId,
-		organisationName: o.organisationName,
+		organisationId: before.organisationId,
+		organisationName: orgName(before.organisationId),
 		actor: { kind: 'user' as const, name: caller.user.name },
-		agentId: o.agent.id,
-		orderId: o.orderId
+		agentId: before.agent.id,
+		orderId: before.orderId
 	};
+	const decided = (o: MockOrder, ...history: Order['statusHistory']): MockOrder => ({
+		...o,
+		status: history.at(-1)!.status,
+		statusHistory: [...o.statusHistory, ...history],
+		approverNote: note ?? null,
+		decidedAt: now,
+		checkAgainAfterSeconds: null
+	});
 
+	let o: MockOrder;
 	if (approve) {
-		// The backend re-checks live data on approval (#15). Closing time is the
-		// check most likely to have changed since the agent placed the order.
-		const late = o.lines.find((l) => new Date(l.offer.closingTime).getTime() < Date.now());
-		if (late) {
-			o.status = 'REJECTED';
-			o.statusHistory.push({
-				status: 'REJECTED',
-				at: now,
-				by: 'system',
-				note: 'Closing time passed'
-			});
+		const checked = recheck(s, before);
+		const seen = new Set(before.policy.reasons.map((r) => `${r.code}:${r.lineRef}`));
+		const unseen = checked.policy.reasons.filter(
+			(r) => r.severity === 'NEEDS_HUMAN' && !seen.has(`${r.code}:${r.lineRef}`)
+		);
+		append(s, {
+			...base,
+			actor: { kind: 'system', name: 'policy' },
+			at: now,
+			type: 'ORDER_RECHECKED',
+			summary: `Re-checked live data on approval: ${checked.policy.outcome}`,
+			outcome: checked.policy.outcome,
+			reasonCodes: checked.policy.reasons.map((r) => r.code)
+		});
+		if (checked.policy.outcome === 'REJECT') {
+			o = decided(checked, { status: 'REJECTED', at: now, by });
 			append(s, {
 				...base,
 				actor: { kind: 'system', name: 'policy' },
 				at: now,
 				type: 'ORDER_REJECTED',
-				summary: `Re-check on approval failed: closing time passed for ${late.ref}`,
+				summary: 'The re-check on approval found a hard rule broken; the order is rejected',
 				outcome: 'REJECT',
-				reasonCodes: ['CLOSING_TIME_PASSED'],
+				reasonCodes: checked.policy.reasons
+					.filter((r) => r.severity === 'REJECT')
+					.map((r) => r.code),
 				stateChange: { from: 'PENDING_APPROVAL', to: 'REJECTED' }
 			});
-			return o;
+		} else if (unseen.length || checked.totals.net > before.totals.net) {
+			// An approval never commits more than the approver saw: decide again.
+			o = checked;
+		} else {
+			o = decided(
+				checked,
+				{ status: 'APPROVED', at: now, by },
+				{ status: 'PLACED', at: now, by: 'system' }
+			);
+			append(s, {
+				...base,
+				at: now,
+				type: 'ORDER_APPROVED',
+				summary: note ? `Approved: “${note}”` : 'Approved without a note',
+				stateChange: { from: 'PENDING_APPROVAL', to: 'APPROVED' }
+			});
+			append(s, {
+				...base,
+				actor: { kind: 'system', name: 'order book' },
+				at: now,
+				type: 'ORDER_PLACED',
+				summary: 'Live re-check passed; recorded in the order book',
+				stateChange: { from: 'APPROVED', to: 'PLACED' }
+			});
 		}
-		o.status = 'PLACED';
-		o.statusHistory.push(
-			{ status: 'APPROVED', at: now, by, note },
-			{ status: 'PLACED', at: now, by: 'system' }
-		);
-		append(s, {
-			...base,
-			at: now,
-			type: 'ORDER_APPROVED',
-			summary: note ? `Approved: “${note}”` : 'Approved without a note',
-			stateChange: { from: 'PENDING_APPROVAL', to: 'APPROVED' }
-		});
-		append(s, {
-			...base,
-			actor: { kind: 'system', name: 'order book' },
-			at: now,
-			type: 'ORDER_PLACED',
-			summary: 'Live re-check passed; recorded in the order book',
-			stateChange: { from: 'APPROVED', to: 'PLACED' }
-		});
 	} else {
-		o.status = 'REJECTED';
-		o.statusHistory.push({ status: 'REJECTED', at: now, by, note });
+		o = decided(before, { status: 'REJECTED', at: now, by });
 		append(s, {
 			...base,
 			at: now,
@@ -338,9 +409,8 @@ function decide(caller: Caller, orderId: string, approve: boolean, note?: string
 			stateChange: { from: 'PENDING_APPROVAL', to: 'REJECTED' }
 		});
 	}
-	o.approverNote = note ?? null;
-	o.checkAgainAfterSeconds = null;
-	return o;
+	s.orders[s.orders.indexOf(before)] = o;
+	return toOrder(o);
 }
 
 // --- Session tokens (unsigned stand-ins for FastAPI's JWT) ------------------
@@ -409,10 +479,12 @@ export const mockApi: SaintElmoApi = {
 		async list(caller, filter) {
 			return visible(caller, store().orders)
 				.filter((o) => !filter?.status || o.status === filter.status)
-				.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+				.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+				.map(toOrder);
 		},
 		async get(caller, orderId) {
-			return visible(caller, store().orders).find((o) => o.orderId === orderId) ?? null;
+			const o = visible(caller, store().orders).find((x) => x.orderId === orderId);
+			return o ? toOrder(o) : null;
 		},
 		async approve(caller, orderId, note) {
 			return decide(caller, orderId, true, note);
@@ -602,18 +674,17 @@ export const mockApi: SaintElmoApi = {
 			);
 			if (!template)
 				throw new ApiError(404, 'NOT_FOUND', 'No order template for that organisation.');
-			const n = 137 + s.orders.length; // seed has 6 orders, so the first simulated one is ORD-0143
 			const now = new Date().toISOString();
-			const order: Order = {
+			const order: MockOrder = {
 				...template,
-				orderId: `ORD-${String(n).padStart(4, '0')}`,
-				quoteId: `Q-${String(400 + n).padStart(4, '0')}`,
+				orderId: randomUUID(),
+				quoteId: randomUUID(),
 				createdAt: now,
 				statusHistory: [{ status: 'PENDING_APPROVAL', at: now, by: `agent:${template.agent.name}` }]
 			};
 			s.orders.push(order);
 			seedOrderTrail(s, order);
-			return order;
+			return { orderId: order.orderId, organisationName: orgName(organisationId) };
 		}
 	}
 };

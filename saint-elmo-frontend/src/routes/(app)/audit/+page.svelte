@@ -75,7 +75,7 @@
 					id="f-order"
 					name="order"
 					class="code"
-					placeholder="ORD-0142"
+					placeholder="Order id, a UUID"
 					bind:value={order}
 				/>
 			</InputGroup.Root>

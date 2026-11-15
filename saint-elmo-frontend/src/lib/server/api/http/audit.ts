@@ -5,6 +5,7 @@ import type {
 	BackendAuditEventType,
 	BackendOrderTrail
 } from '#lib/api/types.js';
+import { isUuid } from '#lib/ids.js';
 import { ApiError, type AuditApi, type Caller } from '../client';
 
 /** The http client's GET, as much of it as the audit area needs. */
@@ -31,8 +32,6 @@ const SUBJECT = {
 } as const satisfies Record<BackendAuditEventType, 'quote' | 'order' | 'agent' | null>;
 
 const isEventType = (type: string): type is BackendAuditEventType => Object.hasOwn(SUBJECT, type);
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** The backend pages at most 200 events; the page reads at most this many. */
 const PAGE_SIZE = 200;
@@ -104,7 +103,7 @@ export function httpAudit(get: Get): AuditApi {
 		async list(caller, filter) {
 			// The backend refuses ids and types it does not know; they simply match nothing here.
 			if (filter.type && !isEventType(filter.type)) return [];
-			if (filter.orderId && !UUID.test(filter.orderId)) return [];
+			if (filter.orderId && !isUuid(filter.orderId)) return [];
 
 			const query = { agentId: filter.agentId, type: filter.type };
 			const trail = filter.orderId ? await orderTrail(caller, filter.orderId) : null;
