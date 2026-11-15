@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
+	import { goto, replaceState } from '$app/navigation';
+	import { page } from '$app/state';
+	import { toast } from 'svelte-sonner';
 	import KeyRoundIcon from '@lucide/svelte/icons/key-round';
 	import PlusIcon from '@lucide/svelte/icons/plus';
-	import MandateSummary from '#lib/components/domain/MandateSummary.svelte';
+	import MandateCharter from '#lib/components/domain/MandateCharter.svelte';
 	import OutcomeBadge from '#lib/components/app/OutcomeBadge.svelte';
 	import TokenReveal from '#lib/components/app/TokenReveal.svelte';
-	import * as Alert from '#lib/components/ui/alert/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
+	import * as Dialog from '#lib/components/ui/dialog/index.js';
 	import * as Field from '#lib/components/ui/field/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
 	import * as RadioGroup from '#lib/components/ui/radio-group/index.js';
 	import * as Select from '#lib/components/ui/select/index.js';
-	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	import * as Tabs from '#lib/components/ui/tabs/index.js';
 	import { date, relative } from '#lib/format.js';
 	import type { PageProps } from './$types';
@@ -26,7 +26,7 @@
 	let showIssue = $state(false);
 	let preset = $state('PURCHASING');
 	let expires = $state('7');
-	// Writable derived: the tabs can switch it, and a freshly issued token switches it back.
+	// Writable derived: the tabs switch it, and a freshly issued token brings its tab forward.
 	let tab = $derived(issued ? 'tokens' : 'mandate');
 
 	const expiryLabel: Record<string, string> = {
@@ -36,225 +36,234 @@
 	};
 	const tokenState = (k: (typeof data.keys)[number]) =>
 		k.revokedAt ? 'revoked' : new Date(k.expiresAt).getTime() < Date.now() ? 'expired' : 'active';
-	let activeTokens = $derived(data.keys.filter((k) => tokenState(k) === 'active').length);
+	let active = $derived(data.keys.filter((k) => tokenState(k) === 'active'));
+	let past = $derived(data.keys.filter((k) => tokenState(k) !== 'active'));
+
+	// A new agent arrives here with ?created: say so once, as a toast.
+	$effect(() => {
+		if (!data.created || !page.url.searchParams.has('created')) return;
+		toast.success(`${agent.name} created with mandate v1`, {
+			description: 'Issue an Agent token to connect it.'
+		});
+		const url = new URL(page.url.href);
+		url.searchParams.delete('created');
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- same page, only drops ?created
+		replaceState(url, page.state);
+	});
+	$effect(() => {
+		if (form && 'revoked' in form) {
+			toast(`Token ${form.revoked}… revoked`, {
+				description: 'It is refused from the agent’s next request.'
+			});
+		}
+	});
 </script>
 
 <svelte:head><title>{agent.name} · Agents · Saint Elmo</title></svelte:head>
 
-<Sheet.Root
+<Dialog.Root
 	open
 	onOpenChange={(open) => {
 		if (!open) goto(resolve('agents'), { reset: false });
 	}}
 >
-	<Sheet.Content
-		side="right"
-		class="gap-0 overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-2xl"
+	<Dialog.Content
+		class="top-[6dvh] flex max-h-[min(88dvh,52rem)] translate-y-0 flex-col gap-0 overflow-hidden p-0 sm:top-[8dvh] sm:max-w-3xl"
 	>
-		<Sheet.Header class="border-b px-6 pt-6 pb-5">
-			<div class="flex items-center gap-3">
-				<Sheet.Title class="code text-lg">{agent.name}</Sheet.Title>
-				<OutcomeBadge
-					outcome={agent.status === 'ACTIVE' ? 'AUTO_APPROVE' : 'REJECT'}
-					label={agent.status === 'ACTIVE' ? 'Active' : 'Disabled'}
-				/>
-			</div>
-			<Sheet.Description>{agent.purpose}</Sheet.Description>
-		</Sheet.Header>
-
-		<div class="space-y-6 px-6 py-6">
-			{#if data.created}
-				<Alert.Root class="border-ok/30 bg-ok/6 text-ok">
-					<CircleCheckIcon />
-					<Alert.Title class="text-foreground">Agent created with mandate v1</Alert.Title>
-					<Alert.Description>Issue an Agent token below to connect it.</Alert.Description>
-				</Alert.Root>
-			{/if}
-
-			<div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3">
-				<p class="text-sm text-muted-foreground">
-					{agent.status === 'ACTIVE'
-						? 'Its tokens work within the mandate below.'
-						: 'Every token is refused until you enable it again.'}
-				</p>
-				<form method="POST" action="?/setStatus" use:enhance>
-					<input
-						type="hidden"
-						name="status"
-						value={agent.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'}
+		<!-- Header: who the agent is, and whether it may act at all -->
+		<header
+			class="flex flex-wrap items-start justify-between gap-4 border-b px-6 pt-6 pb-5 sm:px-8"
+		>
+			<div class="min-w-0 pr-8">
+				<div class="flex flex-wrap items-center gap-3">
+					<Dialog.Title class="code text-xl font-semibold">{agent.name}</Dialog.Title>
+					<OutcomeBadge
+						outcome={agent.status === 'ACTIVE' ? 'AUTO_APPROVE' : 'REJECT'}
+						label={agent.status === 'ACTIVE' ? 'Active' : 'Disabled'}
 					/>
-					<Button
-						type="submit"
-						size="sm"
-						variant={agent.status === 'ACTIVE' ? 'destructive' : 'outline'}
+				</div>
+				<Dialog.Description class="mt-1.5 text-sm">
+					{agent.purpose}
+					<span class="text-muted-foreground">
+						· {agent.lastActiveAt ? `active ${relative(agent.lastActiveAt)}` : 'never used'}</span
 					>
-						{agent.status === 'ACTIVE' ? 'Disable agent' : 'Enable agent'}
-					</Button>
-				</form>
+				</Dialog.Description>
 			</div>
+			<form method="POST" action="?/setStatus" use:enhance class="mr-8">
+				<input
+					type="hidden"
+					name="status"
+					value={agent.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'}
+				/>
+				<Button
+					type="submit"
+					size="sm"
+					variant={agent.status === 'ACTIVE' ? 'destructive' : 'outline'}
+				>
+					{agent.status === 'ACTIVE' ? 'Disable agent' : 'Enable agent'}
+				</Button>
+			</form>
+		</header>
 
-			<Tabs.Root bind:value={tab}>
-				<Tabs.List class="w-full">
-					<Tabs.Trigger value="mandate">Mandate v{agent.mandate.version}</Tabs.Trigger>
+		<Tabs.Root bind:value={tab} class="flex min-h-0 flex-1 flex-col gap-0">
+			<div class="border-b px-6 sm:px-8">
+				<Tabs.List variant="line" class="h-11 gap-4">
+					<Tabs.Trigger value="mandate">
+						Mandate <span class="text-muted-foreground">v{agent.mandate.version}</span>
+					</Tabs.Trigger>
 					<Tabs.Trigger value="tokens">
-						Agent tokens
-						<span class="text-muted-foreground tabular">{activeTokens}</span>
+						Agent tokens <span class="text-muted-foreground tabular">{active.length}</span>
 					</Tabs.Trigger>
 				</Tabs.List>
+			</div>
 
-				<Tabs.Content value="mandate" class="pt-4">
-					<p class="mb-3 text-xs text-muted-foreground">
-						Version {agent.mandate.version}. The agent can read it with
-						<span class="code">get_my_mandate</span>, never change it.
+			<!-- The mandate, in words, with every rule below it -->
+			<Tabs.Content value="mandate" class="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8">
+				<p class="mb-4 text-xs text-muted-foreground">
+					Set by a buyer admin. The agent reads it with <span class="code">get_my_mandate</span> and can
+					never change it.
+				</p>
+				<MandateCharter mandate={agent.mandate} periodSpend={agent.periodSpend} rulesOpen />
+				{#if agent.status !== 'ACTIVE'}
+					<p class="mt-6 rounded-lg bg-stop/8 px-4 py-3 text-sm text-stop">
+						Disabled: every token is refused until you enable the agent again.
 					</p>
-					<MandateSummary mandate={agent.mandate} periodSpend={agent.periodSpend} />
-				</Tabs.Content>
+				{/if}
+			</Tabs.Content>
 
-				<Tabs.Content value="tokens" class="space-y-4 pt-4">
-					{#if issued}
-						<TokenReveal secret={issued.secret} label={issued.key.label} />
-					{/if}
-
-					{#if showIssue && !issued}
-						<form
-							method="POST"
-							action="?/issueKey"
-							class="rounded-xl border bg-muted/40 p-4"
-							use:enhance={() =>
-								async ({ update, result }) => {
-									await update();
-									if (result.type === 'success') showIssue = false;
-								}}
-						>
-							<Field.Set>
-								<Field.Legend>Issue an Agent token</Field.Legend>
-								<Field.Group>
-									<Field.Field>
-										<Field.Label for="token-label">Where will it be used?</Field.Label>
-										<Input
-											id="token-label"
-											name="label"
-											placeholder="e.g. Claude Desktop, kitchen office"
-											required
-										/>
-									</Field.Field>
-									<Field.Set>
-										<Field.Label>What it may do</Field.Label>
-										<RadioGroup.Root
-											name="preset"
-											bind:value={preset}
-											class="grid gap-2 sm:grid-cols-2"
-										>
-											{#each [['PURCHASING', 'Purchasing', 'Search, quote and place orders within the mandate.'], ['RESEARCH_ONLY', 'Research only', 'Search and compare offers, but never order.']] as [value, title, hint] (value)}
-												<Field.Label
-													for="preset-{value}"
-													class="rounded-lg border bg-card has-data-[state=checked]:border-primary/60 has-data-[state=checked]:bg-accent/40"
-												>
-													<Field.Field orientation="horizontal" class="p-3">
-														<RadioGroup.Item {value} id="preset-{value}" />
-														<Field.Content>
-															<Field.Title>{title}</Field.Title>
-															<Field.Description>{hint}</Field.Description>
-														</Field.Content>
-													</Field.Field>
-												</Field.Label>
-											{/each}
-										</RadioGroup.Root>
-									</Field.Set>
-									<Field.Field class="max-w-56">
-										<Field.Label for="token-exp">Expires after</Field.Label>
-										<Select.Root type="single" name="expiresInDays" bind:value={expires}>
-											<Select.Trigger id="token-exp">{expiryLabel[expires]}</Select.Trigger>
-											<Select.Content>
-												{#each Object.entries(expiryLabel) as [value, label] (value)}
-													<Select.Item {value} {label} />
-												{/each}
-											</Select.Content>
-										</Select.Root>
-									</Field.Field>
-								</Field.Group>
-							</Field.Set>
-							{#if form?.error && form && 'action' in form && form.action === 'issueKey'}
-								<p role="alert" class="mt-3 text-sm text-stop">{form.error}</p>
-							{/if}
-							<div class="mt-4 flex justify-end gap-2">
-								<Button type="button" variant="ghost" onclick={() => (showIssue = false)}
-									>Cancel</Button
-								>
-								<Button type="submit"><KeyRoundIcon /> Issue token</Button>
-							</div>
-						</form>
-					{:else if !issued}
+			<!-- The credentials that let it act -->
+			<Tabs.Content
+				value="tokens"
+				class="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-6 sm:px-8"
+			>
+				<div class="flex items-center justify-between gap-3">
+					<p class="text-sm text-muted-foreground">
+						{active.length
+							? `${active.length} active. Each names this agent and its mandate, never carries it.`
+							: 'No active tokens, so the agent can’t connect.'}
+					</p>
+					{#if !showIssue && !issued}
 						<Button variant="outline" size="sm" onclick={() => (showIssue = true)}>
-							<PlusIcon /> Issue an Agent token
+							<PlusIcon /> Issue
 						</Button>
 					{/if}
+				</div>
 
-					{#if data.keys.length === 0}
-						<p
-							class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground"
-						>
-							This agent has no tokens, so it can’t connect yet.
-						</p>
-					{:else}
-						<ul class="divide-y rounded-xl border bg-card">
-							{#each data.keys as key (key.jti)}
-								{@const state = tokenState(key)}
-								<li class="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-									<span
-										class={[
-											'grid size-8 place-items-center rounded-lg',
-											state === 'active'
-												? 'bg-primary/10 text-primary'
-												: 'bg-muted text-muted-foreground'
-										]}
-									>
-										<KeyRoundIcon class="size-4" aria-hidden="true" />
-									</span>
-									<div class="min-w-0 flex-1">
-										<p class="flex flex-wrap items-center gap-2 text-sm">
-											<span
-												class={[
-													'font-medium',
-													state !== 'active' && 'text-muted-foreground line-through'
-												]}>{key.label}</span
-											>
-											<span class="code text-muted-foreground">{key.prefix}…</span>
-										</p>
-										<p class="mt-0.5 text-xs text-muted-foreground">
-											{key.scopes.includes('order:place') ? 'Purchasing' : 'Research only'} · issued by
-											{key.createdBy}
-											{relative(key.createdAt)} ·
-											{state === 'revoked'
-												? `revoked ${relative(key.revokedAt!)}`
-												: state === 'expired'
-													? 'expired'
-													: `expires ${date(key.expiresAt)}`}
-											· {key.lastUsedAt ? `last used ${relative(key.lastUsedAt)}` : 'never used'}
-										</p>
-									</div>
-									{#if state === 'active'}
-										<form method="POST" action="?/revokeKey" use:enhance>
-											<input type="hidden" name="jti" value={key.jti} />
-											<Button type="submit" variant="destructive" size="sm">Revoke</Button>
-										</form>
-									{:else}
-										<span class="text-xs text-muted-foreground"
-											>{state === 'revoked' ? 'Revoked' : 'Expired'}</span
+				{#if issued}
+					<TokenReveal secret={issued.secret} label={issued.key.label} />
+				{/if}
+
+				{#if showIssue && !issued}
+					<form
+						method="POST"
+						action="?/issueKey"
+						class="rounded-xl border bg-card p-4"
+						use:enhance={() =>
+							async ({ update, result }) => {
+								await update();
+								if (result.type === 'success') showIssue = false;
+							}}
+					>
+						<Field.Group class="gap-4">
+							<Field.Field>
+								<Field.Label for="token-label">Where will it be used?</Field.Label>
+								<Input
+									id="token-label"
+									name="label"
+									placeholder="e.g. Claude Desktop, kitchen office"
+									required
+								/>
+							</Field.Field>
+							<Field.Set>
+								<Field.Label>What it may do</Field.Label>
+								<RadioGroup.Root name="preset" bind:value={preset} class="gap-2">
+									{#each [['PURCHASING', 'Purchasing', 'Search, quote and place orders.'], ['RESEARCH_ONLY', 'Research only', 'Search and compare, never order.']] as [value, title, hint] (value)}
+										<Field.Label
+											for="preset-{value}"
+											class="rounded-lg border bg-card has-data-[state=checked]:border-primary/50 has-data-[state=checked]:bg-accent/50"
 										>
-									{/if}
+											<Field.Field orientation="horizontal" class="p-3">
+												<RadioGroup.Item {value} id="preset-{value}" />
+												<Field.Content>
+													<Field.Title>{title}</Field.Title>
+													<Field.Description>{hint}</Field.Description>
+												</Field.Content>
+											</Field.Field>
+										</Field.Label>
+									{/each}
+								</RadioGroup.Root>
+							</Field.Set>
+							<Field.Field>
+								<Field.Label for="token-exp">Expires after</Field.Label>
+								<Select.Root type="single" name="expiresInDays" bind:value={expires}>
+									<Select.Trigger id="token-exp" class="w-full"
+										>{expiryLabel[expires]}</Select.Trigger
+									>
+									<Select.Content>
+										{#each Object.entries(expiryLabel) as [value, label] (value)}
+											<Select.Item {value} {label} />
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							</Field.Field>
+						</Field.Group>
+						{#if form?.error && form && 'action' in form && form.action === 'issueKey'}
+							<p role="alert" class="mt-3 text-sm text-stop">{form.error}</p>
+						{/if}
+						<div class="mt-4 flex justify-end gap-2">
+							<Button type="button" variant="ghost" size="sm" onclick={() => (showIssue = false)}
+								>Cancel</Button
+							>
+							<Button type="submit" size="sm"><KeyRoundIcon /> Issue token</Button>
+						</div>
+					</form>
+				{/if}
+
+				{#if active.length}
+					<ul class="divide-y rounded-xl border bg-card">
+						{#each active as key (key.jti)}
+							<li class="flex items-start gap-3 px-4 py-3">
+								<div class="min-w-0 flex-1">
+									<p class="truncate text-sm font-medium">{key.label}</p>
+									<p class="mt-0.5 text-xs text-muted-foreground">
+										<span class="code">{key.prefix}…</span> ·
+										{key.scopes.includes('order:place') ? 'Purchasing' : 'Research only'}
+									</p>
+									<p class="text-xs text-muted-foreground">
+										expires {date(key.expiresAt)} ·
+										{key.lastUsedAt ? `used ${relative(key.lastUsedAt)}` : 'never used'}
+									</p>
+								</div>
+								<form method="POST" action="?/revokeKey" use:enhance>
+									<input type="hidden" name="jti" value={key.jti} />
+									<Button type="submit" variant="ghost" size="xs" class="text-stop hover:text-stop"
+										>Revoke</Button
+									>
+								</form>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+
+				{#if past.length}
+					<details class="group text-xs text-muted-foreground">
+						<summary class="cursor-pointer select-none hover:text-foreground">
+							{past.length} revoked or expired
+						</summary>
+						<ul class="mt-2 space-y-1.5">
+							{#each past as key (key.jti)}
+								<li>
+									<span class="line-through">{key.label}</span>
+									<span class="code">{key.prefix}…</span>
+									· {tokenState(key) === 'revoked' && key.revokedAt
+										? `revoked ${relative(key.revokedAt)}`
+										: 'expired'}
 								</li>
 							{/each}
 						</ul>
-					{/if}
-					{#if form && 'revoked' in form}
-						<p role="status" class="text-sm text-muted-foreground">
-							Revoked <span class="code">{form.revoked}</span>. It’s refused from the agent’s next
-							request.
-						</p>
-					{/if}
-				</Tabs.Content>
-			</Tabs.Root>
-		</div>
-	</Sheet.Content>
-</Sheet.Root>
+					</details>
+				{/if}
+			</Tabs.Content>
+		</Tabs.Root>
+	</Dialog.Content>
+</Dialog.Root>

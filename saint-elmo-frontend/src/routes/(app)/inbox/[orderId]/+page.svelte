@@ -93,7 +93,9 @@
 			</Dialog.Description>
 		</header>
 
-		<div class="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_22rem]">
+		<div
+			class="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] overflow-y-auto lg:grid-cols-[minmax(0,1fr)_22rem]"
+		>
 			<!-- Main: the policy's reasons, then the lines -->
 			<div class="space-y-8 px-6 py-6 sm:px-8">
 				<section aria-labelledby="why-heading">
