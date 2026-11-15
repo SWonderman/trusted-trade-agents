@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import type {
 	AgentKey,
 	AgentSummary,
@@ -6,6 +6,7 @@ import type {
 	KeyPreset,
 	Mandate,
 	Order,
+	OversightEvent,
 	PolicyReason,
 	ScenarioOverride,
 	SessionUser
@@ -25,6 +26,7 @@ import {
 	withTax,
 	type MockOrder
 } from './fixtures';
+import { agentOf } from '#lib/audit.js';
 import { shortId } from '#lib/format.js';
 import { mockCatalog } from './catalog';
 
@@ -42,9 +44,9 @@ interface Store {
 	orders: MockOrder[];
 	agents: AgentRow[];
 	keys: Record<string, AgentKey[]>;
-	audit: AuditEvent[];
+	/** Oldest first, each filed under the buyer organisation it belongs to. */
+	audit: OversightEvent[];
 	scenarios: ScenarioOverride[];
-	seq: number;
 }
 
 const PRESET_SCOPES: Record<KeyPreset, string[]> = {
@@ -66,92 +68,171 @@ function store(): Store {
 	return g.__saintElmoMock;
 }
 
-// --- Audit trail with a hash chain ------------------------------------------
+// --- Audit trail -------------------------------------------------------------
 
-function hashOf(prev: string, body: object) {
-	return createHash('sha256')
-		.update(prev + JSON.stringify(body))
-		.digest('hex')
-		.slice(0, 16);
-}
+const SYSTEM = { kind: 'system', id: null, name: 'system' } as const;
 
-function append(s: Store, event: Omit<AuditEvent, 'id' | 'prevHash' | 'hash'>) {
-	const prevHash = s.audit.at(-1)?.hash ?? '0'.repeat(16);
-	const id = `EV-${String(++s.seq).padStart(5, '0')}`;
-	const hash = hashOf(prevHash, { id, ...event });
-	s.audit.push({ id, prevHash, hash, ...event });
+/** Records an event as the backend does: what it is about, who acted and its data. */
+function append(
+	s: Store,
+	event: Pick<OversightEvent, 'at' | 'type' | 'actor' | 'summary' | 'organisationId'> &
+		Partial<Pick<OversightEvent, 'subjectId' | 'outcome' | 'reasonCodes' | 'payload'>>
+) {
+	s.audit.push({
+		id: randomUUID(),
+		subjectId: null,
+		outcome: null,
+		reasonCodes: null,
+		payload: {},
+		...event,
+		organisationName: orgName(event.organisationId)
+	});
 }
 
 function orgName(id: string) {
 	return ORGS.find((o) => o.id === id)?.name ?? id;
 }
 
+/** The signed-in person, as the actor of an event. */
+const userActor = (caller: Caller) =>
+	({ kind: 'user', id: caller.user.id, name: caller.user.name }) as const;
+
+/** The reason codes of the hard rules a judgement broke. */
+const rejectCodes = (policy: MockOrder['policy']) =>
+	policy.reasons.filter((r) => r.severity === 'REJECT').map((r) => r.code);
+
+/** Newest first, also among events recorded at the same moment. */
+const newestFirst = (events: OversightEvent[]) =>
+	events.toReversed().toSorted((a, b) => b.at.localeCompare(a.at));
+
+/** "needs a human (the order total is over the auto-approve limit)", as the backend words a verdict. */
+function verdict(policy: MockOrder['policy']) {
+	if (policy.outcome === 'AUTO_APPROVE') return 'within the mandate';
+	const first = policy.reasons
+		.find((r) => r.severity === policy.outcome)
+		?.message.split('. ')[0]
+		.replace(/\.$/, '');
+	const why = first ? ` (${first[0].toLowerCase()}${first.slice(1)})` : '';
+	return (policy.outcome === 'REJECT' ? 'rejected' : 'needs a human') + why;
+}
+
+/** The trail an agent leaves placing an order: substitutes, the quote, the request, the re-check. */
 function seedOrderTrail(s: Store, o: MockOrder) {
 	const t0 = new Date(o.createdAt).getTime();
 	const at = (minBefore: number) => new Date(t0 - minBefore * 60_000).toISOString();
-	const base = {
-		organisationId: o.organisationId,
-		organisationName: orgName(o.organisationId),
-		actor: { kind: 'agent' as const, name: o.agent.name },
-		agentId: o.agent.id
-	};
-	const sub = o.lines.find((l) => l.substitutesFor);
+	const agent = { kind: 'agent', id: o.agent.id, name: o.agent.name } as const;
+	const base = { organisationId: o.organisationId, actor: agent };
+	const total = `€${o.totals.net.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`;
+	const policy = { outcome: o.policy.outcome, mandateVersion: o.policy.mandateVersion };
+	const reasonCodes = o.policy.reasons.map((r) => r.code);
 
-	append(s, {
-		...base,
-		at: at(4),
-		type: 'TOOL_CALL',
-		tool: 'search_products',
-		summary: `Searched the catalog for “${(o.lines[0].name ?? o.lines[0].productCode).split(' ').slice(0, 3).join(' ')}…”`
-	});
-	append(s, {
-		...base,
-		at: at(3),
-		type: 'TOOL_CALL',
-		tool: 'get_offers',
-		summary: `Fetched live price and availability for ${o.lines.length + 3} products`
-	});
-	if (sub) {
+	for (const [i, sub] of o.lines.filter((l) => l.substitutesFor).entries()) {
 		append(s, {
 			...base,
-			at: at(2),
-			type: 'TOOL_CALL',
-			tool: 'find_substitutes',
-			summary: `Asked for substitutes for ${sub.substitutesFor}`
+			at: at(3 + i),
+			type: 'SUBSTITUTES_REQUESTED',
+			summary: `${o.agent.name} asked for substitutes for ${sub.substitutesFor} and got 1 candidate, best ${sub.productCode}`,
+			reasonCodes: sub.reasons.map((r) => r.code),
+			payload: { productCode: sub.substitutesFor, candidates: [{ productCode: sub.productCode }] }
 		});
 	}
 	append(s, {
 		...base,
-		at: at(1),
+		at: at(2),
 		type: 'QUOTE_CREATED',
-		tool: 'create_quote',
-		quoteId: o.quoteId,
-		summary: `Quote ${shortId(o.quoteId)} for €${o.totals.net.toLocaleString('en-GB')}, judged against mandate v${o.policy.mandateVersion}`,
+		subjectId: o.quoteId,
+		summary: `${o.agent.name} quoted ${o.lines.length} ${o.lines.length === 1 ? 'line' : 'lines'} for ${total}: ${verdict(o.policy)}`,
 		outcome: o.policy.outcome,
-		reasonCodes: o.policy.reasons.map((r) => r.code)
+		reasonCodes,
+		payload: {
+			quoteId: o.quoteId,
+			request: {
+				deliverBy: o.deliverBy,
+				lines: o.lines.map((l) => ({
+					productCode: l.productCode,
+					quantity: l.quantity?.requested.value ?? null,
+					unit: l.quantity?.requested.unit ?? null,
+					substitutesFor: l.substitutesFor
+				})),
+				buyerRequest: o.buyerRequest,
+				rationale: o.rationale,
+				previousQuoteId: null
+			},
+			policy,
+			totals: { net: o.totals.net }
+		}
+	});
+	append(s, {
+		...base,
+		at: at(1),
+		type: 'ORDER_REQUESTED',
+		subjectId: o.orderId,
+		summary: `${o.agent.name} asked to place an order from quote ${shortId(o.quoteId)}`,
+		payload: { quoteId: o.quoteId }
 	});
 	append(s, {
 		...base,
 		at: o.createdAt,
-		type: 'ORDER_REQUESTED',
-		tool: 'place_order',
-		quoteId: o.quoteId,
-		orderId: o.orderId,
-		summary: `Placed order from quote ${shortId(o.quoteId)}; live price and availability re-checked`,
+		type: 'ORDER_RECHECKED',
+		subjectId: o.orderId,
+		summary: `${o.agent.name} re-checked the order on live data: ${total}, ${verdict(o.policy)}`,
 		outcome: o.policy.outcome,
-		reasonCodes: o.policy.reasons.map((r) => r.code),
-		stateChange: { from: null, to: o.statusHistory[0].status }
+		reasonCodes,
+		payload: { policy, totals: { net: o.totals.net } }
 	});
-	for (const [i, h] of o.statusHistory.slice(1).entries()) {
-		append(s, {
-			...base,
-			actor: { kind: 'system', name: 'policy' },
-			at: h.at,
-			type: `ORDER_${h.status}`,
-			orderId: o.orderId,
-			summary: `Order moved to ${h.status.toLowerCase().replace('_', ' ')}`,
-			stateChange: { from: o.statusHistory[i].status, to: h.status }
-		});
+	for (const h of o.statusHistory) {
+		const event = { ...base, at: h.at, subjectId: o.orderId };
+		const person = h.by.startsWith('user:')
+			? ({ kind: 'user', id: null, name: h.by.slice('user:'.length) } as const)
+			: null;
+		if (h.status === 'PENDING_APPROVAL') {
+			append(s, {
+				...event,
+				type: 'ORDER_PENDING_APPROVAL',
+				summary: 'The order is waiting for a human to approve it',
+				outcome: 'NEEDS_HUMAN',
+				reasonCodes
+			});
+		} else if (h.status === 'CONFIRMED') {
+			append(s, {
+				...event,
+				type: 'ORDER_CONFIRMED',
+				summary: 'The order was confirmed: the policy approved it automatically',
+				outcome: 'AUTO_APPROVE'
+			});
+		} else if (h.status === 'APPROVED' && person) {
+			append(s, {
+				...event,
+				actor: person,
+				type: 'ORDER_APPROVED',
+				summary: `${person.name} approved the order`
+			});
+		} else if (h.status === 'PLACED') {
+			append(s, {
+				...event,
+				actor: SYSTEM,
+				type: 'ORDER_PLACED',
+				summary: 'The order was placed in the order book'
+			});
+		} else if (h.status === 'REJECTED') {
+			append(
+				s,
+				person
+					? {
+							...event,
+							actor: person,
+							type: 'ORDER_REJECTED_BY_HUMAN',
+							summary: `${person.name} rejected the order`
+						}
+					: {
+							...event,
+							type: 'ORDER_REJECTED',
+							summary: 'The policy rejected the order',
+							outcome: 'REJECT',
+							reasonCodes: rejectCodes(o.policy)
+						}
+			);
+		}
 	}
 }
 
@@ -161,17 +242,16 @@ function seed(): Store {
 		agents: AGENTS.map((a) => ({ ...a, mandate: structuredClone(MANDATES[a.id]) })),
 		keys: structuredClone(KEYS),
 		audit: [],
-		scenarios: structuredClone(SCENARIOS),
-		seq: 0
+		scenarios: structuredClone(SCENARIOS)
 	};
 	append(s, {
 		at: minutesAgo(60 * 24 * 3),
 		organisationId: 'org-aurora',
-		organisationName: orgName('org-aurora'),
-		actor: { kind: 'user', name: 'Helmi Virtanen' },
-		type: 'KEY_ISSUED',
-		agentId: 'agt-dairy',
-		summary: 'Issued key se_ag_7f2a (Purchasing, 7 days) to dairy-restock'
+		actor: { kind: 'user', id: 'u-helmi', name: 'Helmi Virtanen' },
+		type: 'AGENT_TOKEN_ISSUED',
+		subjectId: 'agt-dairy',
+		summary: 'Helmi Virtanen issued the Agent token "laptop" to dairy-restock, purchasing',
+		payload: { label: 'laptop', preset: 'PURCHASING', scopes: PRESET_SCOPES.PURCHASING }
 	});
 	const chronological = [...s.orders].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 	for (const o of chronological) seedOrderTrail(s, o);
@@ -266,6 +346,12 @@ function findAgent(s: Store, caller: Caller, agentId: string) {
 	return a;
 }
 
+/** An event as the backend returns it, without the buyer organisation the mock files it under. */
+function toAuditEvent({ organisationId, organisationName, ...event }: OversightEvent): AuditEvent {
+	void [organisationId, organisationName];
+	return structuredClone(event);
+}
+
 /** An order as the backend returns it, without the buyer organisation the mock files it under. */
 function toOrder({ organisationId, ...order }: MockOrder): Order {
 	void organisationId;
@@ -328,13 +414,13 @@ function decide(caller: Caller, orderId: string, approve: boolean, note?: string
 	}
 	const by = `user:${caller.user.name}`;
 	const now = new Date().toISOString();
+	// A re-check on approval is credited to the approver, as the backend does.
 	const base = {
 		organisationId: before.organisationId,
-		organisationName: orgName(before.organisationId),
-		actor: { kind: 'user' as const, name: caller.user.name },
-		agentId: before.agent.id,
-		orderId: before.orderId
+		actor: userActor(caller),
+		subjectId: before.orderId
 	};
+	const noted = note ? `: “${note}”` : '';
 	const decided = (o: MockOrder, ...history: Order['statusHistory']): MockOrder => ({
 		...o,
 		status: history.at(-1)!.status,
@@ -353,26 +439,23 @@ function decide(caller: Caller, orderId: string, approve: boolean, note?: string
 		);
 		append(s, {
 			...base,
-			actor: { kind: 'system', name: 'policy' },
 			at: now,
 			type: 'ORDER_RECHECKED',
-			summary: `Re-checked live data on approval: ${checked.policy.outcome}`,
+			summary: `${caller.user.name} re-checked the order on live data before approving: ${verdict(checked.policy)}`,
 			outcome: checked.policy.outcome,
-			reasonCodes: checked.policy.reasons.map((r) => r.code)
+			reasonCodes: checked.policy.reasons.map((r) => r.code),
+			payload: { approval: true, totals: { net: checked.totals.net }, changes: checked.changes }
 		});
 		if (checked.policy.outcome === 'REJECT') {
 			o = decided(checked, { status: 'REJECTED', at: now, by });
 			append(s, {
 				...base,
-				actor: { kind: 'system', name: 'policy' },
 				at: now,
 				type: 'ORDER_REJECTED',
-				summary: 'The re-check on approval found a hard rule broken; the order is rejected',
+				summary: 'The policy rejected the order when it was re-checked for approval',
 				outcome: 'REJECT',
-				reasonCodes: checked.policy.reasons
-					.filter((r) => r.severity === 'REJECT')
-					.map((r) => r.code),
-				stateChange: { from: 'PENDING_APPROVAL', to: 'REJECTED' }
+				reasonCodes: rejectCodes(checked.policy),
+				payload: { approver: caller.user.id }
 			});
 		} else if (unseen.length || checked.totals.net > before.totals.net) {
 			// An approval never commits more than the approver saw: decide again.
@@ -387,16 +470,15 @@ function decide(caller: Caller, orderId: string, approve: boolean, note?: string
 				...base,
 				at: now,
 				type: 'ORDER_APPROVED',
-				summary: note ? `Approved: “${note}”` : 'Approved without a note',
-				stateChange: { from: 'PENDING_APPROVAL', to: 'APPROVED' }
+				summary: `${caller.user.name} approved the order${noted}`,
+				payload: { note: note ?? null }
 			});
 			append(s, {
 				...base,
-				actor: { kind: 'system', name: 'order book' },
+				actor: SYSTEM,
 				at: now,
 				type: 'ORDER_PLACED',
-				summary: 'Live re-check passed; recorded in the order book',
-				stateChange: { from: 'APPROVED', to: 'PLACED' }
+				summary: 'The order was placed in the order book'
 			});
 		}
 	} else {
@@ -405,8 +487,8 @@ function decide(caller: Caller, orderId: string, approve: boolean, note?: string
 			...base,
 			at: now,
 			type: 'ORDER_REJECTED_BY_HUMAN',
-			summary: note ? `Rejected: “${note}”` : 'Rejected without a note',
-			stateChange: { from: 'PENDING_APPROVAL', to: 'REJECTED' }
+			summary: `${caller.user.name} rejected the order${noted}`,
+			payload: { note: note ?? null }
 		});
 	}
 	s.orders[s.orders.indexOf(before)] = o;
@@ -537,30 +619,23 @@ export const mockApi: SaintElmoApi = {
 			};
 			s.agents.push(row);
 			s.keys[row.id] = [];
-			append(s, {
-				at: new Date().toISOString(),
-				organisationId: org.id,
-				organisationName: org.name,
-				actor: { kind: 'user', name: caller.user.name },
-				type: 'AGENT_CREATED',
-				agentId: row.id,
-				summary: `Created agent ${row.name} with mandate v1`
-			});
 			return summary(s, row);
 		},
 		async setStatus(caller, agentId, status) {
 			const s = store();
 			const a = findAgent(s, caller, agentId);
+			// The backend records disabling an agent, not enabling it again.
+			if (status === 'DISABLED' && a.status !== 'DISABLED') {
+				append(s, {
+					at: new Date().toISOString(),
+					organisationId: a.organisationId,
+					actor: userActor(caller),
+					type: 'AGENT_DISABLED',
+					subjectId: a.id,
+					summary: `${caller.user.name} disabled ${a.name}; all its Agent tokens are refused`
+				});
+			}
 			a.status = status;
-			append(s, {
-				at: new Date().toISOString(),
-				organisationId: a.organisationId,
-				organisationName: orgName(a.organisationId),
-				actor: { kind: 'user', name: caller.user.name },
-				type: status === 'DISABLED' ? 'AGENT_DISABLED' : 'AGENT_ENABLED',
-				agentId: a.id,
-				summary: `${status === 'DISABLED' ? 'Disabled' : 'Enabled'} ${a.name}; ${status === 'DISABLED' ? 'all its keys are refused' : 'its unrevoked keys work again'}`
-			});
 			return summary(s, a);
 		},
 		async listKeys(caller, agentId) {
@@ -590,11 +665,11 @@ export const mockApi: SaintElmoApi = {
 			append(s, {
 				at: key.createdAt,
 				organisationId: a.organisationId,
-				organisationName: orgName(a.organisationId),
-				actor: { kind: 'user', name: caller.user.name },
-				type: 'KEY_ISSUED',
-				agentId: a.id,
-				summary: `Issued key ${key.prefix} (${input.preset === 'PURCHASING' ? 'Purchasing' : 'Research only'}, ${input.expiresInDays} days) to ${a.name}`
+				actor: userActor(caller),
+				type: 'AGENT_TOKEN_ISSUED',
+				subjectId: a.id,
+				summary: `${caller.user.name} issued the Agent token "${key.label}" to ${a.name}, ${input.preset === 'PURCHASING' ? 'purchasing' : 'research only'}, for ${input.expiresInDays} days`,
+				payload: { label: key.label, preset: input.preset, scopes: key.scopes }
 			});
 			return { key, secret: `${key.prefix}_${randomBytes(24).toString('base64url')}` };
 		},
@@ -608,11 +683,11 @@ export const mockApi: SaintElmoApi = {
 				append(s, {
 					at: key.revokedAt,
 					organisationId: a.organisationId,
-					organisationName: orgName(a.organisationId),
-					actor: { kind: 'user', name: caller.user.name },
-					type: 'KEY_REVOKED',
-					agentId: a.id,
-					summary: `Revoked key ${key.prefix} of ${a.name}; refused from the next request`
+					actor: userActor(caller),
+					type: 'AGENT_TOKEN_REVOKED',
+					subjectId: a.id,
+					summary: `${caller.user.name} revoked the Agent token "${key.label}" of ${a.name}; it is refused from the next request`,
+					payload: { label: key.label }
 				});
 			}
 			return key;
@@ -620,27 +695,55 @@ export const mockApi: SaintElmoApi = {
 	},
 
 	audit: {
-		async list(caller, filter) {
-			// An order filter also matches its quote, so the trail shows how the order came about.
-			const quoteId = filter.orderId
-				? (store().orders.find((o) => o.orderId === filter.orderId)?.quoteId ?? filter.orderId)
-				: undefined;
-			return visible(caller, store().audit)
+		async list(caller, filter, page = {}) {
+			const limit = page.limit ?? 50;
+			const matching = newestFirst(visible(caller, store().audit)).filter(
+				(e) =>
+					(!filter.agentId || agentOf(e) === filter.agentId) &&
+					(!filter.type || e.type === filter.type) &&
+					(!filter.subject || e.subjectId === filter.subject) &&
+					(!filter.from || e.at >= filter.from) &&
+					(!filter.to || e.at < filter.to)
+			);
+			// The cursor is the last event read, as in the backend, so events recorded since
+			// (which sort first) don't shift the next page.
+			const after = page.cursor ? matching.findIndex((e) => e.id === page.cursor) : -1;
+			// An unknown cursor reads nothing rather than starting over.
+			const start = page.cursor && after < 0 ? matching.length : after + 1;
+			const items = matching.slice(start, start + limit);
+			const more = start + limit < matching.length;
+			return {
+				items: items.map(toAuditEvent),
+				nextCursor: more ? items.at(-1)!.id : null
+			};
+		},
+		async orderTrail(caller, orderId) {
+			const s = store();
+			const o = visible(caller, s.orders).find((x) => x.orderId === orderId);
+			if (!o) return null;
+			// The order and its quote; the agent's substitute requests up to the quote. The mock
+			// has no revised quotes, so there's no earlier quote to follow.
+			const quoted = s.audit.find((e) => e.subjectId === o.quoteId)?.at ?? o.createdAt;
+			const asked = new Set(o.lines.flatMap((l) => l.substitutesFor ?? []));
+			return s.audit
 				.filter(
 					(e) =>
-						(!filter.agentId || e.agentId === filter.agentId) &&
-						(!filter.orderId || e.orderId === filter.orderId || e.quoteId === quoteId) &&
-						(!filter.type || e.type === filter.type || e.tool === filter.type) &&
-						(!filter.outcome || e.outcome === filter.outcome)
+						e.subjectId === o.orderId ||
+						e.subjectId === o.quoteId ||
+						(e.type === 'SUBSTITUTES_REQUESTED' &&
+							e.actor.id === o.agent.id &&
+							e.at <= quoted &&
+							asked.has(String(e.payload.productCode)))
 				)
-				.toReversed();
+				.toSorted((a, b) => a.at.localeCompare(b.at))
+				.map(toAuditEvent);
 		}
 	},
 
 	oversight: {
 		async feed(caller) {
 			requireStaff(caller);
-			return store().audit.toReversed().slice(0, 80);
+			return newestFirst(store().audit).slice(0, 80);
 		},
 		async scenarios(caller) {
 			requireStaff(caller);

@@ -8,6 +8,7 @@
 	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import RefreshCwIcon from '@lucide/svelte/icons/refresh-cw';
 	import XIcon from '@lucide/svelte/icons/x';
+	import AuditTimeline from '#lib/components/domain/AuditTimeline.svelte';
 	import OrderLineDetail from '#lib/components/domain/OrderLineDetail.svelte';
 	import ReasonList from '#lib/components/domain/ReasonList.svelte';
 	import OutcomeBadge from '#lib/components/app/OutcomeBadge.svelte';
@@ -252,6 +253,13 @@
 						</ul>
 					</div>
 				</section>
+
+				{#if data.trail.length}
+					<section aria-labelledby="trail-heading">
+						<h3 id="trail-heading" class="mb-3 text-sm font-semibold">How it got here</h3>
+						<AuditTimeline events={data.trail} linkOrders={false} stickyDays="none" />
+					</section>
+				{/if}
 			</div>
 
 			<!-- Side: the agent's words and the mandate it acts under -->
@@ -329,11 +337,6 @@
 						{#if order.approverNote}
 							<p class="mt-2 text-sm italic">“{order.approverNote}”</p>
 						{/if}
-						<a
-							href="{resolve('audit')}?order={order.orderId}"
-							class="mt-3 inline-block text-xs font-medium underline underline-offset-2"
-							>Full audit trail</a
-						>
 					</section>
 				{/if}
 			</aside>

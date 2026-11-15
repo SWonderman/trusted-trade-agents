@@ -22,10 +22,16 @@ export type ProductDetail = Schemas['ProductDetailResponse'];
 export type Vocabulary = Schemas['VocabularyResponse'];
 /** What an order's lines show about a product beyond what the order carries. */
 export type ProductFacts = Pick<ProductDetail, 'name' | 'vendor' | 'claims' | 'diets' | 'labels'>;
-export type BackendAuditEvent = Schemas['AuditEventOut'];
-export type BackendAuditEventType = Schemas['AuditEventType'];
-export type BackendAuditEventList = Schemas['AuditEventListResponse'];
-export type BackendOrderTrail = Schemas['OrderTrailResponse'];
+
+// The audit trail (#57)
+/** One decision or commitment; lookups such as searches and price checks are not recorded. */
+export type AuditEvent = Schemas['AuditEventOut'];
+export type AuditEventType = Schemas['AuditEventType'];
+/** "system" is credited with automatic steps, e.g. placing a confirmed or approved order. */
+export type ActorKind = AuditEvent['actor']['kind'];
+/** A page of events, newest first; `nextCursor` reads the next, older page. */
+export type AuditEventPage = Schemas['AuditEventListResponse'];
+export type OrderTrail = Schemas['OrderTrailResponse'];
 
 // Orders (#15) and the policy's judgement of them (#13)
 export type Order = Schemas['OrderResponse'];
@@ -173,44 +179,21 @@ export interface NewAgentInput {
 
 // --- Audit trail -------------------------------------------------------------
 
-export type ActorKind = 'agent' | 'user' | 'system';
-
-export interface AuditEvent {
-	id: string;
-	at: Iso;
-	organisationId: string;
-	organisationName: string;
-	actor: { kind: ActorKind; name: string };
-	/**
-	 * QUOTE_CREATED, ORDER_PENDING_APPROVAL, AGENT_TOKEN_ISSUED… (`BackendAuditEventType`);
-	 * the mock adds TOOL_CALL, KEY_ISSUED and others the backend does not record.
-	 */
-	type: string;
-	tool?: string; // search_products, find_substitutes, create_quote, place_order… (mock only)
-	/** One plain English sentence; the backend renders it when the event is read. */
-	summary: string;
-	orderId?: string;
-	quoteId?: string;
-	agentId?: string;
-	outcome?: PolicyOutcome;
-	reasonCodes?: string[];
-	stateChange?: { from: string | null; to: string };
-	/** The event's recorded data, unchanged (backend only). */
-	payload?: Record<string, unknown>;
-	/**
-	 * Hash of the previous event, so tampering with history is detectable. Only the mock
-	 * chains its entries so far; the backend's events carry no hash.
-	 */
-	prevHash?: string;
-	hash?: string;
-}
-
+/** The query parameters of GET /api/v1/audit-events. */
 export interface AuditFilter {
+	/** Events of this agent, as actor or subject */
 	agentId?: string;
-	orderId?: string;
-	type?: string;
-	outcome?: PolicyOutcome;
+	type?: AuditEventType;
+	/** Events about this quote, order or agent */
+	subject?: string;
+	/** ISO date-time, inclusive */
+	from?: Iso;
+	/** ISO date-time, exclusive */
+	to?: Iso;
 }
+
+/** An event in Valio Aimo's cross-customer feed, which only the mock serves so far. */
+export type OversightEvent = AuditEvent & { organisationId: string; organisationName: string };
 
 // --- Demo scenario controls --------------------------------------------------
 

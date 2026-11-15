@@ -26,7 +26,7 @@
 
 	let stats = $derived([
 		['Buyer organisations', data.stats.organisations],
-		['Tool calls, 24 h', data.stats.toolCalls],
+		['Quotes, 24 h', data.stats.quotes],
 		['Orders placed, 24 h', data.stats.ordersPlaced],
 		['Sent to a person, 24 h', data.stats.waiting],
 		['Rejected by policy, 24 h', data.stats.rejected]

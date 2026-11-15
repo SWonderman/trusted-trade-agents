@@ -1,11 +1,11 @@
 import type {
 	AgentKey,
 	AgentSummary,
-	AuditEvent,
 	BackendMe,
 	IssuedKey,
 	Order,
 	OrderList,
+	OversightEvent,
 	ProductDetail,
 	ProductSearchResponse,
 	ScenarioOverride,
@@ -208,7 +208,7 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 
 		// TODO: scenario controls (design §3.3) have no issue yet.
 		oversight: {
-			feed: (caller) => call<AuditEvent[]>('/api/v1/oversight/feed', { caller }),
+			feed: (caller) => call<OversightEvent[]>('/api/v1/oversight/feed', { caller }),
 			scenarios: (caller) => call<ScenarioOverride[]>('/api/v1/scenarios', { caller }),
 			setScenario: (caller, id, active) =>
 				call(`/api/v1/scenarios/${encodeURIComponent(id)}`, {

@@ -5,25 +5,32 @@
 	import UserIcon from '@lucide/svelte/icons/user';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import type { AuditEvent } from '#lib/api/types.js';
-	import { date, time } from '#lib/format.js';
+	import { orderOf, quoteRequest } from '#lib/audit.js';
+	import { date, shortId, time } from '#lib/format.js';
 	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
 	import OutcomeBadge from '../app/OutcomeBadge.svelte';
+
+	type TimelineEvent = AuditEvent & { organisationName?: string };
 
 	let {
 		events,
 		showOrganisation = false,
 		linkOrders = true,
-		contained = false
+		stickyDays = 'page'
 	}: {
-		events: AuditEvent[];
+		/** In the order to show them: newest first for the audit trail, oldest first for an order trail. */
+		events: TimelineEvent[];
 		showOrganisation?: boolean;
 		linkOrders?: boolean;
-		/** Inside a container that scrolls on large screens: day headings stick to its top there. */
-		contained?: boolean;
+		/**
+		 * Where day headings stick: under the page header, or also to the top of a container
+		 * that scrolls on large screens; 'none' where they shouldn't stick at all.
+		 */
+		stickyDays?: 'page' | 'container' | 'none';
 	} = $props();
 
 	let days = $derived.by(() => {
-		const groups: { day: string; events: AuditEvent[] }[] = [];
+		const groups: { day: string; events: TimelineEvent[] }[] = [];
 		for (const e of events) {
 			const day = date(e.at);
 			if (groups.at(-1)?.day !== day) groups.push({ day, events: [] });
@@ -45,8 +52,9 @@
 		<section aria-label={group.day}>
 			<h3
 				class={[
-					'sticky top-14 z-[1] -mx-2 mb-3 bg-card/95 px-2 py-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase backdrop-blur',
-					contained && 'lg:top-0'
+					'-mx-2 mb-3 px-2 py-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase',
+					stickyDays !== 'none' && 'sticky top-14 z-[1] bg-card/95 backdrop-blur',
+					stickyDays === 'container' && 'lg:top-0'
 				]}
 			>
 				{group.day}
@@ -54,6 +62,8 @@
 			<ol>
 				{#each group.events as e (e.id)}
 					{@const a = actor[e.actor.kind]}
+					{@const order = orderOf(e)}
+					{@const request = quoteRequest(e)}
 					<li
 						class="group/event grid grid-cols-[3.75rem_1.75rem_1fr] gap-x-3 sm:grid-cols-[4.5rem_1.75rem_1fr]"
 					>
@@ -74,41 +84,46 @@
 							</span>
 						</span>
 						<div class="min-w-0 pb-6">
-							<p class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-								<span class="sr-only">{a.label}</span>
-								<span class={['font-medium', e.actor.kind === 'agent' && 'code text-primary']}>
-									{e.actor.name}
-								</span>
-								<span class="code text-xs text-muted-foreground">{e.tool ?? e.type}</span>
-								{#if showOrganisation}<span class="text-xs text-muted-foreground"
-										>· {e.organisationName}</span
-									>{/if}
-							</p>
-							<p class="mt-0.5 text-sm text-pretty">{e.summary}</p>
-							{#if e.outcome || e.stateChange || e.orderId || e.reasonCodes?.length}
-								<div class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-									{#if e.outcome}<OutcomeBadge outcome={e.outcome} />{/if}
-									{#each e.reasonCodes ?? [] as code (code)}
-										<span class="rounded-md bg-muted px-1.5 py-0.5 code">{code}</span>
-									{/each}
-									{#if e.stateChange}
-										<span class="code text-muted-foreground">
-											{e.stateChange.from ?? 'new'} →
-											<span class="text-foreground">{e.stateChange.to}</span>
-										</span>
-									{/if}
-									{#if e.orderId}
-										{#if linkOrders}
-											<a
-												href={resolve(`inbox/${e.orderId}`)}
-												class="code text-primary underline-offset-2 hover:underline">{e.orderId}</a
-											>
-										{:else}
-											<span class="code text-muted-foreground">{e.orderId}</span>
-										{/if}
-									{/if}
-								</div>
+							<p class="text-sm font-medium text-pretty">{e.summary}</p>
+							{#if request?.buyerRequest}
+								<p class="mt-0.5 text-sm text-pretty text-muted-foreground">
+									Asked for: “{request.buyerRequest}”
+								</p>
 							{/if}
+							<div class="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+								<span
+									class={[
+										'inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5',
+										e.actor.kind === 'agent' && 'code text-primary'
+									]}
+								>
+									<span class="sr-only">{a.label}</span>{e.actor.name}
+								</span>
+								{#if showOrganisation && e.organisationName}
+									<span class="rounded-md bg-muted px-1.5 py-0.5">{e.organisationName}</span>
+								{/if}
+								{#if e.outcome}<OutcomeBadge outcome={e.outcome} />{/if}
+								{#each e.reasonCodes ?? [] as code (code)}
+									<span class="rounded-md bg-muted px-1.5 py-0.5 code">{code}</span>
+								{/each}
+								<span class="code text-muted-foreground">{e.type}</span>
+								{#if request?.previousQuoteId}
+									<span class="code text-muted-foreground"
+										>revises quote {shortId(request.previousQuoteId)}</span
+									>
+								{/if}
+								{#if order}
+									{#if linkOrders}
+										<a
+											href={resolve(`inbox/${order}`)}
+											class="code text-primary underline-offset-2 hover:underline"
+											>order {shortId(order)}</a
+										>
+									{:else}
+										<span class="code text-muted-foreground">order {shortId(order)}</span>
+									{/if}
+								{/if}
+							</div>
 							<Collapsible.Root class="mt-1.5 text-xs text-muted-foreground">
 								<Collapsible.Trigger
 									class="group/trigger inline-flex items-center gap-0.5 hover:text-foreground"
@@ -116,21 +131,27 @@
 									<ChevronRightIcon
 										class="size-3 transition-transform group-data-[state=open]/trigger:rotate-90"
 									/>
-									Entry {e.id}
+									Recorded data
 								</Collapsible.Trigger>
 								<Collapsible.Content>
 									<dl
 										class="mt-1.5 grid grid-cols-[5.5rem_1fr] gap-x-2 gap-y-0.5 rounded-md bg-muted/60 p-2 code break-all"
 									>
-										{#if e.hash}<dt>hash</dt>
-											<dd class="text-foreground/80">{e.hash}</dd>{/if}
-										{#if e.prevHash}<dt>previous</dt>
-											<dd class="text-foreground/80">{e.prevHash}</dd>{/if}
-										{#if e.quoteId}<dt>quote</dt>
-											<dd class="text-foreground/80">{e.quoteId}</dd>{/if}
+										<dt>entry</dt>
+										<dd class="text-foreground/80">{e.id}</dd>
+										{#if e.subjectId}<dt>about</dt>
+											<dd class="text-foreground/80">{e.subjectId}</dd>{/if}
 										<dt>recorded</dt>
 										<dd class="text-foreground/80">{e.at}</dd>
 									</dl>
+									{#if Object.keys(e.payload).length}
+										<pre
+											class="mt-1 max-h-80 overflow-auto rounded-md bg-muted/60 p-2 code text-foreground/80">{JSON.stringify(
+												e.payload,
+												null,
+												2
+											)}</pre>
+									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>
 						</div>
