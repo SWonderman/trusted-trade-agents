@@ -11,3 +11,7 @@ setup:
 # Issue an Agent token for a seeded agent and print it once (preset: Purchasing or "Research only")
 issue-agent-token agent buyer_admin_email preset="Purchasing":
     cd saint-elmo-backend && uv run python -m saint_elmo_backend.agents.command "{{agent}}" "{{buyer_admin_email}}" "{{preset}}"
+
+# Start the MCP server on http://127.0.0.1:8001/mcp (the backend must be running)
+mcp:
+    cd saint-elmo-mcp && uv run saint-elmo-mcp

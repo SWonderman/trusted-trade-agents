@@ -9,6 +9,7 @@ from pydantic import Field
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response, request_body
 from saint_elmo_mcp.schemas import Order, OrderList, OrderStatus
+from saint_elmo_mcp.tools.substitutes import SHORTFALL_ON_A_LINE
 
 # Mirror the backend's list_orders query bounds (api/v1/routes/orders.py); change
 # them together
@@ -17,7 +18,7 @@ MAX_LIMIT = 100
 # There is deliberately no approve or reject tool: approval is user-only (#15), and
 # an agent can never approve its own orders.
 
-PLACE_ORDER_DESCRIPTION = """\
+PLACE_ORDER_DESCRIPTION = f"""\
 Commit a quote (from create_quote) as an order. Retrying is safe: the quote id is
 the idempotency key, so one quote never gives two orders.
 
@@ -30,7 +31,7 @@ the idempotency key, so one quote never gives two orders.
   `checkAgainAfterSeconds`. You can't approve it yourself.
 - `status: "REJECTED"` is an answer with reasons, not an error. Read
   `policy.reasons`, then revise with a new quote or explain it to the buyer.
-- `QUOTE_EXPIRED`: create a new quote (with `previousQuoteId`) and order that.
+{SHORTFALL_ON_A_LINE}- `QUOTE_EXPIRED`: create a new quote (with `previousQuoteId`) and order that.
 - `QUOTE_ALREADY_ORDERED`: this quote already has an order. Use the `orderId` in
   the error with get_order_status instead of ordering again.
 - `QUOTE_NOT_FOUND`: no quote of yours with this id.

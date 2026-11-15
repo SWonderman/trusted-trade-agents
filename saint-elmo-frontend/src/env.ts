@@ -21,6 +21,8 @@ export const variables = defineEnvVars({
 	API_MODE_OVERSIGHT: { schema: apiMode },
 	/** FastAPI base URL, reached only from SvelteKit's server side. */
 	BACKEND_URL: { schema: (value) => value || 'http://localhost:8000' },
+	/** The MCP server URL agents connect to, shown in the console's connect snippet. */
+	MCP_URL: { schema: (value) => value || 'http://localhost:8001/mcp' },
 	/** Set to "false" only for plain-http local development without TLS. */
 	SESSION_COOKIE_SECURE: { schema: (value) => value !== 'false' }
 });

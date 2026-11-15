@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "saint-elmo": {
+      "type": "http",
+      "url": "${SAINT_ELMO_MCP_URL:-http://localhost:8001/mcp}",
+      "headers": {
+        "X-Agent-Key": "${SAINT_ELMO_AGENT_KEY:-}"
+      }
+    }
+  }
+}

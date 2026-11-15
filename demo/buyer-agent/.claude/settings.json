@@ -1,0 +1,3 @@
+{
+  "claudeMdExcludes": ["**/!(buyer-agent)/CLAUDE.md"]
+}
