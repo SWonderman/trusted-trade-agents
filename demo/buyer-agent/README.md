@@ -8,6 +8,8 @@ Start `claude` in this folder and it becomes a buyer's purchasing agent, connect
 
 ## Prerequisites
 
+The quickest way: `docker compose up --build` from the repo root (see the root `readme.md`) runs the database, backend, MCP server and console with everything below already set, except the Valio Aimo API settings in `saint-elmo-backend/.env`. Without Docker:
+
 1. The backend's `.env` (`saint-elmo-backend/.env`, from `.env.example`) sets:
    - `VALIO_AIMO_API_URL` and `VALIO_AIMO_API_KEY`, from the challenge portal. Without them every offer, quote and order fails with `VALIO_AIMO_UNAVAILABLE`.
    - `OFFERS_IGNORE_CLOSING_TIME=true`. Without it, lines past the order closing time are rejected for `CLOSING_TIME_PASSED`.

@@ -28,6 +28,10 @@ MANDATE_URL = "/api/v1/agents/me/mandate"
 QUOTES_URL = "/api/v1/quotes"
 
 
+def agent_url(agent) -> str:
+    return f"{AGENTS_URL}/{agent.public_id}"
+
+
 def tokens_url(agent) -> str:
     return f"{AGENTS_URL}/{agent.public_id}/tokens"
 
@@ -51,6 +55,67 @@ async def test_buyer_admin_lists_their_agents(clean_db, session, client):
         "status": "ACTIVE",
     }
     assert agents["old-bot"]["status"] == "DISABLED"
+
+
+async def test_buyer_admin_reads_an_agent_with_its_mandate_and_token_use(clean_db, session, client):
+    organization = await make_organization(session)
+    admin = await make_user(session, organization)
+    agent = await make_agent(session, organization, name="dairy-restock")
+    await session.commit()
+    headers = user_session_headers(admin)
+
+    fresh = await client.get(agent_url(agent), headers=headers)
+
+    assert fresh.status_code == 200, fresh.text
+    assert fresh.json()["liveTokens"] == 0
+    assert fresh.json()["lastUsedAt"] is None
+
+    used = await _issue(client, admin, agent)
+    revoked = await _issue(client, admin, agent)
+    await client.delete(f"{tokens_url(agent)}/{revoked['jti']}", headers=headers)
+    assert (await client.get(MANDATE_URL, headers=bearer(used["token"]))).status_code == 200
+
+    response = await client.get(agent_url(agent), headers=headers)
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert {key: body[key] for key in ("id", "name", "status", "liveTokens")} == {
+        "id": str(agent.public_id),
+        "name": "dairy-restock",
+        "status": "ACTIVE",
+        "liveTokens": 1,
+    }
+    assert body["lastUsedAt"] is not None
+    mandate = body["mandate"]
+    assert mandate["version"] == 1
+    assert mandate["agent"] == {"id": str(agent.public_id), "name": "dairy-restock"}
+    assert mandate["buyerOrganisation"] == {"name": organization.name}
+    assert mandate["maxOrderTotal"] == 1000
+    assert mandate["periodSpend"]["committed"] == 0
+    assert mandate["periodSpend"]["remaining"] == 5000
+
+
+async def test_agent_without_a_mandate_reads_with_none(clean_db, session, client):
+    organization = await make_organization(session)
+    admin = await make_user(session, organization)
+    agent = Agent(name="no-mandate", organization=organization)
+    session.add(agent)
+    await session.commit()
+
+    response = await client.get(agent_url(agent), headers=user_session_headers(admin))
+
+    assert response.status_code == 200, response.text
+    assert response.json()["mandate"] is None
+
+
+async def test_reading_an_unknown_agent_is_not_found(clean_db, session, client):
+    admin = await make_user(session, await make_organization(session))
+    await session.commit()
+
+    response = await client.get(f"{AGENTS_URL}/{uuid4()}", headers=user_session_headers(admin))
+
+    assert response.status_code == 404, response.text
+    assert response.json()["error"]["code"] == "AGENT_NOT_FOUND"
 
 
 async def test_issued_token_carries_the_preset_mandate_and_default_expiry(
@@ -314,6 +379,7 @@ async def test_disabling_twice_succeeds(clean_db, session, client):
 def _management_requests(agent, jti) -> list[tuple[str, str, dict | None]]:
     return [
         ("GET", AGENTS_URL, None),
+        ("GET", agent_url(agent), None),
         ("POST", tokens_url(agent), {"label": "x", "preset": "Purchasing"}),
         ("GET", tokens_url(agent), None),
         ("DELETE", f"{tokens_url(agent)}/{jti}", None),

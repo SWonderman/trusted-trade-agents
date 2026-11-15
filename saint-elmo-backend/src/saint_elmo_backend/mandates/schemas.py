@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import UUID4, Field
 
 from saint_elmo_backend.agents.dtos import AuthenticatedAgent
+from saint_elmo_backend.agents.models import Agent
 from saint_elmo_backend.catalog.enums import AllergenStrictness
 from saint_elmo_backend.catalog.schemas import Claim
 from saint_elmo_backend.core.schema import CamelBaseModel, DecimalNumber
@@ -107,7 +108,12 @@ class MandateResponse(CamelBaseModel):
     period_spend: PeriodSpendOutput
 
     @classmethod
-    def from_mandate(cls, agent: AuthenticatedAgent, mandate: AgentMandate) -> "MandateResponse":
+    def from_mandate(
+        cls, agent: AuthenticatedAgent | Agent, mandate: AgentMandate
+    ) -> "MandateResponse":
+        """
+        `agent` is the calling agent, or an `Agent` row with its organization loaded.
+        """
         terms = mandate.terms
         return cls(
             id=mandate.public_id,

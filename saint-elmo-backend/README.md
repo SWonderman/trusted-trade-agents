@@ -42,7 +42,8 @@ admin as its issuer, and is printed once. A buyer admin of another buyer organis
 refused.
 
 Buyer admins manage tokens over the API too, with a user session (Agent tokens get 403):
-`GET /api/v1/agents`, `POST|GET /api/v1/agents/{agentId}/tokens` (scopes or a preset,
+`GET /api/v1/agents`, `GET /api/v1/agents/{agentId}` (with its mandate, this period's
+spend, live token count and last use), `POST|GET /api/v1/agents/{agentId}/tokens` (scopes or a preset,
 `expiresInDays` 1–30, default 7), `DELETE /api/v1/agents/{agentId}/tokens/{jti}` and
 `POST /api/v1/agents/{agentId}/disable`. Revocation and disabling apply from the next
 request, and issuing, revoking and disabling are written to the audit trail.

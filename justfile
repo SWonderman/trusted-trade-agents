@@ -15,3 +15,11 @@ issue-agent-token agent buyer_admin_email preset="Purchasing":
 # Start the MCP server on http://127.0.0.1:8001/mcp (the backend must be running)
 mcp:
     cd saint-elmo-mcp && uv run saint-elmo-mcp
+
+# Build and start the whole stack in Docker: console :3000, MCP :8001, backend :8000
+up:
+    docker compose up --build
+
+# Issue an Agent token from the running Docker stack (the counterpart of issue-agent-token)
+compose-token agent buyer_admin_email preset="Purchasing":
+    docker compose exec backend python -m saint_elmo_backend.agents.command "{{agent}}" "{{buyer_admin_email}}" "{{preset}}"

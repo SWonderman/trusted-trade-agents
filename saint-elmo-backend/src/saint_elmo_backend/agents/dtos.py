@@ -35,6 +35,16 @@ class AuthenticatedAgent:
 
 
 @dataclass(frozen=True, slots=True)
+class AgentTokenActivity:
+    """
+    How many of an agent's tokens still work, and when any of them was last accepted.
+    """
+
+    live_tokens: int
+    last_used_at: datetime | None
+
+
+@dataclass(frozen=True, slots=True)
 class IssuedAgentToken:
     """
     A freshly signed Agent token. `token` is shown once and never stored.

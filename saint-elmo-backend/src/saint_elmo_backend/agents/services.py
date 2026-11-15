@@ -7,7 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from saint_elmo_backend.accounts.services import organization_ref
 from saint_elmo_backend.agents import crud, tokens
-from saint_elmo_backend.agents.dtos import AuthenticatedAgent, IssuedAgentToken
+from saint_elmo_backend.agents.dtos import (
+    AgentTokenActivity,
+    AuthenticatedAgent,
+    IssuedAgentToken,
+)
 from saint_elmo_backend.agents.enums import AgentStatus, Scope
 from saint_elmo_backend.agents.exceptions import (
     AgentCredentialNotFoundError,
@@ -245,6 +249,24 @@ async def disable_agent(
 
 async def list_agents(session: AsyncSession, *, organization_id: int) -> list[Agent]:
     return await crud.list_agents(session, organization_id=organization_id)
+
+
+async def get_token_activity(
+    session: AsyncSession, *, organization_id: int, agent_id: int, now: datetime | None = None
+) -> AgentTokenActivity:
+    """
+    The agent's tokens that are neither revoked nor expired at `now` (default: the current
+    time), and the latest accepted request of any of its tokens, revoked ones included.
+    """
+
+    live = await crud.list_live_credentials(
+        session, organization_id=organization_id, agent_id=agent_id, now=now or datetime.now(UTC)
+    )
+    credentials = await crud.list_credentials(
+        session, organization_id=organization_id, agent_id=agent_id
+    )
+    used = [credential.last_used_at for credential in credentials if credential.last_used_at]
+    return AgentTokenActivity(live_tokens=len(live), last_used_at=max(used, default=None))
 
 
 async def authenticate_agent(session: AsyncSession, token: str) -> AuthenticatedAgent:

@@ -10,6 +10,7 @@ from saint_elmo_backend.agents import services as agent_services
 from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.agents.exceptions import AgentCredentialNotFoundError, AgentNotFoundError
 from saint_elmo_backend.agents.schemas import (
+    AgentDetailResponse,
     AgentListResponse,
     AgentResponse,
     AgentTokenIn,
@@ -73,6 +74,42 @@ async def get_my_mandate(
 async def list_agents(admin: BuyerAdmin, session: ASession) -> AgentListResponse:
     agents = await agent_services.list_agents(session, organization_id=admin.organization.id)
     return AgentListResponse(items=[AgentResponse.from_agent(agent) for agent in agents])
+
+
+@router.get(
+    "/{agent_id}",
+    response_model=AgentDetailResponse,
+    responses=to_response_error(InvalidCredentials, PermissionDenied, AgentNotFound),
+    summary="Read one agent with its mandate",
+    description="Buyer admins only. The agent, the mandate Saint Elmo applies to it now "
+    "with this spend period's spend, how many of its tokens still work, and when one was "
+    "last used.",
+)
+async def get_agent(agent_id: UUID4, admin: BuyerAdmin, session: ASession) -> AgentDetailResponse:
+    organization_id = admin.organization.id
+    try:
+        agent = await agent_services.get_agent_by_public_id(
+            session, organization_id=organization_id, public_id=agent_id
+        )
+    except AgentNotFoundError as exc:
+        raise AgentNotFound() from exc
+    try:
+        mandate = await mandate_services.get_agent_mandate(
+            session, organization_id=organization_id, agent_id=agent.id
+        )
+    except MandateNotFoundError:
+        mandate = None
+    activity = await agent_services.get_token_activity(
+        session, organization_id=organization_id, agent_id=agent.id
+    )
+    return AgentDetailResponse(
+        id=agent.public_id,
+        name=agent.name,
+        status=agent.status,
+        mandate=MandateResponse.from_mandate(agent, mandate) if mandate else None,
+        live_tokens=activity.live_tokens,
+        last_used_at=activity.last_used_at,
+    )
 
 
 @router.post(

@@ -1,8 +1,5 @@
 import type {
-	AgentKey,
-	AgentSummary,
 	BackendMe,
-	IssuedKey,
 	Order,
 	OrderList,
 	OversightEvent,
@@ -14,6 +11,7 @@ import type {
 } from '#lib/api/types.js';
 import { ApiError, type Caller, type SaintElmoApi } from '../client';
 import { isUuid } from '#lib/ids.js';
+import { httpAgents } from './agents';
 import { httpAudit } from './audit';
 
 type CallInit = Omit<RequestInit, 'body'> & {
@@ -42,9 +40,9 @@ function sessionUser(me: BackendMe): SessionUser {
 }
 
 /**
- * The FastAPI implementation. Sign-in, the catalog, orders and the audit trail call
- * routes that exist today; agents and scenario controls follow issue #22 and are marked
- * TODO until it lands. Switch a namespace over with API_MODE_<NAMESPACE>=http.
+ * The FastAPI implementation. Sign-in, the catalog, orders, agents and the audit trail
+ * call routes that exist today; oversight and scenario controls have no backend yet.
+ * Switch a namespace over with API_MODE_<NAMESPACE>=http.
  */
 export function httpApi(baseUrl: string): SaintElmoApi {
 	async function call<T>(path: string, init: CallInit = {}): Promise<T> {
@@ -177,32 +175,7 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 				})
 		},
 
-		// TODO(#22): confirm paths once the agent token management API lands.
-		agents: {
-			list: (caller) => call<AgentSummary[]>('/api/v1/agents', { caller }),
-			get: (caller, agentId) =>
-				orNull(call<AgentSummary>(`/api/v1/agents/${encodeURIComponent(agentId)}`, { caller })),
-			create: (caller, input) => call('/api/v1/agents', { caller, method: 'POST', json: input }),
-			setStatus: (caller, agentId, status) =>
-				call(`/api/v1/agents/${encodeURIComponent(agentId)}`, {
-					caller,
-					method: 'PATCH',
-					json: { status }
-				}),
-			listKeys: (caller, agentId) =>
-				call<AgentKey[]>(`/api/v1/agents/${encodeURIComponent(agentId)}/tokens`, { caller }),
-			issueKey: (caller, agentId, input) =>
-				call<IssuedKey>(`/api/v1/agents/${encodeURIComponent(agentId)}/tokens`, {
-					caller,
-					method: 'POST',
-					json: input
-				}),
-			revokeKey: (caller, agentId, jti) =>
-				call<AgentKey>(
-					`/api/v1/agents/${encodeURIComponent(agentId)}/tokens/${encodeURIComponent(jti)}/revoke`,
-					{ caller, method: 'POST' }
-				)
-		},
+		agents: httpAgents(call),
 
 		audit: httpAudit(call),
 

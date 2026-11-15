@@ -6,6 +6,7 @@ from pydantic import UUID4, Field, model_validator
 from saint_elmo_backend.agents.enums import AgentStatus, Scope, ScopePreset
 from saint_elmo_backend.agents.models import Agent, AgentCredential
 from saint_elmo_backend.core.schema import CamelBaseModel
+from saint_elmo_backend.mandates.schemas import MandateResponse
 
 
 class AgentResponse(CamelBaseModel):
@@ -16,6 +17,22 @@ class AgentResponse(CamelBaseModel):
     @classmethod
     def from_agent(cls, agent: Agent) -> "AgentResponse":
         return cls(id=agent.public_id, name=agent.name, status=agent.status)
+
+
+class AgentDetailResponse(AgentResponse):
+    """
+    One agent as its buyer admins see it: its mandate as the policy applies it now, and
+    how its tokens are used.
+    """
+
+    mandate: MandateResponse | None = Field(
+        description="With the current spend period's spend; null while it has none, and "
+        "then no token can be issued for it"
+    )
+    live_tokens: int = Field(description="Tokens neither revoked nor expired")
+    last_used_at: datetime | None = Field(
+        description="The most recent accepted request of any of its tokens"
+    )
 
 
 class AgentListResponse(CamelBaseModel):
