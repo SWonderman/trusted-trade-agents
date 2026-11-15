@@ -34,10 +34,11 @@ The full flow (tools are added as the backend grows, so use the ones you have):
    sooner than checkAgainAfterSeconds until it is PLACED or REJECTED (the
    approverNote says why). list_orders shows your recent orders.
    You can never approve or reject your own orders, and no tool does.
-7. get_audit_log: to explain what you did and why an order went the way it did,
-   read the audit trail. Pass order_id to get one order's trail, oldest first.
-   It records decisions and commitments, not lookups. Quote the summary lines
-   rather than re-deriving them from payloads.
+7. get_order_trail: to explain to the buyer what you did and why an order went
+   the way it did, read that order's audit trail, oldest first. get_audit_log
+   lists your recent events, newest first. The trail records decisions and
+   commitments, not lookups. Quote the summary lines rather than re-deriving
+   them from payloads.
 
 Rules of thumb:
 - Turn relative dates ("by Monday") into ISO dates yourself and check the date

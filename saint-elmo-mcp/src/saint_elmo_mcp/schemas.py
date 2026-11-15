@@ -842,6 +842,8 @@ class AuditEvent(CamelModel):
     outcome: PolicyOutcome | None = Field(
         description="The policy outcome, for events judged against the mandate."
     )
+    # Plain strings, not a Literal like live responses: events are history, and an
+    # old event must stay readable after a reason code is renamed or retired
     reason_codes: list[str] | None = Field(
         description="Reason codes, for events judged against the mandate and for substitute "
         "requests."
@@ -853,15 +855,13 @@ class AuditEvent(CamelModel):
     )
 
 
+class OrderTrail(CamelModel):
+    order_id: str
+    items: list[AuditEvent] = Field(description="Oldest first, the whole trail.")
+
+
 class AuditLog(CamelModel):
-    order_id: str | None = Field(
-        default=None, description="The order whose trail this is; null for your event list."
-    )
-    items: list[AuditEvent] = Field(
-        description="With order_id: oldest first. Without: newest first."
-    )
+    items: list[AuditEvent] = Field(description="Newest first.")
     next_cursor: str | None = Field(
-        default=None,
-        description="Pass as `cursor` for the next, older page; null on the last page and "
-        "for an order trail.",
+        description="Pass as `cursor` for the next, older page; null on the last page."
     )
