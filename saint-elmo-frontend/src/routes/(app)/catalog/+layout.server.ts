@@ -1,7 +1,7 @@
 import { api, apiModes, ApiError } from '#lib/server/api/index.js';
 import { requireCaller } from '#lib/server/session.js';
 import type { AllergenStrictness, ProductSearchRequest } from '#lib/api/types.js';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 
 const PAGE_SIZE = 25;
 const STRICTNESS: AllergenStrictness[] = ['contains', 'may_contain', 'declared_free'];
@@ -20,7 +20,7 @@ function readSearch(url: URL) {
 	};
 }
 
-export const load: PageServerLoad = async ({ locals, url }) => {
+export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const caller = requireCaller(locals, url);
 	const search = readSearch(url);
 
