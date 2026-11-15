@@ -76,6 +76,52 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
+	'/api/v1/products/{code}/substitutes': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Ranked substitutes for a product that can't meet the need
+		 * @description Ranks substitutes for the product, labelled BEST, BETTER, then GOOD.
+		 *     It only ranks: choosing one and quoting it with `substitutesFor` is the agent's decision.
+		 *
+		 *     **Candidates**: the product's curated substitutes, then products in its category, that
+		 *     meet the calling agent's mandate requirements (claims, labels, diets, allergen exclusions,
+		 *     origins, delivery reliability) plus the request's filters, which can only narrow them.
+		 *     Blocked categories and vendors are left out; ones merely not on the mandate's allowed
+		 *     lists stay, and their `policyPreview` says a human must decide.
+		 *     They must be expressible in the buyer unit: both in L, both in KG, or in the same sales
+		 *     unit. Live offers are fetched for at most 50 of them.
+		 *
+		 *     **Score** out of 100, in this order of importance:
+		 *
+		 *     | Input | Points |
+		 *     | --- | --- |
+		 *     | Delivery | 20 for meeting `deliverBy`, 20 for covering the quantity (unknown stock counts) |
+		 *     | Price per buyer unit | 30 × cheapest candidate's / this one's; 0 when unknown |
+		 *     | Delivery reliability | 15 × reliability; unknown counts as the candidates' mean |
+		 *     | Labels gained | 5 per label the original lacks, at most 2 |
+		 *     | CO₂ estimate | 5 × lowest candidate's / this one's; unknown counts as the mean |
+		 *
+		 *     Delivery comes first outright: candidates are ordered by how many of the two delivery
+		 *     conditions they meet, then by score, so nothing lifts a late or short candidate above one
+		 *     that delivers. Equal scores rank curated substitutes first, then by product code.
+		 *
+		 *     `policyPreview` judges each candidate as a substitute line for the original, as a quote
+		 *     would now. No candidates is a 200 with `NO_SUBSTITUTES_FOUND`.
+		 */
+		post: operations['find_substitutes_api_v1_products__code__substitutes_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	'/api/v1/catalog/vocabulary': {
 		parameters: {
 			query?: never;
@@ -116,6 +162,150 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
+	'/api/v1/quotes': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Quote lines against the agent's mandate
+		 * @description Converts each line to sales units, prices it from live offers on `deliverBy` and judges the quote against the calling agent's mandate. The policy outcome says what placing an order would give if live data hasn't changed. A quote is created whatever the outcome, REJECT included: revise from its reasons and quote again with `previousQuoteId`. `buyerRequest` and `rationale` are kept and shown to approvers but never affect the outcome. The quote expires at `expiresAt`.
+		 */
+		post: operations['create_quote_api_v1_quotes_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/quotes/{quote_id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Read a quote
+		 * @description A quote of the caller's buyer organisation, exactly as it was quoted. After `expiresAt` its status is EXPIRED.
+		 */
+		get: operations['get_quote_api_v1_quotes__quote_id__get'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/orders': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List orders
+		 * @description Most recent first. An agent sees its own orders; a user sees every order of their buyer organisation.
+		 */
+		get: operations['list_orders_api_v1_orders_get'];
+		put?: never;
+		/**
+		 * Place an order from a quote
+		 * @description Re-checks every line of the quote on fresh Valio Aimo data and judges it again against the agent's current mandate and period spend; the order follows that result, which `changes` explains when live data moved since the quote. AUTO_APPROVE is placed at once (CONFIRMED, then PLACED). NEEDS_HUMAN waits as PENDING_APPROVAL: poll `GET /orders/{orderId}` after `checkAgainAfterSeconds`. REJECT gives a REJECTED order with its reasons, still a 201. The quote id is the idempotency key: a retry gets 409 QUOTE_ALREADY_ORDERED with the existing `orderId` in `details`, and never a second order.
+		 */
+		post: operations['place_order_api_v1_orders_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/orders/{order_id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Read an order
+		 * @description With its status history and, once decided, the approver's note. While PENDING_APPROVAL, poll again after `checkAgainAfterSeconds`. An agent reads only its own orders.
+		 */
+		get: operations['get_order_api_v1_orders__order_id__get'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/orders/{order_id}/trail': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Read an order's audit trail
+		 * @description The audit events behind one order, oldest first and whole: those of the order, its quote and every earlier quote it revised through `previousQuoteId`, plus the agent's substitute requests for products in those quotes, from the first quote until the order's latest event. An agent reads only its own orders, and of them only what it acted in plus human approvals and rejections and automatic placing.
+		 */
+		get: operations['get_order_trail_api_v1_orders__order_id__trail_get'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/orders/{order_id}/approve': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Approve a pending order
+		 * @description Users only; an Agent token is refused whatever its scopes. Re-checks live data once more; the NEEDS_HUMAN reasons the order was pending with are what the approver accepts. A REJECT reason that now applies (e.g. the closing time has passed) makes it REJECTED with that reason. A NEEDS_HUMAN reason the order wasn't pending with (e.g. a price rise now over a cap), or a total above the one it was pending with, keeps it PENDING_APPROVAL, showing the new reasons and total, to be decided again: an approval never commits more than the approver saw. Otherwise it is APPROVED and PLACED.
+		 */
+		post: operations['approve_order_api_v1_orders__order_id__approve_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/orders/{order_id}/reject': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Reject a pending order
+		 * @description Users only; an Agent token is refused whatever its scopes.
+		 */
+		post: operations['reject_order_api_v1_orders__order_id__reject_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	'/api/v1/agents/me/mandate': {
 		parameters: {
 			query?: never;
@@ -128,6 +318,110 @@ export interface paths {
 		 * @description Every limit Saint Elmo applies to this agent's quotes and orders, and how much of the current spend period is left. Use it to pre-check a proposal before quoting. The mandate is the one the Agent token's agent holds now; an agent can read it but never change it.
 		 */
 		get: operations['get_my_mandate_api_v1_agents_me_mandate_get'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/agents': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List the buyer organisation's agents
+		 * @description Buyer admins only; an Agent token is refused whatever its scopes.
+		 */
+		get: operations['list_agents_api_v1_agents_get'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/agents/{agent_id}/tokens': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List an agent's Agent tokens
+		 * @description Buyer admins only. Every token issued for the agent, revoked and expired ones included, with when it was last used. Token values are never shown again.
+		 */
+		get: operations['list_agent_tokens_api_v1_agents__agent_id__tokens_get'];
+		put?: never;
+		/**
+		 * Issue an Agent token
+		 * @description Buyer admins only. Signs a token for the agent naming its mandate, with `scopes` or a `preset`, expiring after `expiresInDays` (default 7, at most 30). The token is returned only in this response and never stored: copy it now. It works from the next request.
+		 */
+		post: operations['issue_token_api_v1_agents__agent_id__tokens_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/agents/{agent_id}/tokens/{jti}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		/**
+		 * Revoke an Agent token
+		 * @description Buyer admins only. The token is refused from the very next request. Revoking a revoked token succeeds and keeps the first revocation time.
+		 */
+		delete: operations['revoke_agent_token_api_v1_agents__agent_id__tokens__jti__delete'];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/agents/{agent_id}/disable': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Disable an agent
+		 * @description Buyer admins only. Every token of the agent is refused from the very next request. Disabling a disabled agent succeeds and changes nothing.
+		 */
+		post: operations['disable_agent_api_v1_agents__agent_id__disable_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/audit-events': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List audit events
+		 * @description The audit trail of decisions and commitments: quotes, substitute requests, orders, approvals and changes to agents' authority. Lookups such as searches and price checks are not in it. Newest first; follow `nextCursor` for older events. A user sees the whole buyer organisation; an agent sees the events it acted in, plus human approvals and rejections and automatic placing of its own orders.
+		 */
+		get: operations['list_audit_events_api_v1_audit_events_get'];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -175,6 +469,126 @@ export interface components {
 			token_type: 'bearer';
 			/** Expires In */
 			expires_in: number;
+		};
+		/** ActorOut */
+		ActorOut: {
+			/**
+			 * Kind
+			 * @description "system" for automatic steps, e.g. placing a confirmed or approved order
+			 * @enum {string}
+			 */
+			kind: 'agent' | 'user' | 'system';
+			/**
+			 * Id
+			 * @description The agent's or user's id; null for the system
+			 */
+			id: string | null;
+			/**
+			 * Name
+			 * @example dairy-restock
+			 */
+			name: string;
+		};
+		/** AgentListResponse */
+		AgentListResponse: {
+			/**
+			 * Items
+			 * @description By name
+			 */
+			items: components['schemas']['AgentResponse'][];
+		};
+		/** AgentNotFoundResponse */
+		AgentNotFoundResponse: {
+			/**
+			 * Detail
+			 * @default No agent with this id in your buyer organisation
+			 * @example No agent with this id in your buyer organisation
+			 */
+			detail: string;
+			/** @default AGENT_NOT_FOUND */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** AgentResponse */
+		AgentResponse: {
+			/**
+			 * Id
+			 * Format: uuid4
+			 */
+			id: string;
+			/** Name */
+			name: string;
+			/** @description A DISABLED agent's tokens are all refused */
+			status: components['schemas']['AgentStatus'];
+		};
+		/**
+		 * AgentStatus
+		 * @enum {string}
+		 */
+		AgentStatus: 'ACTIVE' | 'DISABLED';
+		/** AgentTokenIn */
+		AgentTokenIn: {
+			/**
+			 * Label
+			 * @description What the token is for, e.g. where it runs
+			 */
+			label: string;
+			/**
+			 * Scopes
+			 * @description The scopes to grant; or give `preset`
+			 */
+			scopes?: components['schemas']['Scope'][] | null;
+			/** @description A named set of scopes: 'Research only' = catalog:read offers:read mandate:read order:read; 'Purchasing' = all scopes. Or give `scopes` */
+			preset?: components['schemas']['ScopePreset'] | null;
+			/**
+			 * Expiresindays
+			 * @default 7
+			 */
+			expiresInDays: number;
+		};
+		/** AgentTokenListResponse */
+		AgentTokenListResponse: {
+			/**
+			 * Items
+			 * @description Most recent first
+			 */
+			items: components['schemas']['AgentTokenResponse'][];
+		};
+		/**
+		 * AgentTokenResponse
+		 * @description An issued Agent token, without its value, which is never stored.
+		 */
+		AgentTokenResponse: {
+			/**
+			 * Jti
+			 * Format: uuid4
+			 */
+			jti: string;
+			/** Label */
+			label: string;
+			/** Scopes */
+			scopes: components['schemas']['Scope'][];
+			/**
+			 * Expiresat
+			 * Format: date-time
+			 */
+			expiresAt: string;
+			/**
+			 * Createdat
+			 * Format: date-time
+			 */
+			createdAt: string;
+			/** @description The buyer admin who issued it */
+			createdBy: components['schemas']['TokenIssuer'];
+			/**
+			 * Lastusedat
+			 * @description Its most recent accepted request
+			 */
+			lastUsedAt: string | null;
+			/**
+			 * Revokedat
+			 * @description Set once revoked; refused from then on
+			 */
+			revokedAt: string | null;
 		};
 		/** Allergen */
 		Allergen: {
@@ -228,6 +642,78 @@ export interface components {
 		 * @enum {string}
 		 */
 		AllergenStrictness: 'contains' | 'may_contain' | 'declared_free';
+		/** AuditEventListResponse */
+		AuditEventListResponse: {
+			/**
+			 * Items
+			 * @description Newest first
+			 */
+			items: components['schemas']['AuditEventOut'][];
+			/**
+			 * Nextcursor
+			 * @description Pass as `cursor` for the next, older page; null on the last page
+			 */
+			nextCursor: string | null;
+		};
+		/** AuditEventOut */
+		AuditEventOut: {
+			/**
+			 * Id
+			 * Format: uuid4
+			 */
+			id: string;
+			/**
+			 * At
+			 * Format: date-time
+			 */
+			at: string;
+			type: components['schemas']['AuditEventType'];
+			/**
+			 * Subjectid
+			 * @description What the event is about: the quote, order or agent. Null for a substitute request
+			 */
+			subjectId: string | null;
+			/** @description Who acted. A re-check is credited to whoever triggered it: the agent when placing, the approver when approving */
+			actor: components['schemas']['ActorOut'];
+			/**
+			 * Summary
+			 * @description One plain English sentence, rendered when read
+			 * @example dairy-restock quoted 50 KI of 463038 for €1,565.50: needs a human (over the auto-approve limit)
+			 */
+			summary: string;
+			/** @description The policy outcome, for events that judged against the mandate */
+			outcome: components['schemas']['PolicyOutcome'] | null;
+			/**
+			 * Reasoncodes
+			 * @description The reason codes, for events that judged against the mandate and for substitute requests
+			 */
+			reasonCodes: string[] | null;
+			/**
+			 * Payload
+			 * @description The event's recorded data, unchanged
+			 */
+			payload: {
+				[key: string]: unknown;
+			};
+		};
+		/**
+		 * AuditEventType
+		 * @enum {string}
+		 */
+		AuditEventType:
+			| 'QUOTE_CREATED'
+			| 'SUBSTITUTES_REQUESTED'
+			| 'ORDER_REQUESTED'
+			| 'ORDER_RECHECKED'
+			| 'ORDER_CONFIRMED'
+			| 'ORDER_PENDING_APPROVAL'
+			| 'ORDER_APPROVED'
+			| 'ORDER_PLACED'
+			| 'ORDER_REJECTED'
+			| 'ORDER_REJECTED_BY_HUMAN'
+			| 'AGENT_TOKEN_ISSUED'
+			| 'AGENT_TOKEN_REVOKED'
+			| 'AGENT_DISABLED';
 		/** AvailabilityOut */
 		AvailabilityOut: {
 			/** @description STOCK from Valio Aimo's warehouse, TERMINAL via a supplier */
@@ -281,6 +767,33 @@ export interface components {
 			 */
 			client_secret?: string | null;
 		};
+		/** CandidateOut */
+		CandidateOut: {
+			/**
+			 * Rank
+			 * @description From 1
+			 */
+			rank: number;
+			/** @description BEST, BETTER, then GOOD, in rank order */
+			tier: components['schemas']['Tier'];
+			/**
+			 * Score
+			 * @description Out of 100; see the operation's description
+			 */
+			score: number;
+			/**
+			 * Curated
+			 * @description A curated substitute Valio Aimo lists for the original
+			 */
+			curated: boolean;
+			/** Productcode */
+			productCode: string;
+			/** Name */
+			name: string | null;
+			offer: components['schemas']['OfferOut'];
+			tradeOffs: components['schemas']['TradeOffsOut'];
+			policyPreview: components['schemas']['PolicyPreviewOut'];
+		};
 		/** CarbonFootprint */
 		CarbonFootprint: {
 			/**
@@ -291,6 +804,21 @@ export interface components {
 			/**
 			 * Basis
 			 * @description The value is the average of the product's group, not of this product
+			 * @default PRODUCT_GROUP_AVERAGE
+			 * @constant
+			 */
+			basis: 'PRODUCT_GROUP_AVERAGE';
+		};
+		/** CarbonFootprintDelta */
+		CarbonFootprintDelta: {
+			/**
+			 * Value
+			 * @description kg CO2-eq per kg, candidate minus original
+			 */
+			value: number;
+			/**
+			 * Basis
+			 * @description Both values are averages of the products' groups, not of the products
 			 * @default PRODUCT_GROUP_AVERAGE
 			 * @constant
 			 */
@@ -370,6 +898,14 @@ export interface components {
 			/** @default CUSTOMER_NUMBER_MISSING */
 			errorCode: components['schemas']['ErrorCode'];
 		};
+		/** DecisionIn */
+		DecisionIn: {
+			/**
+			 * Note
+			 * @description Why the approver decided so; shown with the order and kept in the audit trail
+			 */
+			note?: string | null;
+		};
 		/** Deposit */
 		Deposit: {
 			/**
@@ -380,6 +916,21 @@ export interface components {
 			/**
 			 * Quantity
 			 * @description Deposit units per sales unit
+			 */
+			quantity: number;
+			/** Unit */
+			unit: string;
+		};
+		/**
+		 * DepositOut
+		 * @description Returnable packaging, charged on top of the price; Valio Aimo gives no deposit price.
+		 */
+		DepositOut: {
+			/** Materialcode */
+			materialCode: string;
+			/**
+			 * Quantity
+			 * @description Deposit units for all the lines
 			 */
 			quantity: number;
 			/** Unit */
@@ -426,6 +977,7 @@ export interface components {
 			| 'PDF_GENERATION_ERROR'
 			| 'EVENT_NOT_FOUND'
 			| 'ORDER_NOT_FOUND'
+			| 'ORDER_NOT_PENDING'
 			| 'ORDER_ALREADY_FULFILLED'
 			| 'SHIPPING_ADDRESS_MISSING'
 			| 'CARRIER_REJECTED'
@@ -446,7 +998,13 @@ export interface components {
 			| 'UNKNOWN_CODE'
 			| 'VALIO_AIMO_UNAVAILABLE'
 			| 'CUSTOMER_NUMBER_MISSING'
+			| 'AGENT_NOT_FOUND'
+			| 'AGENT_TOKEN_NOT_FOUND'
 			| 'MANDATE_NOT_FOUND'
+			| 'MANDATE_REQUIRED'
+			| 'QUOTE_NOT_FOUND'
+			| 'QUOTE_EXPIRED'
+			| 'QUOTE_ALREADY_ORDERED'
 			| 'LOCATION_NOT_FOUND'
 			| 'DUPLICATE_LOCATION';
 		/**
@@ -524,6 +1082,73 @@ export interface components {
 			/** @default INVALID_CREDENTIALS */
 			errorCode: components['schemas']['ErrorCode'];
 		};
+		/** InvalidCursorResponse */
+		InvalidCursorResponse: {
+			/**
+			 * Detail
+			 * @default The cursor is not one this list returned
+			 * @example The cursor is not one this list returned
+			 */
+			detail: string;
+			/** @default VALIDATION_ERROR */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** IssuedAgentTokenResponse */
+		IssuedAgentTokenResponse: {
+			/**
+			 * Token
+			 * @description The Agent token. Shown only this once and never stored
+			 */
+			token: string;
+			/**
+			 * Jti
+			 * Format: uuid4
+			 * @description The token's id, to list or revoke it by
+			 */
+			jti: string;
+			/** Scopes */
+			scopes: components['schemas']['Scope'][];
+			/**
+			 * Expiresat
+			 * Format: date-time
+			 */
+			expiresAt: string;
+		};
+		/**
+		 * JudgedLineOut
+		 * @description The line's offer, as `POST /offers` returns it, plus the policy's judgement of it.
+		 */
+		JudgedLineOut: {
+			/** Productcode */
+			productCode: string;
+			/** Name */
+			name: string | null;
+			/** Salesunit */
+			salesUnit: string;
+			/** @description Null when the API has no price (NO_PRICE) */
+			price: components['schemas']['PriceOut'] | null;
+			/** @description Null when the API left the product out (NOT_DELIVERABLE) */
+			availability: components['schemas']['AvailabilityOut'] | null;
+			/** @description Only when a quantity was given */
+			quantity: components['schemas']['QuantityOut'] | null;
+			/**
+			 * Deliveryreliability
+			 * @description Share of historical orders delivered as ordered, 0-1
+			 */
+			deliveryReliability: number | null;
+			carbonFootprint: components['schemas']['CarbonFootprint'] | null;
+			/** Reasoncodes */
+			reasonCodes: components['schemas']['OfferReasonCode'][];
+			provenance: components['schemas']['OfferProvenanceOut'];
+			/** Position */
+			position: number;
+			/** Substitutesfor */
+			substitutesFor: string | null;
+			/** @description The most severe outcome of the line's reasons */
+			outcome: components['schemas']['PolicyOutcome'];
+			/** Reasons */
+			reasons: components['schemas']['PolicyReasonOut'][];
+		};
 		/**
 		 * Language
 		 * @description ISO 639-1 language the catalogue has texts in.
@@ -559,6 +1184,17 @@ export interface components {
 			 */
 			detail: string;
 			/** @default MANDATE_NOT_FOUND */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** MandateRequiredResponse */
+		MandateRequiredResponse: {
+			/**
+			 * Detail
+			 * @default The agent has no mandate; set one before issuing a token
+			 * @example The agent has no mandate; set one before issuing a token
+			 */
+			detail: string;
+			/** @default MANDATE_REQUIRED */
 			errorCode: components['schemas']['ErrorCode'];
 		};
 		/**
@@ -801,7 +1437,7 @@ export interface components {
 		/**
 		 * OfferReasonCode
 		 * @description The shortfall and data codes an offer can carry, a subset of the policy's reason
-		 *     code catalogue (#13). An offer only states them; it judges nothing.
+		 *     code catalogue. An offer only states them; it judges nothing.
 		 * @enum {string}
 		 */
 		OfferReasonCode:
@@ -847,6 +1483,175 @@ export interface components {
 			 */
 			items: components['schemas']['OfferOut'][];
 		};
+		/** OrderAgent */
+		OrderAgent: {
+			/**
+			 * Id
+			 * Format: uuid4
+			 */
+			id: string;
+			/** Name */
+			name: string;
+		};
+		/** OrderChange */
+		OrderChange: {
+			/**
+			 * Lineref
+			 * @description The line's position (from 1)
+			 */
+			lineRef: string;
+			/**
+			 * Field
+			 * @description unitPrice (net per sales unit), availableAmount, earliestDate, closingTime or salesBlocked
+			 */
+			field: string;
+			/**
+			 * Quoted
+			 * @description The value the quote was judged on
+			 */
+			quoted: unknown;
+			/**
+			 * Now
+			 * @description The live value the order was judged on
+			 */
+			now: unknown;
+		};
+		/** OrderIn */
+		OrderIn: {
+			/**
+			 * Quoteid
+			 * Format: uuid4
+			 * @description The quote to order. Also the idempotency key: a quote gives at most one order, so retrying after a timeout is safe
+			 */
+			quoteId: string;
+		};
+		/** OrderListResponse */
+		OrderListResponse: {
+			/** Total */
+			total: number;
+			/**
+			 * Items
+			 * @description Most recent first
+			 */
+			items: components['schemas']['OrderResponse'][];
+		};
+		/** OrderNotFoundResponse */
+		OrderNotFoundResponse: {
+			/**
+			 * Detail
+			 * @default Order not found
+			 * @example Order not found
+			 */
+			detail: string;
+			/** @default ORDER_NOT_FOUND */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** OrderNotPendingResponse */
+		OrderNotPendingResponse: {
+			/**
+			 * Detail
+			 * @default Only an order pending approval can be approved or rejected
+			 * @example Only an order pending approval can be approved or rejected
+			 */
+			detail: string;
+			/** @default ORDER_NOT_PENDING */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** OrderPolicy */
+		OrderPolicy: {
+			/** @description The policy outcome of the latest live re-check */
+			outcome: components['schemas']['PolicyOutcome'];
+			/**
+			 * Reasons
+			 * @description Lines in order, then the order's own
+			 */
+			reasons: components['schemas']['PolicyReasonOut'][];
+			/**
+			 * Mandateversion
+			 * @description The mandate version the re-check judged against
+			 */
+			mandateVersion: number;
+		};
+		/** OrderResponse */
+		OrderResponse: {
+			/**
+			 * Orderid
+			 * Format: uuid4
+			 */
+			orderId: string;
+			/**
+			 * Quoteid
+			 * Format: uuid4
+			 */
+			quoteId: string;
+			status: components['schemas']['OrderStatus'];
+			/**
+			 * Createdat
+			 * Format: date-time
+			 */
+			createdAt: string;
+			agent: components['schemas']['OrderAgent'];
+			/**
+			 * Deliverby
+			 * Format: date
+			 */
+			deliverBy: string;
+			/**
+			 * Lines
+			 * @description Each line's live offer at the latest re-check, and its judgement
+			 */
+			lines: components['schemas']['JudgedLineOut'][];
+			/** @description Excluding deposits */
+			totals: components['schemas']['Totals'];
+			/** Deposits */
+			deposits: components['schemas']['DepositOut'][];
+			policy: components['schemas']['OrderPolicy'];
+			/**
+			 * Changes
+			 * @description Where the live data the order was judged on differs from the quote's. The order follows the live result
+			 */
+			changes: components['schemas']['OrderChange'][];
+			/** Buyerrequest */
+			buyerRequest: string;
+			/** Rationale */
+			rationale: string;
+			/**
+			 * Statushistory
+			 * @description Oldest first
+			 */
+			statusHistory: components['schemas']['StatusChangeOut'][];
+			/**
+			 * Approvernote
+			 * @description The approver's note, once decided
+			 */
+			approverNote: string | null;
+			/** Decidedat */
+			decidedAt: string | null;
+			/**
+			 * Checkagainafterseconds
+			 * @description While PENDING_APPROVAL: poll the order again after this many seconds
+			 */
+			checkAgainAfterSeconds: number | null;
+		};
+		/**
+		 * OrderStatus
+		 * @description The order lifecycle (design §3.5). PLACED and REJECTED are final.
+		 * @enum {string}
+		 */
+		OrderStatus: 'CONFIRMED' | 'PENDING_APPROVAL' | 'APPROVED' | 'PLACED' | 'REJECTED';
+		/** OrderTrailResponse */
+		OrderTrailResponse: {
+			/**
+			 * Orderid
+			 * Format: uuid4
+			 */
+			orderId: string;
+			/**
+			 * Items
+			 * @description Oldest first
+			 */
+			items: components['schemas']['AuditEventOut'][];
+		};
 		/** OrganizationSummary */
 		OrganizationSummary: {
 			/**
@@ -856,6 +1661,14 @@ export interface components {
 			publicId: string;
 			/** Name */
 			name: string;
+		};
+		/** OriginalOut */
+		OriginalOut: {
+			/** Productcode */
+			productCode: string;
+			/** Name */
+			name: string | null;
+			offer: components['schemas']['OfferOut'];
 		};
 		/**
 		 * PackagingLevel
@@ -918,6 +1731,76 @@ export interface components {
 			detail: string;
 			/** @default PERMISSION_DENIED */
 			errorCode: components['schemas']['ErrorCode'];
+		};
+		/**
+		 * PolicyOutcome
+		 * @enum {string}
+		 */
+		PolicyOutcome: 'AUTO_APPROVE' | 'NEEDS_HUMAN' | 'REJECT';
+		/** PolicyPreviewOut */
+		PolicyPreviewOut: {
+			/** @description What quoting this candidate as a substitute line for the original would give now; a preview, not a commitment */
+			outcome: components['schemas']['PolicyOutcome'];
+			/** Reasons */
+			reasons: components['schemas']['PolicyReasonOut'][];
+		};
+		/**
+		 * PolicyReasonCode
+		 * @description The policy's reason code catalogue. Each code has a fixed severity
+		 *     (`REASON_SEVERITY`), except LATE_DELIVERY, which the mandate decides.
+		 * @enum {string}
+		 */
+		PolicyReasonCode:
+			| 'SALES_BLOCKED'
+			| 'NOT_DELIVERABLE'
+			| 'NO_PRICE'
+			| 'CLOSING_TIME_PASSED'
+			| 'CONTAINS_EXCLUDED_ALLERGEN'
+			| 'MAY_CONTAIN_EXCLUDED_ALLERGEN'
+			| 'ALLERGEN_NOT_DECLARED_FREE'
+			| 'BLOCKED_CATEGORY'
+			| 'BLOCKED_VENDOR'
+			| 'SUBSTITUTION_NOT_ALLOWED'
+			| 'OVER_ORDER_LIMIT'
+			| 'CONVERSION_UNAVAILABLE'
+			| 'CATEGORY_NOT_ALLOWED'
+			| 'VENDOR_NOT_ALLOWED'
+			| 'ORIGIN_NOT_ALLOWED'
+			| 'MISSING_REQUIRED_CLAIM'
+			| 'MISSING_REQUIRED_LABEL'
+			| 'MISSING_REQUIRED_DIET'
+			| 'OVER_AUTO_APPROVE_LIMIT'
+			| 'OVER_PERIOD_CAP'
+			| 'OVER_CATEGORY_CAP'
+			| 'PARTIAL_AVAILABILITY'
+			| 'LATE_DELIVERY'
+			| 'BELOW_MIN_RELIABILITY'
+			| 'SUBSTITUTE_NEEDS_APPROVAL'
+			| 'SUBSTITUTE_PRICE_INCREASE'
+			| 'STOCK_UNKNOWN'
+			| 'CONVERSION_UNCERTAIN'
+			| 'ROUNDED_TO_LOT_SIZE';
+		/** PolicyReasonOut */
+		PolicyReasonOut: {
+			code: components['schemas']['PolicyReasonCode'];
+			severity: components['schemas']['Severity'];
+			/**
+			 * Lineref
+			 * @description The line's position (from 1); null for the quote
+			 */
+			lineRef: string | null;
+			/**
+			 * Message
+			 * @description One plain-English sentence for approvers
+			 */
+			message: string;
+			/**
+			 * Facts
+			 * @description The numbers behind the reason, e.g. available vs ordered amounts
+			 */
+			facts: {
+				[key: string]: unknown;
+			};
 		};
 		/** PriceOut */
 		PriceOut: {
@@ -1266,6 +2149,140 @@ export interface components {
 			 */
 			coveredByAvailability: boolean | null;
 		};
+		/** QuoteExpiredResponse */
+		QuoteExpiredResponse: {
+			/**
+			 * Detail
+			 * @default The quote has expired; quote again for fresh prices
+			 * @example The quote has expired; quote again for fresh prices
+			 */
+			detail: string;
+			/** @default QUOTE_EXPIRED */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** QuoteIn */
+		QuoteIn: {
+			/**
+			 * Deliverby
+			 * Format: date
+			 * @description Delivery date, already resolved by the agent (e.g. 'by Monday')
+			 */
+			deliverBy: string;
+			/** Lines */
+			lines: components['schemas']['QuoteLineIn'][];
+			/**
+			 * Buyerrequest
+			 * @description The need as the buyer stated it. Kept with the quote; never affects the policy
+			 * @example 1,000 litres of lactose-free milk by Monday
+			 */
+			buyerRequest: string;
+			/**
+			 * Rationale
+			 * @description Why the agent chose these lines. Shown to approvers; never affects the policy
+			 */
+			rationale: string;
+			/**
+			 * Previousquoteid
+			 * @description The quote this one revises, so attempts for one buyer request stay connected
+			 */
+			previousQuoteId?: string | null;
+		};
+		/** QuoteLineIn */
+		QuoteLineIn: {
+			/**
+			 * Productcode
+			 * @example 463038
+			 */
+			productCode: string;
+			/**
+			 * Quantity
+			 * @example 1000
+			 */
+			quantity: number | string;
+			/**
+			 * Unit
+			 * @description `L`, `KG`, or one of the product's unit codes such as `KI` or `ST`. Without it the quantity is in the product's sales unit
+			 * @example L
+			 */
+			unit?: string | null;
+			/**
+			 * Substitutesfor
+			 * @description The product code this line is a substitute for. The line is then judged by the mandate's substitution rules, and its price compared with that product's
+			 */
+			substitutesFor?: string | null;
+		};
+		/** QuoteNotFoundResponse */
+		QuoteNotFoundResponse: {
+			/**
+			 * Detail
+			 * @default No quote with this id in your buyer organisation
+			 * @example No quote with this id in your buyer organisation
+			 */
+			detail: string;
+			/** @default QUOTE_NOT_FOUND */
+			errorCode: components['schemas']['ErrorCode'];
+		};
+		/** QuotePolicy */
+		QuotePolicy: {
+			/** @description What placing an order from this quote would give if live data hasn't changed */
+			outcome: components['schemas']['PolicyOutcome'];
+			/**
+			 * Reasons
+			 * @description Lines in order, then the quote's own
+			 */
+			reasons: components['schemas']['PolicyReasonOut'][];
+			/**
+			 * Mandateversion
+			 * @description The mandate version the quote was judged against
+			 */
+			mandateVersion: number;
+		};
+		/** QuoteResponse */
+		QuoteResponse: {
+			/**
+			 * Quoteid
+			 * Format: uuid4
+			 */
+			quoteId: string;
+			status: components['schemas']['QuoteStatus'];
+			/**
+			 * Createdat
+			 * Format: date-time
+			 */
+			createdAt: string;
+			/**
+			 * Expiresat
+			 * Format: date-time
+			 * @description The earliest of the lines' price validity, their closing time for deliverBy, and the quote time-to-live
+			 */
+			expiresAt: string;
+			/**
+			 * Deliverby
+			 * Format: date
+			 */
+			deliverBy: string;
+			/** Lines */
+			lines: components['schemas']['JudgedLineOut'][];
+			/** @description Excluding deposits */
+			totals: components['schemas']['Totals'];
+			/**
+			 * Deposits
+			 * @description Returnable packaging charged on top; Valio Aimo gives no deposit price
+			 */
+			deposits: components['schemas']['DepositOut'][];
+			policy: components['schemas']['QuotePolicy'];
+			/** Buyerrequest */
+			buyerRequest: string;
+			/** Rationale */
+			rationale: string;
+			/** Previousquoteid */
+			previousQuoteId: string | null;
+		};
+		/**
+		 * QuoteStatus
+		 * @enum {string}
+		 */
+		QuoteStatus: 'QUOTED' | 'EXPIRED';
 		/**
 		 * Role
 		 * @enum {string}
@@ -1293,17 +2310,215 @@ export interface components {
 		 */
 		SafetyStatementType: 'HAZARD' | 'PRECAUTIONARY';
 		/**
+		 * Scope
+		 * @description What kinds of operation an Agent token may call at all, independent of any mandate limit.
+		 * @enum {string}
+		 */
+		Scope:
+			| 'catalog:read'
+			| 'offers:read'
+			| 'mandate:read'
+			| 'quote:create'
+			| 'order:place'
+			| 'order:read'
+			| 'audit:read';
+		/**
+		 * ScopePreset
+		 * @description A named set of scopes to issue an Agent token with.
+		 * @enum {string}
+		 */
+		ScopePreset: 'Research only' | 'Purchasing';
+		/**
+		 * Severity
+		 * @description How much one reason weighs. INFO is only stated.
+		 * @enum {string}
+		 */
+		Severity: 'INFO' | 'NEEDS_HUMAN' | 'REJECT';
+		/**
 		 * SpendPeriod
 		 * @description The calendar period a mandate's period spend cap covers.
 		 * @enum {string}
 		 */
 		SpendPeriod: 'WEEK' | 'MONTH';
+		/** StatusChangeOut */
+		StatusChangeOut: {
+			status: components['schemas']['OrderStatus'];
+			/**
+			 * At
+			 * Format: date-time
+			 */
+			at: string;
+			/**
+			 * By
+			 * @description Whose request led to it: "agent:<name>" or "user:<first and last name>"; "system" for placing a confirmed or approved order
+			 * @example agent:dairy-restock
+			 */
+			by: string;
+		};
+		/**
+		 * SubstitutesIn
+		 * @description Every field is optional. The filters only add to the mandate's requirements: none of
+		 *     them can drop one.
+		 */
+		SubstitutesIn: {
+			/**
+			 * Quantity
+			 * @description With it, candidates are judged on covering this quantity, and their offers converted and priced for it
+			 * @example 1000
+			 */
+			quantity?: number | string | null;
+			/**
+			 * Unit
+			 * @description `L`, `KG`, or a unit code such as `KI`. Without it the quantity is in the original's sales unit. Candidates that can't be expressed in it are left out
+			 * @example L
+			 */
+			unit?: string | null;
+			/**
+			 * Deliverby
+			 * @description Delivery date, already resolved by the agent. Without it, offers are evaluated for tomorrow (Europe/Helsinki)
+			 */
+			deliverBy?: string | null;
+			/**
+			 * Requiredclaims
+			 * @description Added to the mandate's; a candidate must carry all
+			 */
+			requiredClaims?: components['schemas']['Claim'][];
+			/**
+			 * Requiredlabels
+			 * @description Packaging label codes, added to the mandate's
+			 */
+			requiredLabels?: string[];
+			/**
+			 * Requireddiets
+			 * @description GS1 diet codes, added to the mandate's
+			 */
+			requiredDiets?: string[];
+			/**
+			 * Excludedallergens
+			 * @description GS1 allergen codes, added to the mandate's and excluded as strictly as the mandate's allergen strictness says
+			 */
+			excludedAllergens?: string[];
+			/**
+			 * Countriesoforigin
+			 * @description ISO 3166-1 alpha-2; a candidate must come from one of them, and from the mandate's allowed origins if it has any
+			 */
+			countriesOfOrigin?: string[];
+			/**
+			 * Mindeliveryreliability
+			 * @description Excludes candidates below this share and candidates with no delivery history; the mandate's own minimum still applies
+			 */
+			minDeliveryReliability?: number | string | null;
+			/**
+			 * Limit
+			 * @default 3
+			 */
+			limit: number;
+			/**
+			 * @description Language of product names; falls back to fi
+			 * @default en
+			 */
+			language: components['schemas']['Language'];
+		};
+		/**
+		 * SubstitutesReasonCode
+		 * @enum {string}
+		 */
+		SubstitutesReasonCode: 'NO_SUBSTITUTES_FOUND';
+		/** SubstitutesResponse */
+		SubstitutesResponse: {
+			original: components['schemas']['OriginalOut'];
+			/**
+			 * Deliverby
+			 * Format: date
+			 * @description The requested deliverBy, or the default used
+			 */
+			deliverBy: string;
+			/**
+			 * Buyerunit
+			 * @description The unit candidates were compared in: the requested unit, or without a quantity the original's comparison unit (L or KG) or sales unit
+			 */
+			buyerUnit: string;
+			/**
+			 * Evaluatedat
+			 * Format: date-time
+			 */
+			evaluatedAt: string;
+			/**
+			 * Candidates
+			 * @description In rank order, at most `limit`
+			 */
+			candidates: components['schemas']['CandidateOut'][];
+			/**
+			 * Reasoncodes
+			 * @description NO_SUBSTITUTES_FOUND when no candidate qualified
+			 */
+			reasonCodes: components['schemas']['SubstitutesReasonCode'][];
+		};
 		/**
 		 * SubstitutionPolicy
 		 * @description When a substitute the agent proposes may go through without a human.
 		 * @enum {string}
 		 */
 		SubstitutionPolicy: 'NEVER' | 'IF_REQUIREMENTS_HOLD' | 'ALWAYS_NEEDS_APPROVAL';
+		/**
+		 * Tier
+		 * @description A ranked substitute's label, in rank order: the first is BEST, the second BETTER,
+		 *     every other GOOD.
+		 * @enum {string}
+		 */
+		Tier: 'BEST' | 'BETTER' | 'GOOD';
+		/** TokenIssuer */
+		TokenIssuer: {
+			/**
+			 * Id
+			 * Format: uuid4
+			 */
+			id: string;
+			/** Name */
+			name: string;
+		};
+		/** Totals */
+		Totals: {
+			/** Net */
+			net: number;
+			/** Gross */
+			gross: number;
+			/** Currency */
+			currency: string;
+		};
+		/**
+		 * TradeOffsOut
+		 * @description The candidate against the original. A delta is null when either side is unknown.
+		 */
+		TradeOffsOut: {
+			/**
+			 * Priceperbuyerunitdeltapct
+			 * @description Percent; positive when the candidate costs more per buyer unit
+			 */
+			pricePerBuyerUnitDeltaPct: number | null;
+			/**
+			 * Earliestdatedelta
+			 * @description Days; positive when the candidate arrives later
+			 */
+			earliestDateDelta: number | null;
+			/** Reliabilitydelta */
+			reliabilityDelta: number | null;
+			/**
+			 * Claimskept
+			 * @description The original's claims the candidate carries
+			 */
+			claimsKept: components['schemas']['Claim'][];
+			/**
+			 * Claimslost
+			 * @description The original's claims the candidate lacks
+			 */
+			claimsLost: components['schemas']['Claim'][];
+			/** Labelsgained */
+			labelsGained: string[];
+			/** Labelslost */
+			labelsLost: string[];
+			carbonFootprintDelta: components['schemas']['CarbonFootprintDelta'] | null;
+		};
 		/**
 		 * Translation
 		 * @description Texts of the product in one language; not every language carries every text.
@@ -1685,6 +2900,86 @@ export interface operations {
 			};
 		};
 	};
+	find_substitutes_api_v1_products__code__substitutes_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				code: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['SubstitutesIn'] | null;
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['SubstitutesResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Product not found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ProductNotFoundResponse'];
+				};
+			};
+			/** @description The buyer organisation has no Valio Aimo customer number, so it can't be priced */
+			409: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['CustomerNumberMissingResponse'];
+				};
+			};
+			/** @description Search filters name codes the catalog does not know */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['UnknownFilterCodesResponse'];
+				};
+			};
+			/** @description The Valio Aimo price and availability API is unavailable; try again later */
+			503: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ValioAimoApiUnavailableResponse'];
+				};
+			};
+		};
+	};
 	get_vocabulary_api_v1_catalog_vocabulary_get: {
 		parameters: {
 			query?: never;
@@ -1801,6 +3096,539 @@ export interface operations {
 			};
 		};
 	};
+	create_quote_api_v1_quotes_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['QuoteIn'];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['QuoteResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Unknown product codes: 999990 */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['UnknownProductsResponse'];
+				};
+			};
+			/** @description The buyer organisation has no Valio Aimo customer number, so it can't be priced */
+			409: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['CustomerNumberMissingResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+			/** @description The Valio Aimo price and availability API is unavailable; try again later */
+			503: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ValioAimoApiUnavailableResponse'];
+				};
+			};
+		};
+	};
+	get_quote_api_v1_quotes__quote_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				quote_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['QuoteResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description No quote with this id in your buyer organisation */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['QuoteNotFoundResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	list_orders_api_v1_orders_get: {
+		parameters: {
+			query?: {
+				/** @description Only orders in this status */
+				status?: components['schemas']['OrderStatus'] | null;
+				limit?: number;
+				offset?: number;
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderListResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	place_order_api_v1_orders_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['OrderIn'];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description No quote with this id in your buyer organisation */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['QuoteNotFoundResponse'];
+				};
+			};
+			/** @description The quote has expired; quote again for fresh prices */
+			409: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['QuoteExpiredResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+			/** @description The Valio Aimo price and availability API is unavailable; try again later */
+			503: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ValioAimoApiUnavailableResponse'];
+				};
+			};
+		};
+	};
+	get_order_api_v1_orders__order_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				order_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Order not found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderNotFoundResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	get_order_trail_api_v1_orders__order_id__trail_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				order_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderTrailResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Order not found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderNotFoundResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	approve_order_api_v1_orders__order_id__approve_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				order_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['DecisionIn'] | null;
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Order not found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderNotFoundResponse'];
+				};
+			};
+			/** @description Only an order pending approval can be approved or rejected */
+			409: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderNotPendingResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+			/** @description The Valio Aimo price and availability API is unavailable; try again later */
+			503: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ValioAimoApiUnavailableResponse'];
+				};
+			};
+		};
+	};
+	reject_order_api_v1_orders__order_id__reject_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				order_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['DecisionIn'] | null;
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description Order not found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderNotFoundResponse'];
+				};
+			};
+			/** @description Only an order pending approval can be approved or rejected */
+			409: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['OrderNotPendingResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
 	get_my_mandate_api_v1_agents_me_mandate_get: {
 		parameters: {
 			query?: never;
@@ -1844,6 +3672,351 @@ export interface operations {
 				};
 				content: {
 					'application/json': components['schemas']['MandateNotFoundResponse'];
+				};
+			};
+		};
+	};
+	list_agents_api_v1_agents_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentListResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+		};
+	};
+	list_agent_tokens_api_v1_agents__agent_id__tokens_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				agent_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentTokenListResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description No agent with this id in your buyer organisation */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentNotFoundResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	issue_token_api_v1_agents__agent_id__tokens_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				agent_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['AgentTokenIn'];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['IssuedAgentTokenResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description No agent with this id in your buyer organisation */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentNotFoundResponse'];
+				};
+			};
+			/** @description The agent has no mandate; set one before issuing a token */
+			409: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['MandateRequiredResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	revoke_agent_token_api_v1_agents__agent_id__tokens__jti__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				agent_id: string;
+				jti: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentTokenResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description No agent with this id in your buyer organisation */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentNotFoundResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	disable_agent_api_v1_agents__agent_id__disable_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				agent_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description No agent with this id in your buyer organisation */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AgentNotFoundResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	list_audit_events_api_v1_audit_events_get: {
+		parameters: {
+			query?: {
+				/** @description Only events of this agent, as actor or subject */
+				agentId?: string | null;
+				/** @description Only this event type */
+				type?: components['schemas']['AuditEventType'] | null;
+				/** @description Only events about this quote, order or agent */
+				subject?: string | null;
+				/** @description Inclusive */
+				from?: string | null;
+				/** @description Exclusive */
+				to?: string | null;
+				/** @description `nextCursor` of the previous page */
+				cursor?: string | null;
+				limit?: number;
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['AuditEventListResponse'];
+				};
+			};
+			/** @description Could not validate credentials */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCredentialsResponse'];
+				};
+			};
+			/** @description Insufficient permissions */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['PermissionDeniedResponse'];
+				};
+			};
+			/** @description The cursor is not one this list returned */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['InvalidCursorResponse'];
 				};
 			};
 		};
