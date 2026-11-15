@@ -1,6 +1,10 @@
 <script lang="ts">
+	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
+	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
+	import CircleXIcon from '@lucide/svelte/icons/circle-x';
+	import InfoIcon from '@lucide/svelte/icons/info';
 	import type { PolicyReason, ReasonSeverity } from '#lib/api/types.js';
-	import OutcomeBadge from '../app/OutcomeBadge.svelte';
+	import { outcomeLabel } from '#lib/format.js';
 
 	let { reasons }: { reasons: PolicyReason[] } = $props();
 
@@ -10,12 +14,12 @@
 		AUTO_APPROVE: 2,
 		INFO: 3
 	};
-	const rail: Record<ReasonSeverity, string> = {
-		REJECT: 'bg-stop',
-		NEEDS_HUMAN: 'bg-hold',
-		AUTO_APPROVE: 'bg-ok',
-		INFO: 'bg-border'
-	};
+	const look = {
+		REJECT: { icon: CircleXIcon, cls: 'text-stop' },
+		NEEDS_HUMAN: { icon: CircleAlertIcon, cls: 'text-hold' },
+		AUTO_APPROVE: { icon: CircleCheckIcon, cls: 'text-ok' },
+		INFO: { icon: InfoIcon, cls: 'text-muted-foreground' }
+	} as const;
 	let sorted = $derived(reasons.toSorted((a, b) => rank[a.severity] - rank[b.severity]));
 
 	const factLabel = (k: string) => k.replace(/([A-Z])/g, ' $1').toLowerCase();
@@ -34,29 +38,30 @@
 		Every rule in the mandate passed. Nothing needed a person.
 	</p>
 {:else}
-	<ul class="space-y-2">
+	<ul class="divide-y">
 		{#each sorted as reason (reason.code + (reason.lineRef ?? ''))}
-			<li class="relative overflow-hidden rounded-lg border bg-card py-3 pr-4 pl-5">
-				<span class={['absolute inset-y-0 left-0 w-1', rail[reason.severity]]} aria-hidden="true"
-				></span>
-				<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-					<span class="code font-medium">{reason.code}</span>
-					{#if reason.lineRef}
-						<span class="text-xs text-muted-foreground">line {reason.lineRef.slice(1)}</span>
+			{@const l = look[reason.severity]}
+			<li class="grid grid-cols-[1.25rem_1fr] gap-x-3 py-3.5 first:pt-0 last:pb-0">
+				<l.icon class={['mt-0.5 size-4', l.cls]} aria-hidden="true" />
+				<div class="min-w-0">
+					<p class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+						<span class="code font-medium">{reason.code}</span>
+						{#if reason.lineRef}
+							<span class="text-xs text-muted-foreground">line {reason.lineRef.slice(1)}</span>
+						{/if}
+						<span class={['ml-auto text-xs', l.cls]}>{outcomeLabel[reason.severity]}</span>
+					</p>
+					<p class="mt-0.5 text-sm text-pretty">{reason.message}</p>
+					{#if Object.keys(reason.facts).length}
+						<p class="mt-1 text-xs text-muted-foreground">
+							{#each Object.entries(reason.facts) as [k, v], i (k)}
+								{#if i}<span class="mx-1.5" aria-hidden="true">·</span>{/if}
+								{factLabel(k)}
+								<span class="font-medium text-foreground tabular">{factValue(k, v)}</span>
+							{/each}
+						</p>
 					{/if}
-					<OutcomeBadge outcome={reason.severity} class="ml-auto" />
 				</div>
-				<p class="mt-1 text-sm">{reason.message}</p>
-				{#if Object.keys(reason.facts).length}
-					<dl class="mt-2 flex flex-wrap gap-1.5">
-						{#each Object.entries(reason.facts) as [k, v] (k)}
-							<div class="flex gap-1 rounded-md bg-muted px-2 py-0.5 text-xs">
-								<dt class="text-muted-foreground">{factLabel(k)}</dt>
-								<dd class="font-medium tabular">{factValue(k, v)}</dd>
-							</div>
-						{/each}
-					</dl>
-				{/if}
 			</li>
 		{/each}
 	</ul>
