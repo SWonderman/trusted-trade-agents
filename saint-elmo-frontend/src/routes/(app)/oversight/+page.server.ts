@@ -25,14 +25,10 @@ export const load: PageServerLoad = async ({ locals, url, depends }) => {
 		scenarios,
 		stats: {
 			organisations: new Set(feed.map((e) => e.organisationId)).size,
-			toolCalls: today.filter((e) => e.type === 'TOOL_CALL').length,
-			ordersPlaced: today.filter((e) => e.type === 'ORDER_PLACED' || e.stateChange?.to === 'PLACED')
-				.length,
-			waiting: today.filter((e) => e.stateChange?.to === 'PENDING_APPROVAL').length,
-			rejected: today.filter(
-				(e) =>
-					(e.type === 'ORDER_REQUESTED' && e.outcome === 'REJECT') || e.type === 'ORDER_REJECTED'
-			).length
+			quotes: today.filter((e) => e.type === 'QUOTE_CREATED').length,
+			ordersPlaced: today.filter((e) => e.type === 'ORDER_PLACED').length,
+			waiting: today.filter((e) => e.type === 'ORDER_PENDING_APPROVAL').length,
+			rejected: today.filter((e) => e.type === 'ORDER_REJECTED').length
 		},
 		organisations: [...new Map(feed.map((e) => [e.organisationId, e.organisationName]))].map(
 			([id, name]) => ({

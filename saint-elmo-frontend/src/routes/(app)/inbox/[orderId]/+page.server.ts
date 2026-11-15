@@ -45,14 +45,17 @@ export const load: PageServerLoad = async ({ locals, url, params, depends }) => 
 	depends('app:inbox');
 	const order = await api.orders.get(caller, params.orderId);
 	if (!order) error(404, `There’s no order ${params.orderId} in your organisation.`);
-	const [agent, products] = await Promise.all([
+	const [agent, products, trail] = await Promise.all([
 		// Agents may still answer from the mock (#22), which doesn't know the backend's ids.
 		context(api.agents.get(caller, order.agent.id)),
-		productFacts(caller, order)
+		productFacts(caller, order),
+		// Oldest first: the buyer's request, quotes and substitutes, then the order's own steps.
+		context(api.audit.orderTrail(caller, order.orderId))
 	]);
 	return {
 		order,
 		products,
+		trail: trail ?? [],
 		mandate: agent?.mandate ?? null,
 		periodSpend: agent?.periodSpend ?? null
 	};

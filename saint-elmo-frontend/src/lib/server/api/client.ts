@@ -2,12 +2,14 @@ import type {
 	AgentKey,
 	AgentSummary,
 	AuditEvent,
+	AuditEventPage,
 	AuditFilter,
 	IssuedKey,
 	KeyPreset,
 	NewAgentInput,
 	Order,
 	OrderStatus,
+	OversightEvent,
 	ProductDetail,
 	ProductSearchRequest,
 	ProductSearchResponse,
@@ -91,13 +93,22 @@ export interface AgentsApi {
 	revokeKey(caller: Caller, agentId: string, jti: string): Promise<AgentKey>;
 }
 
+/** Which page of a list to read: after `cursor` (a page's `nextCursor`), `limit` long. */
+export interface PageRequest {
+	cursor?: string;
+	limit?: number;
+}
+
 export interface AuditApi {
-	list(caller: Caller, filter: AuditFilter): Promise<AuditEvent[]>;
+	/** One page of the events matching the filter, newest first. */
+	list(caller: Caller, filter: AuditFilter, page?: PageRequest): Promise<AuditEventPage>;
+	/** The events behind one order, oldest first; null for an order the caller can't see. */
+	orderTrail(caller: Caller, orderId: string): Promise<AuditEvent[] | null>;
 }
 
 export interface OversightApi {
 	/** Cross-customer feed, Valio Aimo staff only. */
-	feed(caller: Caller): Promise<AuditEvent[]>;
+	feed(caller: Caller): Promise<OversightEvent[]>;
 	scenarios(caller: Caller): Promise<ScenarioOverride[]>;
 	setScenario(caller: Caller, id: string, active: boolean): Promise<ScenarioOverride>;
 	addScenario(

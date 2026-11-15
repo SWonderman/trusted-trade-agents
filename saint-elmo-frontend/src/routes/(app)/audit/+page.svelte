@@ -11,18 +11,44 @@
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Empty from '#lib/components/ui/empty/index.js';
 	import * as InputGroup from '#lib/components/ui/input-group/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
 	import { Label } from '#lib/components/ui/label/index.js';
 	import * as Select from '#lib/components/ui/select/index.js';
-	import { outcomeLabel } from '#lib/format.js';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import type { AuditEventPage } from '#lib/api/types.js';
+	import { localDay, startOfLocalDay } from '#lib/format.js';
+	import { isFiltered } from './filter.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
-	let filtered = $derived(
-		Boolean(data.filter.agentId || data.filter.orderId || data.filter.type || data.filter.outcome)
-	);
+	let filtered = $derived(isFiltered(data.filter));
 	const ALL = '__all';
-	const outcomes = ['AUTO_APPROVE', 'NEEDS_HUMAN', 'REJECT'] as const;
+
+	// The first page comes with the load; "load more" appends older pages until a new filter.
+	let events = $derived(data.page.items);
+	let nextCursor = $derived(data.page.nextCursor);
+	let loading = $state(false);
+	let loadError = $state(false);
+
+	async function loadMore() {
+		if (!nextCursor) return;
+		loading = true;
+		loadError = false;
+		try {
+			const url = new URL(page.url.href);
+			url.searchParams.set('cursor', nextCursor);
+			const res = await fetch(`${resolve('audit/events.json')}${url.search}`);
+			if (!res.ok) throw new Error(String(res.status));
+			const more: AuditEventPage = await res.json();
+			events = [...events, ...more.items];
+			nextCursor = more.nextCursor;
+		} catch {
+			loadError = true;
+		} finally {
+			loading = false;
+		}
+	}
 
 	/** Filters live in the URL, so a filtered view can be linked and shared. */
 	function setFilter(key: string, value: string | undefined) {
@@ -32,7 +58,7 @@
 		// eslint-disable-next-line svelte/no-navigation-without-resolve -- same resolved route, new query only
 		goto(`${resolve('audit')}${url.search}`, { reset: false });
 	}
-	let order = $derived(data.filter.orderId ?? '');
+	let subject = $derived(data.filter.subject ?? '');
 </script>
 
 <svelte:head><title>Audit trail · Saint Elmo</title></svelte:head>
@@ -40,7 +66,7 @@
 <PageHeader
 	title="Audit trail"
 	source={data.source}
-	description="Every tool call, policy decision, approval and token change, newest first. Entries are only ever added, and each carries the hash of the one before, so edited history can be detected. {data.crossCustomer
+	description="Every quote, order, policy decision, approval and change to an agent’s authority, newest first. Entries are only ever added; lookups such as searches and price checks aren’t recorded. {data.crossCustomer
 		? 'You are seeing every buyer organisation.'
 		: 'Valio Aimo sees the same entries.'}"
 >
@@ -63,20 +89,20 @@
 		data-sveltekit-keepfocus
 		onsubmit={(e) => {
 			e.preventDefault();
-			setFilter('order', order.trim() || undefined);
+			setFilter('subject', subject.trim() || undefined);
 		}}
 	>
 		<p class="text-sm font-medium">Filter</p>
 		<div class="space-y-1.5">
-			<Label for="f-order">Order or quote</Label>
+			<Label for="f-subject">Order, quote or agent</Label>
 			<InputGroup.Root>
 				<InputGroup.Addon><SearchIcon /></InputGroup.Addon>
 				<InputGroup.Input
-					id="f-order"
-					name="order"
+					id="f-subject"
+					name="subject"
 					class="code"
-					placeholder="Order id, a UUID"
-					bind:value={order}
+					placeholder="Its id, a UUID"
+					bind:value={subject}
 				/>
 			</InputGroup.Root>
 		</div>
@@ -85,10 +111,13 @@
 			<Select.Root
 				type="single"
 				value={data.filter.agentId ?? ALL}
-				onValueChange={(v) => setFilter('agent', v)}
+				onValueChange={(v) => setFilter('agentId', v)}
 			>
 				<Select.Trigger id="f-agent" class="w-full">
-					{data.agentOptions.find((a) => a.id === data.filter.agentId)?.name ?? 'All agents'}
+					{data.filter.agentId
+						? (data.agentOptions.find((a) => a.id === data.filter.agentId)?.name ??
+							data.filter.agentId)
+						: 'All agents'}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Item value={ALL} label="All agents" />
@@ -99,7 +128,7 @@
 			</Select.Root>
 		</div>
 		<div class="space-y-1.5">
-			<Label for="f-type">Tool call or event</Label>
+			<Label for="f-type">Event</Label>
 			<Select.Root
 				type="single"
 				value={data.filter.type ?? ALL}
@@ -116,23 +145,28 @@
 				</Select.Content>
 			</Select.Root>
 		</div>
-		<div class="space-y-1.5">
-			<Label for="f-outcome">Policy outcome</Label>
-			<Select.Root
-				type="single"
-				value={data.filter.outcome ?? ALL}
-				onValueChange={(v) => setFilter('outcome', v)}
-			>
-				<Select.Trigger id="f-outcome" class="w-full">
-					{data.filter.outcome ? outcomeLabel[data.filter.outcome] : 'Any'}
-				</Select.Trigger>
-				<Select.Content>
-					<Select.Item value={ALL} label="Any" />
-					{#each outcomes as o (o)}
-						<Select.Item value={o} label={outcomeLabel[o]} />
-					{/each}
-				</Select.Content>
-			</Select.Root>
+		<div class="grid gap-4">
+			<div class="space-y-1.5">
+				<Label for="f-from">From</Label>
+				<Input
+					id="f-from"
+					type="date"
+					value={localDay(data.filter.from)}
+					max={localDay(data.filter.to, 1) || undefined}
+					onchange={(e) => setFilter('from', startOfLocalDay(e.currentTarget.value))}
+				/>
+			</div>
+			<div class="space-y-1.5">
+				<Label for="f-to">To</Label>
+				<!-- The backend's `to` is exclusive: the day after the last one picked. -->
+				<Input
+					id="f-to"
+					type="date"
+					value={localDay(data.filter.to, 1)}
+					min={localDay(data.filter.from) || undefined}
+					onchange={(e) => setFilter('to', startOfLocalDay(e.currentTarget.value, 1))}
+				/>
+			</div>
 		</div>
 		{#if filtered}
 			<Button href={resolve('audit')} variant="ghost" size="sm" class="w-full">
@@ -140,19 +174,18 @@
 			</Button>
 		{/if}
 		<p class="border-t pt-3 text-xs text-muted-foreground tabular">
-			{filtered
-				? `${data.events.length} of ${data.total} entries`
-				: `${data.events.length} entries`}
+			{events.length}
+			{events.length === 1 ? 'entry' : 'entries'}{nextCursor ? ', more to load' : ''}
 		</p>
 	</form>
 
-	{#if data.events.length === 0}
+	{#if events.length === 0}
 		<Empty.Root class="rounded-xl border border-dashed">
 			<Empty.Header>
 				<Empty.Media variant="icon"><ScrollTextIcon /></Empty.Media>
 				<Empty.Title>No entries match these filters</Empty.Title>
 				<Empty.Description
-					>Check the order id, or clear the filters to see the whole trail.</Empty.Description
+					>Check the id and the dates, or clear the filters to see the whole trail.</Empty.Description
 				>
 			</Empty.Header>
 			<Empty.Content>
@@ -167,17 +200,29 @@
 			class="min-w-0 rounded-xl border bg-card lg:sticky lg:top-20 lg:max-h-[calc(100dvh-18rem)] lg:overflow-y-auto lg:overscroll-contain"
 			{@attach (el) => {
 				// A new filter starts the trail back at its newest entry
-				void data.events;
+				void data.page;
 				el.scrollTop = 0;
 			}}
 		>
 			<div class="px-3 py-5 sm:px-6">
 				<AuditTimeline
-					contained
-					events={data.events}
+					stickyDays="container"
+					{events}
 					showOrganisation={data.crossCustomer}
 					linkOrders={!data.crossCustomer}
 				/>
+				{#if nextCursor}
+					<div class="flex flex-col items-center gap-2 border-t pt-4">
+						<Button variant="outline" size="sm" onclick={loadMore} disabled={loading}>
+							{#if loading}<Spinner />Loading…{:else}Load older entries{/if}
+						</Button>
+						{#if loadError}
+							<p role="alert" class="text-xs text-stop">
+								Couldn’t load more entries. Try again in a moment.
+							</p>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		</div>
 	{/if}

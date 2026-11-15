@@ -120,3 +120,20 @@ export const unitName: Record<string, string> = {
 export function claimText(c: { type: string; element: string }) {
 	return `${c.type}_${c.element}`;
 }
+
+/** The local calendar day, YYYY-MM-DD, `back` days before the instant; '' for none. */
+export function localDay(iso: string | undefined, back = 0) {
+	if (!iso) return '';
+	const d = new Date(iso);
+	d.setDate(d.getDate() - back);
+	const pad = (n: number) => String(n).padStart(2, '0');
+	return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** The start of a local calendar day (YYYY-MM-DD), `ahead` days later, as an ISO instant. */
+export function startOfLocalDay(value: string, ahead = 0) {
+	if (!value) return undefined;
+	const d = new Date(`${value}T00:00`);
+	d.setDate(d.getDate() + ahead);
+	return d.toISOString();
+}

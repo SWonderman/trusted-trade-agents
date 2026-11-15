@@ -27,7 +27,7 @@
 		{
 			icon: ScrollTextIcon,
 			title: 'Everything is written down',
-			text: 'Every tool call, decision and approval goes into an append-only audit trail that both the buyer and Valio Aimo can read.'
+			text: 'Every quote, decision and approval goes into an append-only audit trail that both the buyer and Valio Aimo can read.'
 		}
 	];
 
