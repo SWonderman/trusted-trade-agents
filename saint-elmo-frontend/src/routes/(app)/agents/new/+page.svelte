@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { Button } from '#lib/components/ui/button/index.js';
+	import CategoryPicker from '#lib/components/app/CategoryPicker.svelte';
 	import { Checkbox } from '#lib/components/ui/checkbox/index.js';
 	import * as Field from '#lib/components/ui/field/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
@@ -13,7 +14,7 @@
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
 	import type { PageProps } from './$types';
 
-	let { form }: PageProps = $props();
+	let { data, form }: PageProps = $props();
 
 	let saving = $state(false);
 	let errors = $derived<Record<string, string>>(
@@ -178,16 +179,26 @@
 					<Field.Legend>Assortment</Field.Legend>
 					<Field.Group>
 						<Field.Field>
-							<Field.Label for="allowedCategoryCodes">Only these category codes</Field.Label>
-							<Input
-								id="allowedCategoryCodes"
-								name="allowedCategoryCodes"
-								class="code"
-								placeholder="10400, 10401"
-								value={v.allowedCategoryCodes ?? ''}
-							/>
+							<Field.Label for="allowedCategoryCodes">Only these categories</Field.Label>
+							{#if data.categories}
+								<CategoryPicker
+									id="allowedCategoryCodes"
+									name="allowedCategoryCodes"
+									categories={data.categories}
+									value={v.allowedCategoryCodes ?? ''}
+								/>
+							{:else}
+								<Input
+									id="allowedCategoryCodes"
+									name="allowedCategoryCodes"
+									class="code"
+									placeholder="10400, 10401"
+									value={v.allowedCategoryCodes ?? ''}
+								/>
+							{/if}
 							<Field.Description>
-								Leave empty to allow every category. The Catalog page lists the codes.
+								Leave empty to allow every category. The source data names no categories, so they
+								are listed by code with their product count.
 							</Field.Description>
 						</Field.Field>
 						<div class="grid gap-4 sm:grid-cols-2">
