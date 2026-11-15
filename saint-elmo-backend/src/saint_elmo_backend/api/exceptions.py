@@ -447,6 +447,15 @@ class OrderNotFound(SaintElmoHTTPException):
         )
 
 
+class InvalidCursor(SaintElmoHTTPException):
+    def __init__(self, detail: str = "The cursor is not one this list returned"):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            error_code=ErrorCode.VALIDATION_ERROR,
+            detail=detail,
+        )
+
+
 class OrderAlreadyFulfilled(SaintElmoHTTPException):
     def __init__(self, detail: str = "Order is already fulfilled"):
         super().__init__(

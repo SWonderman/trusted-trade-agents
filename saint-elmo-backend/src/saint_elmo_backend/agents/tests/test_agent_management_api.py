@@ -77,8 +77,14 @@ async def test_issued_token_carries_the_preset_mandate_and_default_expiry(
     assert claims["sub"] == str(agent.public_id)
     assert claims["mandate_id"] == str(mandate.public_id)
     assert claims["jti"] == body["jti"]
-    assert claims["scope"] == "catalog:read mandate:read offers:read order:read"
-    assert body["scopes"] == ["catalog:read", "mandate:read", "offers:read", "order:read"]
+    assert claims["scope"] == "audit:read catalog:read mandate:read offers:read order:read"
+    assert body["scopes"] == [
+        "audit:read",
+        "catalog:read",
+        "mandate:read",
+        "offers:read",
+        "order:read",
+    ]
     expected_exp = datetime.now(UTC) + timedelta(days=7)
     assert abs(claims["exp"] - expected_exp.timestamp()) < 60
     assert datetime.fromisoformat(body["expiresAt"]).timestamp() == pytest.approx(

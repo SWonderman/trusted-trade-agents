@@ -233,3 +233,31 @@ orders, a user their buyer organisation's. `POST /api/v1/orders/{orderId}/approv
   the orders' tables, so `mandates` never depends on the order services.
 - **Tests**: `FakeValioAimoApi.change_price` and `change_availability` move live data
   between a quote and its order.
+
+## Audit trail
+
+`saint_elmo_backend/audit/` records decisions and commitments (quotes, substitute
+requests, orders, approvals, agent tokens) through `services.record_event`, and reads them
+back through `trail.py`. Lookups such as searches and offers are not recorded.
+
+- `GET /api/v1/audit-events`: newest first, filtered by `agentId` (as actor, or as
+  subject of a buyer admin's action), `type`, `subject` (a quote, order or agent id),
+  `from` (inclusive) and `to` (exclusive). `limit` defaults to 50, at most 200; pass
+  `nextCursor` back as `cursor` for older events (an unknown cursor is 422).
+- `GET /api/v1/orders/{orderId}/trail`: oldest first and whole. The events of the order,
+  its quote and every earlier quote reached through `previousQuoteId`, plus the agent's
+  `SUBSTITUTES_REQUESTED` for products in any of those quotes, from the first quote's
+  creation to the order's latest event (a stand-in until substitute requests are linked
+  to quote lines).
+- **Event shape**: `id`, `at`, `type`, `subjectId`, `actor {kind, id, name}`, `summary`,
+  `outcome` and `reasonCodes` (from the payload's policy, or a substitute request's own
+  `reasonCodes`; else null) and the raw `payload`. `actor.kind` is `agent`, `user`, or `system` for placing a confirmed or
+  approved order. A buyer admin's action on an agent carries both ids and is credited to
+  the admin.
+- **Summary**: one plain English sentence rendered at read time by `audit/summaries.py`,
+  one renderer per event type; a test fails for an event type without one.
+- **Who reads**: users (buyer admin, approver) the whole buyer organisation. Agent tokens
+  need `audit:read` (in both presets) and see the events they acted in, plus
+  `ORDER_APPROVED`, `ORDER_REJECTED_BY_HUMAN` and system steps on their own orders; not the
+  approver's re-check or a rejection by it. An agent asking for another agent's order trail
+  gets `ORDER_NOT_FOUND`.

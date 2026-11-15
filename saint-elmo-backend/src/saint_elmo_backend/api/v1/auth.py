@@ -177,3 +177,8 @@ def require_permission(*permissions: Permission):
         return user
 
     return _guard
+
+
+# A user reads the buyer organisation's audit trail; an agent what it acted in, plus a
+# human's decisions on its own orders
+AuditReader = Annotated[Principal, Depends(authenticate(users=True, agent_scope=Scope.AUDIT_READ))]
