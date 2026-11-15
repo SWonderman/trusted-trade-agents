@@ -1,125 +1,143 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
+	import { toast } from 'svelte-sonner';
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+	import InboxIcon from '@lucide/svelte/icons/inbox';
+	import OutcomeBadge from '#lib/components/app/OutcomeBadge.svelte';
+	import PageHeader from '#lib/components/app/PageHeader.svelte';
+	import * as Empty from '#lib/components/ui/empty/index.js';
+	import * as Table from '#lib/components/ui/table/index.js';
+	import * as Tabs from '#lib/components/ui/tabs/index.js';
 	import { moneyWhole, relative, statusLabel, statusTone } from '#lib/format.js';
-	import OutcomeBadge from '#lib/components/ui/OutcomeBadge.svelte';
-	import Icon from '#lib/components/ui/Icon.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
 
+	type View = 'waiting' | 'decided' | 'all';
+	let view = $state<View>('waiting');
+
+	let waiting = $derived(data.orders.filter((o) => o.status === 'PENDING_APPROVAL'));
+	let decided = $derived(data.orders.filter((o) => o.status !== 'PENDING_APPROVAL'));
+	let rows = $derived(view === 'waiting' ? waiting : view === 'decided' ? decided : data.orders);
 	let selected = $derived(page.params.orderId ?? null);
-	let done = $derived(page.url.searchParams.get('done'));
+
+	// After a decision the server sends ?done=ORD-0142:PLACED; say so once, then tidy the URL.
+	$effect(() => {
+		const done = page.url.searchParams.get('done');
+		if (!done) return;
+		const [orderId, status] = done.split(':');
+		if (status === 'PLACED') {
+			toast.success(`${orderId} approved and placed`, {
+				description: 'The agent sees it on its next status check.'
+			});
+		} else {
+			toast(`${orderId} rejected`, {
+				description: 'The agent sees the rejection and your note on its next status check.'
+			});
+		}
+		const url = new URL(page.url.href);
+		url.searchParams.delete('done');
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- same page, only drops ?done
+		replaceState(url, page.state);
+	});
 </script>
 
-<svelte:head><title>Approval inbox · Saint Elmo</title></svelte:head>
+<svelte:head><title>Approvals · Saint Elmo</title></svelte:head>
 
-<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
-	<div>
-		<h1 class="text-2xl font-semibold tracking-tight text-ink">Approval inbox</h1>
-		<p class="mt-1 max-w-[60ch] text-sm text-muted">
-			Orders your agents placed that the mandate sent to a person. Nothing here is ordered until you
-			approve it.
-		</p>
+<PageHeader
+	title="Approvals"
+	source={data.source}
+	description="Orders your agents placed that their mandate sent to a person. Nothing is ordered until you approve it."
+/>
+
+<Tabs.Root bind:value={view} class="mb-4">
+	<Tabs.List>
+		<Tabs.Trigger value="waiting">
+			Waiting for you
+			{#if waiting.length}<span
+					class="rounded-full bg-hold/15 px-1.5 text-xs font-semibold text-hold tabular"
+					>{waiting.length}</span
+				>{/if}
+		</Tabs.Trigger>
+		<Tabs.Trigger value="decided">Decided</Tabs.Trigger>
+		<Tabs.Trigger value="all">All</Tabs.Trigger>
+	</Tabs.List>
+</Tabs.Root>
+
+{#if rows.length === 0}
+	<Empty.Root class="rounded-xl border border-dashed bg-card/50">
+		<Empty.Header>
+			<Empty.Media variant="icon"><InboxIcon /></Empty.Media>
+			<Empty.Title
+				>{view === 'waiting' ? 'Nothing is waiting for you' : 'No orders yet'}</Empty.Title
+			>
+			<Empty.Description>
+				Agents are working within their mandates. New approvals appear here within seconds.
+			</Empty.Description>
+		</Empty.Header>
+	</Empty.Root>
+{:else}
+	<div class="overflow-hidden rounded-xl border bg-card">
+		<Table.Root class="min-w-[52rem]">
+			<Table.Header>
+				<Table.Row class="hover:bg-transparent">
+					<Table.Head class="pl-5">Order</Table.Head>
+					<Table.Head>What was asked</Table.Head>
+					<Table.Head>Why it’s here</Table.Head>
+					<Table.Head class="text-right">Total</Table.Head>
+					<Table.Head>Status</Table.Head>
+					<Table.Head class="w-10"><span class="sr-only">Open</span></Table.Head>
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each rows as o (o.orderId)}
+					<Table.Row
+						class={['group relative', selected === o.orderId && 'bg-accent/60 hover:bg-accent/60']}
+					>
+						<Table.Cell class="py-3.5 pl-5">
+							<!-- Stretched over the whole row, so any click on it opens the order. -->
+							<a
+								href={resolve(`inbox/${o.orderId}`)}
+								data-sveltekit-noscroll
+								class="code font-medium outline-none after:absolute after:inset-0 after:rounded-sm focus-visible:after:ring-2 focus-visible:after:ring-ring"
+								>{o.orderId}</a
+							>
+							<p class="mt-0.5 text-xs text-muted-foreground">
+								<span class="code">{o.agentName}</span> · {relative(o.createdAt)}
+							</p>
+						</Table.Cell>
+						<Table.Cell class="max-w-[22rem] py-3.5">
+							<p class="truncate text-sm">{o.buyerRequest ?? '—'}</p>
+						</Table.Cell>
+						<Table.Cell class="py-3.5">
+							{#if o.topReason}
+								<span class="code text-xs text-hold">{o.topReason}</span>
+								{#if o.moreReasons}<span class="ml-1 text-xs text-muted-foreground"
+										>+{o.moreReasons}</span
+									>{/if}
+							{:else}
+								<span class="text-xs text-muted-foreground">Within the mandate</span>
+							{/if}
+						</Table.Cell>
+						<Table.Cell class="py-3.5 text-right font-medium tabular"
+							>{moneyWhole(o.total)}</Table.Cell
+						>
+						<Table.Cell class="py-3.5">
+							<OutcomeBadge outcome={statusTone[o.status]} label={statusLabel[o.status]} />
+						</Table.Cell>
+						<Table.Cell class="py-3.5 pr-4">
+							<ChevronRightIcon
+								class="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+								aria-hidden="true"
+							/>
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
 	</div>
-</div>
-
-{#if done}
-	{@const [orderId, status] = done.split(':')}
-	<p
-		role="status"
-		class={[
-			'mb-5 flex items-center gap-2 rounded-md border px-4 py-3 text-sm',
-			status === 'PLACED'
-				? 'border-ok/30 bg-ok-wash text-ok'
-				: 'border-stop/30 bg-stop-wash text-stop'
-		]}
-	>
-		<Icon name={status === 'PLACED' ? 'check' : 'ban'} />
-		<span>
-			<span class="code font-medium">{orderId}</span>
-			{status === 'PLACED'
-				? 'approved and placed in the order book. The agent sees it on its next status check.'
-				: 'rejected. The agent sees the rejection and your note on its next status check.'}
-		</span>
-		<a
-			href="{resolve('audit')}?order={orderId}"
-			class="ml-auto font-medium underline underline-offset-2">See audit trail</a
-		>
-	</p>
 {/if}
 
-<div class="grid gap-6 lg:grid-cols-[21rem_1fr]">
-	<section aria-labelledby="queue-heading" class={['min-w-0', selected && 'max-lg:hidden']}>
-		<h2 id="queue-heading" class="mb-2 flex items-center gap-2 text-sm font-semibold text-ink">
-			Waiting for you
-			<span class="tabular rounded-full bg-sunken px-2 text-xs text-muted"
-				>{data.pending.length}</span
-			>
-		</h2>
-
-		{#if data.pending.length === 0}
-			<div class="panel px-5 py-8 text-center">
-				<p class="font-semibold text-ink">Nothing is waiting for you</p>
-				<p class="mx-auto mt-1 max-w-[32ch] text-sm text-muted">
-					Agents are working within their mandates. New approvals appear here within seconds.
-				</p>
-			</div>
-		{:else}
-			<ul class="panel divide-y divide-line overflow-hidden">
-				{#each data.pending as o (o.orderId)}
-					<li>
-						<a
-							href={resolve(`inbox/${o.orderId}`)}
-							aria-current={selected === o.orderId ? 'page' : undefined}
-							class={[
-								'block border-l-[3px] px-4 py-3.5 hover:bg-surface',
-								selected === o.orderId ? 'border-l-lapis bg-lapis-wash/60' : 'border-l-transparent'
-							]}
-						>
-							<div class="flex items-baseline justify-between gap-3">
-								<span class="code font-medium text-ink">{o.orderId}</span>
-								<span class="tabular font-semibold text-ink">{moneyWhole(o.total)}</span>
-							</div>
-							<p class="mt-0.5 truncate text-sm text-muted">{o.buyerRequest}</p>
-							<div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-								<span class="font-medium text-ink">{o.agentName}</span>
-								{#if o.topReason}<span class="code text-hold">{o.topReason}</span>{/if}
-								{#if o.reasonCount > 1}<span>+{o.reasonCount - 1} more</span>{/if}
-								<span class="ml-auto">{relative(o.createdAt)}</span>
-							</div>
-						</a>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-
-		{#if data.recent.length}
-			<h2 class="mt-8 mb-2 text-sm font-semibold text-ink">Recently decided</h2>
-			<ul class="space-y-1">
-				{#each data.recent as o (o.orderId)}
-					<li>
-						<a
-							href={resolve(`inbox/${o.orderId}`)}
-							class="flex items-center gap-3 rounded-sm px-2 py-1.5 text-sm hover:bg-sunken"
-						>
-							<span class="code text-ink">{o.orderId}</span>
-							<span class="truncate text-muted">{o.agentName}</span>
-							<span class="ml-auto"
-								><OutcomeBadge
-									outcome={statusTone[o.status]}
-									label={statusLabel[o.status]}
-									size="sm"
-								/></span
-							>
-						</a>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</section>
-
-	<div class={['min-w-0', !selected && 'max-lg:hidden']}>
-		{@render children()}
-	</div>
-</div>
+{@render children()}

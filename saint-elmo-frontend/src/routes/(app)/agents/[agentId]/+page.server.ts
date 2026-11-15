@@ -25,9 +25,12 @@ export const actions: Actions = {
 		const preset = text(data, 'preset') as KeyPreset;
 		const expiresInDays = Number(text(data, 'expiresInDays'));
 		if (!label)
-			return fail(400, { action: 'issueKey', error: 'Name the key after where it will be used.' });
+			return fail(400, {
+				action: 'issueKey',
+				error: 'Name the token after where it will be used.'
+			});
 		if (preset !== 'PURCHASING' && preset !== 'RESEARCH_ONLY') {
-			return fail(400, { action: 'issueKey', error: 'Choose what the key may do.' });
+			return fail(400, { action: 'issueKey', error: 'Choose what the token may do.' });
 		}
 		const r = await attempt(() =>
 			api.agents.issueKey(caller, params.agentId, { label, preset, expiresInDays })

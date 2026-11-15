@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
+	import ArrowLeftRightIcon from '@lucide/svelte/icons/arrow-left-right';
 	import type { OrderLine } from '#lib/api/types.js';
 	import { claimText, date, dateTime, money, number, percent, unitName } from '#lib/format.js';
-	import Icon from '../ui/Icon.svelte';
+	import { Badge } from '#lib/components/ui/badge/index.js';
 
 	let { line, deliverBy }: { line: OrderLine; deliverBy: string } = $props();
 
@@ -16,26 +19,45 @@
 	let reliability = $derived(line.product.deliveryReliability);
 </script>
 
-<article class="py-5 first:pt-0 last:pb-0">
-	<header class="grid grid-cols-[1fr_auto] items-start gap-x-6 gap-y-2">
-		<div class="min-w-0">
-			<p class="flex flex-wrap gap-x-3 text-xs text-muted">
+{#snippet fact(label: string, value: string, hint: string, tone?: 'stop' | 'hold')}
+	<div>
+		<dt class="text-xs text-muted-foreground">{label}</dt>
+		<dd
+			class={[
+				'mt-0.5 tabular',
+				tone === 'stop' && 'font-semibold text-stop',
+				tone === 'hold' && 'font-semibold text-hold'
+			]}
+		>
+			{value}
+		</dd>
+		<dd class="text-xs text-muted-foreground">{hint}</dd>
+	</div>
+{/snippet}
+
+<article class="rounded-xl border bg-card">
+	<header class="flex items-start justify-between gap-x-6 gap-y-2 px-4 pt-4 sm:px-5">
+		<div class="min-w-0 flex-1">
+			<p class="flex flex-wrap gap-x-3 text-xs text-muted-foreground">
 				<span>Line {line.ref.slice(1)}</span>
-				<span class="code">{line.product.code}</span>
+				<a
+					href={resolve(`catalog/${line.product.code}`)}
+					class="code underline-offset-2 hover:text-primary hover:underline">{line.product.code}</a
+				>
 				{#if line.product.vendor}<span>{line.product.vendor}</span>{/if}
 			</p>
-			<h3 class="mt-0.5 font-semibold text-ink">{line.product.name}</h3>
+			<h4 class="mt-1 font-medium text-balance">{line.product.name}</h4>
 			{#if line.substitutesFor}
-				<p class="mt-1 text-sm text-hold">
-					<span class="mr-1 inline-block translate-y-0.5"><Icon name="swap" size={14} /></span
-					>Substitute for <span class="code">{line.substitutesFor.code}</span>
+				<p class="mt-1.5 inline-flex items-center gap-1.5 text-sm text-hold">
+					<ArrowLeftRightIcon class="size-3.5" aria-hidden="true" />
+					Substitute for <span class="code">{line.substitutesFor.code}</span>
 					{line.substitutesFor.name}
 				</p>
 			{/if}
 		</div>
-		<div class="text-right">
-			<p class="tabular text-lg font-semibold text-ink">{money(line.lineTotal)}</p>
-			<p class="tabular text-xs text-muted">
+		<div class="shrink-0 text-right">
+			<p class="text-lg font-semibold tracking-tight tabular">{money(line.lineTotal)}</p>
+			<p class="text-xs text-muted-foreground tabular">
 				{number(line.quantity)}
 				{unit} × {money(o.unitPrice)}
 			</p>
@@ -43,18 +65,18 @@
 	</header>
 
 	<!-- The conversion is shown with every quantity it was used for (GLOSSARY: Conversion). -->
-	<div class="mt-3 rounded-sm border border-line bg-surface px-3 py-2.5 text-sm">
+	<div class="mx-4 mt-3 rounded-lg bg-muted/70 px-3 py-2.5 text-sm sm:mx-5">
 		{#if c}
-			<p class="tabular flex flex-wrap items-center gap-x-2 gap-y-1 text-ink">
+			<p class="flex flex-wrap items-center gap-x-2 gap-y-1 tabular">
 				<span class="font-semibold">{number(c.requested.amount)} {c.requested.unit}</span>
-				<Icon name="arrowRight" size={14} />
+				<ArrowRightIcon class="size-3.5 text-muted-foreground" aria-label="becomes" />
 				<span class="font-semibold">{number(c.salesUnits)} {unit}</span>
-				<span class="text-muted">
+				<span class="text-muted-foreground">
 					1 {unit} ({unitName[unit] ?? unit}) ≈ {number(c.buyerUnitsPerSalesUnit)}
 					{c.requested.unit}{#if c.rounded}, rounded up to a multiple of {number(c.lotSize)}{/if}
 				</span>
 			</p>
-			<p class="mt-1 text-xs text-muted">
+			<p class="mt-1 text-xs text-muted-foreground">
 				From the {c.method === 'COMPARISON_PRICE'
 					? 'price per litre or kilo in the price API'
 					: c.method === 'UNIT_CONVERSIONS'
@@ -67,75 +89,62 @@
 						: 'Not cross-checked.'}
 			</p>
 		{:else}
-			<p class="text-ink">
-				<span class="tabular font-semibold">{number(line.quantity)} {unit}</span>
-				<span class="text-muted">ordered directly in sales units, no conversion used.</span>
+			<p>
+				<span class="font-semibold tabular">{number(line.quantity)} {unit}</span>
+				<span class="text-muted-foreground">ordered directly in sales units, no conversion.</span>
 			</p>
 		{/if}
 	</div>
 
-	<dl class="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 text-sm lg:grid-cols-3">
-		<div>
-			<dt class="text-xs text-muted">Price</dt>
-			<dd class="tabular text-ink">
-				{money(o.comparisonPrice)} per {o.comparisonUnit === 'L' ? 'litre' : 'kg'}
-			</dd>
-			<dd class="text-xs text-muted">valid until {date(o.priceValidTo)}</dd>
-		</div>
-		<div>
-			<dt class="text-xs text-muted">Available</dt>
-			{#if o.availableAmount === null}
-				<dd class="text-ink">Unknown</dd>
-				<dd class="text-xs text-muted">shipped by the supplier</dd>
-			{:else}
-				<dd class={['tabular', short ? 'font-semibold text-stop' : 'text-ink']}>
-					{number(o.availableAmount)}
-					{unit} in Aimo stock
-				</dd>
-				<dd class="text-xs text-muted">ordered {number(line.quantity)}</dd>
-			{/if}
-		</div>
-		<div>
-			<dt class="text-xs text-muted">Delivery</dt>
-			<dd class={daysLate > 0 ? 'font-semibold text-hold' : 'text-ink'}>{date(o.availableDate)}</dd>
-			<dd class="text-xs text-muted">
-				{daysLate > 0
-					? `${daysLate} day${daysLate > 1 ? 's' : ''} after ${date(deliverBy)}`
-					: `on time for ${date(deliverBy)}`}
-			</dd>
-		</div>
-		<div>
-			<dt class="text-xs text-muted">Order by</dt>
-			<dd class={closingPassed ? 'font-semibold text-stop' : 'text-ink'}>
-				{dateTime(o.closingTime)}
-			</dd>
-			<dd class="text-xs text-muted">
-				{closingPassed ? 'closing time has passed' : 'closing time'}
-			</dd>
-		</div>
-		<div>
-			<dt class="text-xs text-muted">Delivery reliability</dt>
-			<dd class="tabular text-ink">{reliability === null ? 'No history' : percent(reliability)}</dd>
-			<dd class="text-xs text-muted">
-				{reliability === null ? 'not the same as unreliable' : 'delivered vs. ordered'}
-			</dd>
-		</div>
-		<div>
-			<dt class="text-xs text-muted">CO₂ estimate</dt>
-			{#if line.product.carbonFootprint}
-				<dd class="tabular text-ink">{number(line.product.carbonFootprint.value)} kg CO₂e/kg</dd>
-				<dd class="text-xs text-muted">product-group average</dd>
-			{:else}
-				<dd class="text-ink">No estimate</dd>
-			{/if}
-		</div>
+	<dl class="grid grid-cols-2 gap-x-6 gap-y-4 px-4 py-4 text-sm sm:px-5 lg:grid-cols-3">
+		{@render fact(
+			'Price',
+			`${money(o.comparisonPrice)} per ${o.comparisonUnit === 'L' ? 'litre' : 'kg'}`,
+			`valid until ${date(o.priceValidTo)}`
+		)}
+		{#if o.availableAmount === null}
+			{@render fact('Available', 'Unknown', 'shipped by the supplier')}
+		{:else}
+			{@render fact(
+				'Available',
+				`${number(o.availableAmount)} ${unit} in Aimo stock`,
+				`ordered ${number(line.quantity)}`,
+				short ? 'stop' : undefined
+			)}
+		{/if}
+		{@render fact(
+			'Delivery',
+			date(o.availableDate),
+			daysLate > 0
+				? `${daysLate} day${daysLate > 1 ? 's' : ''} after ${date(deliverBy)}`
+				: `on time for ${date(deliverBy)}`,
+			daysLate > 0 ? 'hold' : undefined
+		)}
+		{@render fact(
+			'Order by',
+			dateTime(o.closingTime),
+			closingPassed ? 'closing time has passed' : 'closing time',
+			closingPassed ? 'stop' : undefined
+		)}
+		{@render fact(
+			'Delivery reliability',
+			reliability === null ? 'No history' : percent(reliability),
+			reliability === null ? 'not the same as unreliable' : 'delivered vs. ordered'
+		)}
+		{@render fact(
+			'CO₂ estimate',
+			line.product.carbonFootprint
+				? `${number(line.product.carbonFootprint.value)} kg CO₂e/kg`
+				: 'No estimate',
+			line.product.carbonFootprint ? 'product-group average' : ''
+		)}
 	</dl>
 
-	<p class="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-muted">
+	<footer
+		class="flex flex-wrap items-center gap-1.5 border-t px-4 py-3 text-xs text-muted-foreground sm:px-5"
+	>
 		{#each line.product.claims as claim (claimText(claim))}
-			<span class="code rounded-sm border border-line px-1.5 py-0.5 text-ink"
-				>{claimText(claim)}</span
-			>
+			<Badge variant="outline" class="code font-normal">{claimText(claim)}</Badge>
 		{:else}
 			<span>No claims declared.</span>
 		{/each}
@@ -144,6 +153,6 @@
 				? 'Declared by the manufacturer (GS1 Synkka).'
 				: 'Manufacturer data missing; unknown is not free-from.'}
 		</span>
-		<span>Live data fetched {dateTime(o.fetchedAt)}.</span>
-	</p>
+		<span class="ml-auto">Live data fetched {dateTime(o.fetchedAt)}</span>
+	</footer>
 </article>

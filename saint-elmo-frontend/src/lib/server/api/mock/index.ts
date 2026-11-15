@@ -21,6 +21,7 @@ import {
 	daysFromNow,
 	minutesAgo
 } from './fixtures';
+import { mockCatalog } from './catalog';
 
 /**
  * In-memory stand-in for the FastAPI backend. State lives on globalThis so it
@@ -160,9 +161,9 @@ function seed(): Store {
 	};
 	append(s, {
 		at: minutesAgo(60 * 24 * 3),
-		organisationId: 'org-kajo',
-		organisationName: orgName('org-kajo'),
-		actor: { kind: 'user', name: 'Aino Virtanen' },
+		organisationId: 'org-aurora',
+		organisationName: orgName('org-aurora'),
+		actor: { kind: 'user', name: 'Helmi Virtanen' },
 		type: 'KEY_ISSUED',
 		agentId: 'agt-dairy',
 		summary: 'Issued key se_ag_7f2a (Purchasing, 7 days) to dairy-restock'
@@ -174,29 +175,42 @@ function seed(): Store {
 
 // --- Helpers ----------------------------------------------------------------
 
+/**
+ * The demo organisation the caller belongs to. Matched by id, or by name when the
+ * session comes from the real backend (API_MODE_AUTH=http), whose seed uses the same
+ * organisation names but its own ids. That keeps not-yet-built areas on demo data
+ * while sign-in is real.
+ */
+function demoOrgOf(caller: Caller) {
+	const org = caller.user.organisation;
+	if (!org) return null;
+	return ORGS.find((o) => o.id === org.id) ?? ORGS.find((o) => o.name === org.name) ?? null;
+}
+
 function orgOf(caller: Caller) {
-	return caller.user.organisation?.id ?? null;
+	return demoOrgOf(caller)?.id ?? null;
 }
 
 function visible<T extends { organisationId: string }>(caller: Caller, rows: T[]) {
 	const org = orgOf(caller);
 	// Valio Aimo staff read across customers; everyone else sees only their own.
-	return caller.user.role === 'aimo_staff' ? rows : rows.filter((r) => r.organisationId === org);
+	return caller.user.role === 'AIMO_STAFF' ? rows : rows.filter((r) => r.organisationId === org);
 }
 
 function requireBuyer(caller: Caller) {
-	if (caller.user.role === 'aimo_staff' || !caller.user.organisation) {
+	const org = demoOrgOf(caller);
+	if (caller.user.role === 'AIMO_STAFF' || !org) {
 		throw new ApiError(
 			403,
 			'PERMISSION_DENIED',
 			'Only people in the buyer organisation can do this.'
 		);
 	}
-	return caller.user.organisation;
+	return org;
 }
 
 function requireStaff(caller: Caller) {
-	if (caller.user.role !== 'aimo_staff') {
+	if (caller.user.role !== 'AIMO_STAFF') {
 		throw new ApiError(403, 'PERMISSION_DENIED', 'This view is for Valio Aimo staff.');
 	}
 }
@@ -371,7 +385,7 @@ export const mockApi: SaintElmoApi = {
 				);
 			}
 			const user = publicUser(u);
-			return { token: encodeToken(user), user };
+			return { token: encodeToken(user), user, expiresInSeconds: SESSION_MINUTES * 60 };
 		},
 		async session(token) {
 			const claims = decodeToken(token);
@@ -384,10 +398,12 @@ export const mockApi: SaintElmoApi = {
 				email: u.email,
 				password: u.password,
 				label:
-					u.role === 'aimo_staff' ? 'Valio Aimo operations' : `${u.organisation?.name}, buyer admin`
+					u.role === 'AIMO_STAFF' ? 'Valio Aimo operations' : `${u.organisation?.name}, buyer admin`
 			}));
 		}
 	},
+
+	catalog: mockCatalog,
 
 	orders: {
 		async list(caller, filter) {

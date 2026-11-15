@@ -41,38 +41,43 @@ function closingTimeBefore(isoDate: string) {
 // --- Organisations and people -----------------------------------------------
 
 export const ORGS: BuyerOrganisation[] = [
-	{ id: 'org-kajo', name: 'Kajo Hotels', kind: 'hotel_chain', customerNumber: '100482' },
 	{
-		id: 'org-merikoski',
-		name: 'Merikoski Hospital kitchen',
+		id: 'org-aurora',
+		name: 'Aurora Hotels',
+		kind: 'hotel_chain',
+		customerNumber: 'DEMO-HOTEL-001'
+	},
+	{
+		id: 'org-kuusikko',
+		name: 'Kuusikko Hospital Kitchen',
 		kind: 'hospital',
-		customerNumber: '100917'
+		customerNumber: 'DEMO-HOSPITAL-001'
 	}
 ];
 
 export const USERS: (SessionUser & { password: string })[] = [
 	{
-		id: 'u-aino',
-		name: 'Aino Virtanen',
-		email: 'aino@kajohotels.demo',
-		password: 'demo',
-		role: 'buyer_admin',
+		id: 'u-helmi',
+		name: 'Helmi Virtanen',
+		email: 'buyer.admin@aurora-hotels.example',
+		password: 'saint-elmo-demo',
+		role: 'BUYER_ADMIN',
 		organisation: ORGS[0]
 	},
 	{
-		id: 'u-mikael',
-		name: 'Mikael Laine',
-		email: 'mikael@merikoski.demo',
-		password: 'demo',
-		role: 'buyer_admin',
+		id: 'u-onni',
+		name: 'Onni Korhonen',
+		email: 'buyer.admin@kuusikko-hospital.example',
+		password: 'saint-elmo-demo',
+		role: 'BUYER_ADMIN',
 		organisation: ORGS[1]
 	},
 	{
 		id: 'u-satu',
-		name: 'Satu Korhonen',
-		email: 'satu@aimo-ops.demo',
-		password: 'demo',
-		role: 'aimo_staff',
+		name: 'Satu Mäkelä',
+		email: 'ops@valio-aimo.example',
+		password: 'saint-elmo-demo',
+		role: 'AIMO_STAFF',
 		organisation: null
 	}
 ];
@@ -84,7 +89,7 @@ export const PRODUCTS = {
 		code: '463038',
 		name: 'Valio Eila® semi skimmed milk drink 10 l novobox lactose free',
 		vendor: 'Valio',
-		categoryCode: '1101',
+		categoryCode: '10400',
 		salesUnit: 'KI',
 		claims: [{ type: 'FREE_FROM', element: 'LACTOSE' }],
 		labels: ['MADE_IN_FINLAND_FLAG', 'COOL_TEMPERATURE'],
@@ -93,22 +98,22 @@ export const PRODUCTS = {
 		claimsSource: 'SYNKKA'
 	},
 	lowLactose1l: {
-		code: '418207',
-		name: 'Semi skimmed milk drink 1 l low lactose',
-		vendor: 'Arla',
-		categoryCode: '1101',
+		code: '464042',
+		name: 'Valio Hyvä suomalainen Arki® semi skimmed milk drink 1 l',
+		vendor: 'Valio',
+		categoryCode: '10400',
 		salesUnit: 'ST',
-		claims: [{ type: 'LOW', element: 'LACTOSE' }],
+		claims: [],
 		labels: ['COOL_TEMPERATURE'],
 		deliveryReliability: 0.93,
 		carbonFootprint: { value: 1.31, basis: 'PRODUCT_GROUP_AVERAGE' },
 		claimsSource: 'SYNKKA'
 	},
 	butterLf: {
-		code: '402115',
-		name: 'Lactose-free butter 500 g',
+		code: '471280',
+		name: 'Valio Egg & Butter spread 500 g lactose free',
 		vendor: 'Valio',
-		categoryCode: '1104',
+		categoryCode: '10592',
 		salesUnit: 'KI',
 		claims: [{ type: 'FREE_FROM', element: 'LACTOSE' }],
 		labels: ['MADE_IN_FINLAND_FLAG'],
@@ -117,10 +122,10 @@ export const PRODUCTS = {
 		claimsSource: 'SYNKKA'
 	},
 	gfBread: {
-		code: '377920',
-		name: 'Gluten-free oat bread 300 g, sliced',
+		code: '474391',
+		name: 'Oululainen Reissumies Gluten-Free Oat 3pcs 210g, oat bread',
 		vendor: 'Fazer',
-		categoryCode: '2203',
+		categoryCode: '10901',
 		salesUnit: 'ST',
 		claims: [
 			{ type: 'FREE_FROM', element: 'GLUTEN' },
@@ -132,10 +137,10 @@ export const PRODUCTS = {
 		claimsSource: 'SYNKKA'
 	},
 	gfBreadOriginal: {
-		code: '377815',
-		name: 'Gluten-free dark bread 330 g, sliced',
-		vendor: 'Fazer',
-		categoryCode: '2203',
+		code: '469602',
+		name: 'Vaasan Moilas Free From dark gluten-free portion bread 280 g',
+		vendor: 'Vaasan',
+		categoryCode: '10900',
 		salesUnit: 'ST',
 		claims: [
 			{ type: 'FREE_FROM', element: 'GLUTEN' },
@@ -147,10 +152,10 @@ export const PRODUCTS = {
 		claimsSource: 'SYNKKA'
 	},
 	muesli: {
-		code: '361044',
-		name: 'Berry muesli 2.5 kg',
-		vendor: 'Myllärin',
-		categoryCode: '2401',
+		code: '465238',
+		name: 'Fazer Alku Garden berries muesli 375 g',
+		vendor: 'Fazer',
+		categoryCode: '21373',
 		salesUnit: 'PAK',
 		claims: [],
 		labels: [],
@@ -159,10 +164,10 @@ export const PRODUCTS = {
 		claimsSource: 'MISSING'
 	},
 	cream: {
-		code: '409876',
-		name: 'Whipping cream 38% 1 l lactose free',
+		code: '464699',
+		name: 'Valio whipping cream 1 l lactose free, organic',
 		vendor: 'Valio',
-		categoryCode: '1102',
+		categoryCode: '10401',
 		salesUnit: 'ST',
 		claims: [{ type: 'FREE_FROM', element: 'LACTOSE' }],
 		labels: ['MADE_IN_FINLAND_FLAG'],
@@ -203,9 +208,34 @@ export const MANDATES: Record<string, Mandate> = {
 		maxOrderTotal: 2000,
 		autoApproveUpTo: 1500,
 		periodSpendCap: 5000,
-		allowedCategoryCodes: ['1101', '1102', '1103', '1104'],
+		// Same dairy categories as the backend's demo seed (db/seeders/demo.py)
+		allowedCategoryCodes: [
+			'10400',
+			'10401',
+			'10404',
+			'10405',
+			'10411',
+			'10412',
+			'10419',
+			'10430',
+			'10500',
+			'10501',
+			'10600',
+			'10602',
+			'10603',
+			'10630',
+			'10631',
+			'10632',
+			'10633',
+			'10635',
+			'10636',
+			'10637',
+			'10639',
+			'10640'
+		],
 		requiredClaims: [{ type: 'FREE_FROM', element: 'LACTOSE' }],
 		substitutionPolicy: 'IF_REQUIREMENTS_HOLD',
+		maxSubstitutePriceIncreasePct: 10,
 		minDeliveryReliability: 0.9
 	},
 	'agt-event': {
@@ -221,13 +251,14 @@ export const MANDATES: Record<string, Mandate> = {
 	'agt-ward': {
 		...emptyMandate,
 		version: 7,
-		maxOrderTotal: 2500,
+		maxOrderTotal: 3000,
 		autoApproveUpTo: 1000,
-		periodSpendCap: 8000,
+		periodSpendCap: 12000,
+		spendPeriod: 'MONTH',
 		excludedAllergens: ['AM', 'AW'],
 		allergenStrictness: 'declared_free',
 		substitutionPolicy: 'ALWAYS_NEEDS_APPROVAL',
-		maxSubstitutePriceIncreasePct: 15,
+		maxSubstitutePriceIncreasePct: 5,
 		minDeliveryReliability: 0.85
 	}
 };
@@ -241,7 +272,7 @@ export const AGENTS: (Omit<AgentSummary, 'periodSpend' | 'activeKeys' | 'mandate
 		purpose: 'Keeps the hotel kitchens stocked with lactose-free dairy.',
 		status: 'ACTIVE',
 		lastActiveAt: minutesAgo(9),
-		organisationId: 'org-kajo'
+		organisationId: 'org-aurora'
 	},
 	{
 		id: 'agt-event',
@@ -249,7 +280,7 @@ export const AGENTS: (Omit<AgentSummary, 'periodSpend' | 'activeKeys' | 'mandate
 		purpose: 'Sources everything for banquets and one-off events.',
 		status: 'ACTIVE',
 		lastActiveAt: minutesAgo(60 * 26),
-		organisationId: 'org-kajo'
+		organisationId: 'org-aurora'
 	},
 	{
 		id: 'agt-ward',
@@ -257,7 +288,7 @@ export const AGENTS: (Omit<AgentSummary, 'periodSpend' | 'activeKeys' | 'mandate
 		purpose: 'Orders for patient meals under strict allergen rules.',
 		status: 'ACTIVE',
 		lastActiveAt: minutesAgo(41),
-		organisationId: 'org-merikoski'
+		organisationId: 'org-kuusikko'
 	}
 ];
 
@@ -276,7 +307,7 @@ export const KEYS: Record<string, AgentKey[]> = {
 				'order:read'
 			],
 			createdAt: minutesAgo(60 * 24 * 3),
-			createdBy: 'Aino Virtanen',
+			createdBy: 'Helmi Virtanen',
 			expiresAt: daysFromNow(4),
 			lastUsedAt: minutesAgo(9),
 			revokedAt: null
@@ -287,7 +318,7 @@ export const KEYS: Record<string, AgentKey[]> = {
 			label: 'Old laptop',
 			scopes: ['catalog:read', 'offers:read', 'mandate:read', 'order:read'],
 			createdAt: minutesAgo(60 * 24 * 20),
-			createdBy: 'Aino Virtanen',
+			createdBy: 'Helmi Virtanen',
 			expiresAt: daysFromNow(10),
 			lastUsedAt: minutesAgo(60 * 24 * 12),
 			revokedAt: minutesAgo(60 * 24 * 11)
@@ -307,7 +338,7 @@ export const KEYS: Record<string, AgentKey[]> = {
 				'order:read'
 			],
 			createdAt: minutesAgo(60 * 24 * 6),
-			createdBy: 'Aino Virtanen',
+			createdBy: 'Helmi Virtanen',
 			expiresAt: daysFromNow(1),
 			lastUsedAt: minutesAgo(60 * 26),
 			revokedAt: null
@@ -327,7 +358,7 @@ export const KEYS: Record<string, AgentKey[]> = {
 				'order:read'
 			],
 			createdAt: minutesAgo(60 * 24 * 2),
-			createdBy: 'Mikael Laine',
+			createdBy: 'Onni Korhonen',
 			expiresAt: daysFromNow(5),
 			lastUsedAt: minutesAgo(41),
 			revokedAt: null
@@ -353,8 +384,8 @@ export function buildOrders(): Order[] {
 		{
 			orderId: 'ORD-0142',
 			quoteId: 'Q-0398',
-			organisationId: 'org-kajo',
-			organisationName: 'Kajo Hotels',
+			organisationId: 'org-aurora',
+			organisationName: 'Aurora Hotels',
 			agent: { id: 'agt-dairy', name: 'dairy-restock' },
 			status: 'PENDING_APPROVAL',
 			buyerRequest:
@@ -414,13 +445,13 @@ export function buildOrders(): Order[] {
 		{
 			orderId: 'ORD-0139',
 			quoteId: 'Q-0391',
-			organisationId: 'org-kajo',
-			organisationName: 'Kajo Hotels',
+			organisationId: 'org-aurora',
+			organisationName: 'Aurora Hotels',
 			agent: { id: 'agt-dairy', name: 'dairy-restock' },
 			status: 'PENDING_APPROVAL',
 			buyerRequest: '400 L of lactose-free milk for the Wednesday breakfast buffets.',
 			rationale:
-				'Only 12 cases of Eila 10 l are available for Wednesday (240 L). I took all of it and covered the remaining 160 L with the 1 l low-lactose carton, which is cheaper and in stock. It is not declared lactose-free, so a person has to decide whether low-lactose is acceptable for the buffet. The alternative is moving 160 L to Thursday.',
+				'Only 12 cases of Eila 10 l are available for Wednesday (240 L). I took all of it and covered the remaining 160 L with the regular 1 l Arki carton, which is cheaper and in stock. It is not declared lactose-free, so a person has to decide whether regular milk is acceptable for the buffet. The alternative is moving 160 L to Thursday.',
 			deliverBy: wednesday,
 			lines: [
 				{
@@ -488,8 +519,8 @@ export function buildOrders(): Order[] {
 						severity: 'NEEDS_HUMAN',
 						lineRef: 'L2',
 						message:
-							'The substitute is not declared lactose-free. It is labelled low-lactose, and the mandate requires FREE_FROM_LACTOSE.',
-						facts: { required: 'FREE_FROM LACTOSE', declared: 'LOW LACTOSE', source: 'Synkka' }
+							'The substitute is not declared lactose-free. It makes no lactose claim at all, and the mandate requires FREE_FROM_LACTOSE.',
+						facts: { required: 'FREE_FROM LACTOSE', declared: 'none', source: 'Synkka' }
 					},
 					{
 						code: 'ROUNDED_TO_LOT_SIZE',
@@ -512,8 +543,8 @@ export function buildOrders(): Order[] {
 		{
 			orderId: 'ORD-0137',
 			quoteId: 'Q-0385',
-			organisationId: 'org-merikoski',
-			organisationName: 'Merikoski Hospital kitchen',
+			organisationId: 'org-kuusikko',
+			organisationName: 'Kuusikko Hospital Kitchen',
 			agent: { id: 'agt-ward', name: 'ward-kitchen' },
 			status: 'PENDING_APPROVAL',
 			buyerRequest: 'Gluten- and milk-free bread for 140 patients for Tuesday.',
@@ -579,8 +610,8 @@ export function buildOrders(): Order[] {
 		{
 			orderId: 'ORD-0131',
 			quoteId: 'Q-0377',
-			organisationId: 'org-kajo',
-			organisationName: 'Kajo Hotels',
+			organisationId: 'org-aurora',
+			organisationName: 'Aurora Hotels',
 			agent: { id: 'agt-dairy', name: 'dairy-restock' },
 			status: 'PLACED',
 			buyerRequest: 'Top up lactose-free butter, about 40 kg.',
@@ -629,8 +660,8 @@ export function buildOrders(): Order[] {
 		{
 			orderId: 'ORD-0128',
 			quoteId: 'Q-0370',
-			organisationId: 'org-kajo',
-			organisationName: 'Kajo Hotels',
+			organisationId: 'org-aurora',
+			organisationName: 'Aurora Hotels',
 			agent: { id: 'agt-event', name: 'event-planner' },
 			status: 'REJECTED',
 			buyerRequest: 'Cream and cheese for the 300-guest wedding on Saturday.',
@@ -687,8 +718,8 @@ export function buildOrders(): Order[] {
 		{
 			orderId: 'ORD-0125',
 			quoteId: 'Q-0366',
-			organisationId: 'org-merikoski',
-			organisationName: 'Merikoski Hospital kitchen',
+			organisationId: 'org-kuusikko',
+			organisationName: 'Kuusikko Hospital Kitchen',
 			agent: { id: 'agt-ward', name: 'ward-kitchen' },
 			status: 'REJECTED',
 			buyerRequest: 'Breakfast muesli for the cardiology ward.',
@@ -750,7 +781,7 @@ export const SCENARIOS: ScenarioOverride[] = [
 	},
 	{
 		id: 'sc-2',
-		productCode: '377815',
+		productCode: '469602',
 		productName: PRODUCTS.gfBreadOriginal.name,
 		kind: 'OUT_OF_STOCK',
 		detail: 'Out of stock until next week',
@@ -766,7 +797,7 @@ export const SCENARIOS: ScenarioOverride[] = [
 	},
 	{
 		id: 'sc-4',
-		productCode: '402115',
+		productCode: '471280',
 		productName: PRODUCTS.butterLf.name,
 		kind: 'PRICE_CHANGE',
 		detail: 'Price up 8% at the next re-check',

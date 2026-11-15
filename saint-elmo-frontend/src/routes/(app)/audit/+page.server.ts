@@ -1,4 +1,4 @@
-import { api } from '#lib/server/api/index.js';
+import { api, apiModes } from '#lib/server/api/index.js';
 import { requireCaller } from '#lib/server/session.js';
 import { readAuditFilter } from './filter.js';
 import type { PageServerLoad } from './$types';
@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	}
 
 	return {
+		source: apiModes.audit,
 		events,
 		filter,
 		total: all.length,
@@ -28,6 +29,6 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			.map(([id, name]) => ({ id, name }))
 			.sort((a, b) => a.name.localeCompare(b.name)),
 		typeOptions: [...types].sort(),
-		crossCustomer: caller.user.role === 'aimo_staff'
+		crossCustomer: caller.user.role === 'AIMO_STAFF'
 	};
 };

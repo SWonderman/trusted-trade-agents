@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { api } from '#lib/server/api/index.js';
+import { api, apiModes } from '#lib/server/api/index.js';
 import { attempt, text } from '#lib/server/actions.js';
 import { requireCaller, requireRole } from '#lib/server/session.js';
 import type { ScenarioKind } from '#lib/api/types.js';
@@ -9,7 +9,7 @@ const KINDS: ScenarioKind[] = ['OUT_OF_STOCK', 'PARTIAL', 'LATE', 'PRICE_CHANGE'
 
 export const load: PageServerLoad = async ({ locals, url, depends }) => {
 	const caller = requireCaller(locals, url);
-	requireRole(caller, 'aimo_staff');
+	requireRole(caller, 'AIMO_STAFF');
 	depends('app:inbox');
 
 	const [feed, scenarios] = await Promise.all([
@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ locals, url, depends }) => {
 	const today = feed.filter((e) => new Date(e.at).getTime() > since);
 
 	return {
+		source: apiModes.oversight,
 		feed,
 		scenarios,
 		stats: {

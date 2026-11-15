@@ -3,6 +3,7 @@ import {
 	API_MODE_AGENTS,
 	API_MODE_AUDIT,
 	API_MODE_AUTH,
+	API_MODE_CATALOG,
 	API_MODE_ORDERS,
 	API_MODE_OVERSIGHT,
 	BACKEND_URL
@@ -13,27 +14,45 @@ import { mockApi } from './mock';
 
 export { ApiError, type Caller, type SaintElmoApi } from './client';
 
-const http = httpApi(BACKEND_URL);
-const pick = (mode: 'mock' | 'http' | undefined) =>
-	(mode ?? API_MODE) === 'http' ? http : mockApi;
+type Area = keyof SaintElmoApi;
+type Mode = 'mock' | 'http';
 
-/**
- * The API the server side uses, assembled per namespace so real backend
- * endpoints can be switched on one at a time (API_MODE_ORDERS=http, …).
- */
-export const api: SaintElmoApi = {
-	auth: pick(API_MODE_AUTH).auth,
-	orders: pick(API_MODE_ORDERS).orders,
-	agents: pick(API_MODE_AGENTS).agents,
-	audit: pick(API_MODE_AUDIT).audit,
-	oversight: pick(API_MODE_OVERSIGHT).oversight
+/** Where each area's data comes from: the backend, or the in-memory demo data. */
+export const apiModes: Record<Area, Mode> = {
+	auth: API_MODE_AUTH ?? API_MODE,
+	catalog: API_MODE_CATALOG ?? API_MODE,
+	orders: API_MODE_ORDERS ?? API_MODE,
+	agents: API_MODE_AGENTS ?? API_MODE,
+	audit: API_MODE_AUDIT ?? API_MODE,
+	oversight: API_MODE_OVERSIGHT ?? API_MODE
 };
 
-/** True when any namespace still answers from the mock; shown in the UI. */
-export const usingMock = [
-	API_MODE_AUTH,
-	API_MODE_ORDERS,
-	API_MODE_AGENTS,
-	API_MODE_AUDIT,
-	API_MODE_OVERSIGHT
-].some((m) => (m ?? API_MODE) === 'mock');
+// The backend only accepts its own session tokens, which only real sign-in issues.
+if (apiModes.auth === 'mock') {
+	const live = (Object.keys(apiModes) as Area[]).filter((a) => apiModes[a] === 'http');
+	if (live.length) {
+		throw new Error(
+			`API_MODE_AUTH must be "http" when ${live.join(', ')} use the backend: ` +
+				'the backend only accepts sessions it signed itself.'
+		);
+	}
+}
+
+const http = httpApi(BACKEND_URL);
+const pick = (area: Area) => (apiModes[area] === 'http' ? http : mockApi)[area];
+
+/**
+ * The API the server side uses, assembled per area so real backend endpoints can be
+ * switched on one at a time (API_MODE_CATALOG=http, …).
+ */
+export const api = {
+	auth: pick('auth'),
+	catalog: pick('catalog'),
+	orders: pick('orders'),
+	agents: pick('agents'),
+	audit: pick('audit'),
+	oversight: pick('oversight')
+} as SaintElmoApi;
+
+/** True when any area still answers from the mock; shown in the UI. */
+export const usingMock = Object.values(apiModes).includes('mock');

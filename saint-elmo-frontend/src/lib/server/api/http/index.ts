@@ -2,56 +2,111 @@ import type {
 	AgentKey,
 	AgentSummary,
 	AuditEvent,
+	BackendMe,
 	IssuedKey,
 	Order,
+	ProductDetail,
+	ProductSearchResponse,
 	ScenarioOverride,
-	SessionUser
+	SessionUser,
+	Vocabulary
 } from '#lib/api/types.js';
 import { ApiError, type Caller, type SaintElmoApi } from '../client';
 
+type CallInit = Omit<RequestInit, 'body'> & {
+	caller?: Caller;
+	/** A bearer token without a resolved user yet, e.g. right after sign-in. */
+	token?: string;
+	query?: Record<string, string | undefined>;
+	/** Sent as JSON. */
+	json?: unknown;
+	/** Sent as application/x-www-form-urlencoded, as OAuth 2.0 expects. */
+	form?: Record<string, string>;
+};
+
+/** The backend's session user, in the shape the pages use. */
+function sessionUser(me: BackendMe): SessionUser {
+	return {
+		id: me.publicId,
+		name: `${me.firstName} ${me.lastName}`.trim(),
+		email: me.email,
+		role: me.role,
+		organisation: { id: me.organization.publicId, name: me.organization.name }
+	};
+}
+
 /**
- * The FastAPI implementation. Routes follow design.md and issues #11, #15 and
- * #22; the ones not built yet are marked TODO with their issue. Switch a
- * namespace over with API_MODE_<NAMESPACE>=http once its routes exist.
+ * The FastAPI implementation. Sign-in and the catalog call routes that exist today;
+ * orders, agents, audit and scenario controls follow issues #15 and #22 and are marked
+ * TODO until those land. Switch a namespace over with API_MODE_<NAMESPACE>=http.
  */
 export function httpApi(baseUrl: string): SaintElmoApi {
-	async function call<T>(
-		path: string,
-		init: RequestInit & { caller?: Caller; query?: Record<string, string | undefined> } = {}
-	): Promise<T> {
+	async function call<T>(path: string, init: CallInit = {}): Promise<T> {
+		const { caller, token, query, json, form, ...rest } = init;
 		const url = new URL(path, baseUrl);
-		for (const [k, v] of Object.entries(init.query ?? {})) if (v) url.searchParams.set(k, v);
-		const headers = new Headers(init.headers);
+		for (const [k, v] of Object.entries(query ?? {})) if (v) url.searchParams.set(k, v);
+		const headers = new Headers(rest.headers);
 		headers.set('accept', 'application/json');
-		if (init.body) headers.set('content-type', 'application/json');
-		if (init.caller) headers.set('authorization', `Bearer ${init.caller.token}`);
+		let body: BodyInit | undefined;
+		if (json !== undefined) {
+			headers.set('content-type', 'application/json');
+			body = JSON.stringify(json);
+		} else if (form) {
+			body = new URLSearchParams(form);
+		}
+		const bearer = caller?.token ?? token;
+		if (bearer) headers.set('authorization', `Bearer ${bearer}`);
 
-		const res = await fetch(url, { ...init, headers });
+		let res: Response;
+		try {
+			res = await fetch(url, { ...rest, headers, body });
+		} catch {
+			throw new ApiError(
+				503,
+				'BACKEND_UNREACHABLE',
+				`Saint Elmo’s backend at ${url.origin} isn’t answering. Is it running?`
+			);
+		}
 		if (res.status === 204) return undefined as T;
-		const body = await res.json().catch(() => null);
+		const payload = await res.json().catch(() => null);
 		if (!res.ok) {
-			// The backend's error envelope: { error: { code, message } } (api/exceptions.py)
-			const err = body?.error ?? body?.detail ?? {};
+			// The backend's error envelope: { error: { code, message, requestId } } (api/error_handlers.py)
+			const err = payload?.error ?? {};
 			throw new ApiError(
 				res.status,
 				err.code ?? `HTTP_${res.status}`,
 				err.message ?? `The backend answered ${res.status} for ${url.pathname}.`
 			);
 		}
-		return body as T;
+		return payload as T;
 	}
 
-	const json = (data: unknown) => JSON.stringify(data);
+	const orNull = async <T>(p: Promise<T>) => {
+		try {
+			return await p;
+		} catch (e) {
+			if (e instanceof ApiError && e.status === 404) return null;
+			throw e;
+		}
+	};
 
 	return {
 		auth: {
-			login: (email, password) =>
-				call('/auth/login', { method: 'POST', body: json({ email, password }) }),
+			async login(email, password) {
+				const grant = await call<{ access_token: string; expires_in: number }>(
+					'/api/v1/auth/token',
+					{ method: 'POST', form: { grant_type: 'password', username: email, password } }
+				);
+				const me = await call<BackendMe>('/api/v1/auth/me', { token: grant.access_token });
+				return {
+					token: grant.access_token,
+					user: sessionUser(me),
+					expiresInSeconds: grant.expires_in
+				};
+			},
 			async session(token) {
 				try {
-					return await call<SessionUser>('/auth/me', {
-						caller: { token, user: null as unknown as SessionUser }
-					});
+					return sessionUser(await call<BackendMe>('/api/v1/auth/me', { token }));
 				} catch (e) {
 					if (e instanceof ApiError && (e.status === 401 || e.status === 403)) return null;
 					throw e;
@@ -60,6 +115,24 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 			demoAccounts: async () => []
 		},
 
+		catalog: {
+			search: (caller, request) =>
+				call<ProductSearchResponse>('/api/v1/products/search', {
+					caller,
+					method: 'POST',
+					json: request
+				}),
+			product: (caller, code) =>
+				orNull(
+					call<ProductDetail>(`/api/v1/products/${encodeURIComponent(code)}`, {
+						caller,
+						query: { language: 'en' }
+					})
+				),
+			vocabulary: (caller) => call<Vocabulary>('/api/v1/catalog/vocabulary', { caller })
+		},
+
+		// TODO(#15): confirm paths once the orders and approval API lands.
 		orders: {
 			async list(caller, filter) {
 				const page = await call<{ items: Order[] }>('/api/v1/orders', {
@@ -68,48 +141,33 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 				});
 				return page.items;
 			},
-			async get(caller, orderId) {
-				try {
-					return await call<Order>(`/api/v1/orders/${encodeURIComponent(orderId)}`, { caller });
-				} catch (e) {
-					if (e instanceof ApiError && e.status === 404) return null;
-					throw e;
-				}
-			},
+			get: (caller, orderId) =>
+				orNull(call<Order>(`/api/v1/orders/${encodeURIComponent(orderId)}`, { caller })),
 			approve: (caller, orderId, note) =>
 				call(`/api/v1/orders/${encodeURIComponent(orderId)}/approve`, {
 					caller,
 					method: 'POST',
-					body: json({ note })
+					json: { note }
 				}),
 			reject: (caller, orderId, note) =>
 				call(`/api/v1/orders/${encodeURIComponent(orderId)}/reject`, {
 					caller,
 					method: 'POST',
-					body: json({ note })
+					json: { note }
 				})
 		},
 
 		// TODO(#22): confirm paths once the agent token management API lands.
 		agents: {
 			list: (caller) => call<AgentSummary[]>('/api/v1/agents', { caller }),
-			async get(caller, agentId) {
-				try {
-					return await call<AgentSummary>(`/api/v1/agents/${encodeURIComponent(agentId)}`, {
-						caller
-					});
-				} catch (e) {
-					if (e instanceof ApiError && e.status === 404) return null;
-					throw e;
-				}
-			},
-			create: (caller, input) =>
-				call('/api/v1/agents', { caller, method: 'POST', body: json(input) }),
+			get: (caller, agentId) =>
+				orNull(call<AgentSummary>(`/api/v1/agents/${encodeURIComponent(agentId)}`, { caller })),
+			create: (caller, input) => call('/api/v1/agents', { caller, method: 'POST', json: input }),
 			setStatus: (caller, agentId, status) =>
 				call(`/api/v1/agents/${encodeURIComponent(agentId)}`, {
 					caller,
 					method: 'PATCH',
-					body: json({ status })
+					json: { status }
 				}),
 			listKeys: (caller, agentId) =>
 				call<AgentKey[]>(`/api/v1/agents/${encodeURIComponent(agentId)}/tokens`, { caller }),
@@ -117,7 +175,7 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 				call<IssuedKey>(`/api/v1/agents/${encodeURIComponent(agentId)}/tokens`, {
 					caller,
 					method: 'POST',
-					body: json(input)
+					json: input
 				}),
 			revokeKey: (caller, agentId, jti) =>
 				call<AgentKey>(
@@ -148,10 +206,10 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 				call(`/api/v1/scenarios/${encodeURIComponent(id)}`, {
 					caller,
 					method: 'PATCH',
-					body: json({ active })
+					json: { active }
 				}),
 			addScenario: (caller, input) =>
-				call('/api/v1/scenarios', { caller, method: 'POST', body: json(input) }),
+				call('/api/v1/scenarios', { caller, method: 'POST', json: input }),
 			async simulateAgentOrder() {
 				throw new ApiError(
 					501,

@@ -1,9 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { api } from '#lib/server/api/index.js';
+import { api, ApiError } from '#lib/server/api/index.js';
 import { attempt, text } from '#lib/server/actions.js';
 import { requireCaller } from '#lib/server/session.js';
 import type { AllergenStrictness, Mandate, SubstitutionPolicy } from '#lib/api/types.js';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 const money = (v: string) => (v === '' ? NaN : Number(v));
 const codes = (v: string) =>
@@ -11,6 +11,18 @@ const codes = (v: string) =>
 		.split(/[\s,]+/)
 		.map((s) => s.trim())
 		.filter(Boolean);
+
+/** The category codes products actually use, for the picker; null falls back to free text. */
+export const load: PageServerLoad = async ({ locals, url }) => {
+	const caller = requireCaller(locals, url);
+	try {
+		const { categories } = await api.catalog.vocabulary(caller);
+		return { categories };
+	} catch (e) {
+		if (e instanceof ApiError) return { categories: null };
+		throw e;
+	}
+};
 
 export const actions: Actions = {
 	default: async ({ locals, url, request }) => {

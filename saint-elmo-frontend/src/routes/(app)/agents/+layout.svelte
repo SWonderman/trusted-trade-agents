@@ -1,145 +1,166 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import Icon from '#lib/components/ui/Icon.svelte';
-	import OutcomeBadge from '#lib/components/ui/OutcomeBadge.svelte';
+	import BotIcon from '@lucide/svelte/icons/bot';
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+	import PlusIcon from '@lucide/svelte/icons/plus';
+	import OutcomeBadge from '#lib/components/app/OutcomeBadge.svelte';
+	import PageHeader from '#lib/components/app/PageHeader.svelte';
+	import AgentCanvas from '#lib/components/app/AgentCanvas.svelte';
+	import * as Tabs from '#lib/components/ui/tabs/index.js';
+	import ListIcon from '@lucide/svelte/icons/list';
+	import WorkflowIcon from '@lucide/svelte/icons/workflow';
+	import { Badge } from '#lib/components/ui/badge/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import * as Empty from '#lib/components/ui/empty/index.js';
+	import { Progress } from '#lib/components/ui/progress/index.js';
+	import * as Table from '#lib/components/ui/table/index.js';
 	import { claimText, moneyWhole, relative } from '#lib/format.js';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
 
+	// Agents as nodes wired through Saint Elmo; the list is there for when there are many.
+	let view = $state<'nodes' | 'list'>('nodes');
+
 	const substitution = {
 		NEVER: 'Never',
 		IF_REQUIREMENTS_HOLD: 'If requirements hold',
-		ALWAYS_NEEDS_APPROVAL: 'Always needs approval'
+		ALWAYS_NEEDS_APPROVAL: 'Always ask a person'
 	} as const;
 </script>
 
-<svelte:head><title>Agents and mandates · Saint Elmo</title></svelte:head>
+<svelte:head><title>Agents & mandates · Saint Elmo</title></svelte:head>
 
-<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
-	<div>
-		<h1 class="text-2xl font-semibold tracking-tight text-ink">Agents and mandates</h1>
-		<p class="mt-1 max-w-[62ch] text-sm text-muted">
-			Each agent works for one task, under one mandate that only people here can change. An agent
-			can read its mandate but never widen it.
-		</p>
+<PageHeader
+	title="Agents & mandates"
+	source={data.source}
+	description="Each agent works on one task, under one mandate that only people here can change. An agent can read its mandate but never widen it."
+>
+	{#snippet actions()}
+		<Tabs.Root bind:value={view}>
+			<Tabs.List aria-label="View">
+				<Tabs.Trigger value="nodes"><WorkflowIcon /> Nodes</Tabs.Trigger>
+				<Tabs.Trigger value="list"><ListIcon /> List</Tabs.Trigger>
+			</Tabs.List>
+		</Tabs.Root>
+		<Button href={resolve('agents/new')}><PlusIcon /> New agent</Button>
+	{/snippet}
+</PageHeader>
+
+{#if data.agents.length === 0}
+	<Empty.Root class="rounded-xl border border-dashed">
+		<Empty.Header>
+			<Empty.Media variant="icon"><BotIcon /></Empty.Media>
+			<Empty.Title>No agents yet</Empty.Title>
+			<Empty.Description
+				>Create one, set its mandate, then issue it an Agent token.</Empty.Description
+			>
+		</Empty.Header>
+		<Empty.Content>
+			<Button href={resolve('agents/new')}><PlusIcon /> New agent</Button>
+		</Empty.Content>
+	</Empty.Root>
+{:else if view === 'nodes'}
+	<AgentCanvas agents={data.agents} waiting={data.waitingByAgent} />
+{:else}
+	<div class="overflow-hidden rounded-xl border bg-card shadow-xs">
+		<Table.Root class="min-w-[58rem]">
+			<Table.Header>
+				<Table.Row class="bg-muted/50 hover:bg-muted/50">
+					<Table.Head class="pl-5">Agent</Table.Head>
+					<Table.Head>Spend this period</Table.Head>
+					<Table.Head>Decides alone up to</Table.Head>
+					<Table.Head>Requirements</Table.Head>
+					<Table.Head>Substitutes</Table.Head>
+					<Table.Head class="text-right">Tokens</Table.Head>
+					<Table.Head class="w-12"><span class="sr-only">Open</span></Table.Head>
+				</Table.Row>
+			</Table.Header>
+			<Table.Body>
+				{#each data.agents as agent (agent.id)}
+					{@const m = agent.mandate}
+					{@const used = Math.min(100, (agent.periodSpend.committed / m.periodSpendCap) * 100)}
+					<Table.Row
+						class={['group relative align-top', page.params.agentId === agent.id && 'bg-accent/50']}
+					>
+						<Table.Cell class="py-4 pl-5">
+							<div class="flex items-center gap-2">
+								<a
+									href={resolve(`agents/${agent.id}`)}
+									class="code font-semibold text-foreground after:absolute after:inset-0 hover:text-primary"
+									>{agent.name}</a
+								>
+								{#if agent.status === 'DISABLED'}
+									<OutcomeBadge outcome="REJECT" label="Disabled" />
+								{/if}
+							</div>
+							<p class="mt-1 max-w-[30ch] text-sm whitespace-normal text-muted-foreground">
+								{agent.purpose}
+							</p>
+							<p class="mt-1.5 text-xs text-muted-foreground/80">
+								{agent.lastActiveAt ? `Active ${relative(agent.lastActiveAt)}` : 'Not used yet'}
+							</p>
+						</Table.Cell>
+						<Table.Cell class="py-4">
+							<p class="tabular">
+								{moneyWhole(agent.periodSpend.committed)}
+								<span class="text-muted-foreground">/ {moneyWhole(m.periodSpendCap)}</span>
+							</p>
+							<Progress
+								value={used}
+								class={[
+									'mt-2 h-1.5 w-32',
+									used > 85 && '[&>[data-slot=progress-indicator]]:bg-hold'
+								]}
+								aria-label="Share of the {m.spendPeriod === 'WEEK' ? 'weekly' : 'monthly'} cap used"
+							/>
+							<p class="mt-1.5 text-xs text-muted-foreground">
+								per {m.spendPeriod === 'WEEK' ? 'week' : 'month'}
+							</p>
+						</Table.Cell>
+						<Table.Cell class="py-4">
+							<p class="tabular">{moneyWhole(m.autoApproveUpTo)}</p>
+							<p class="text-xs text-muted-foreground tabular">
+								limit {moneyWhole(m.maxOrderTotal)}
+							</p>
+						</Table.Cell>
+						<Table.Cell class="py-4">
+							<div class="flex max-w-[22rem] flex-wrap gap-1">
+								{#each m.requiredClaims as c (claimText(c))}
+									<Badge variant="outline" class="code font-normal">{claimText(c)}</Badge>
+								{/each}
+								{#each m.excludedAllergens as a (a)}
+									<Badge variant="destructive" class="code font-normal" title="Excluded allergen"
+										>no {a}</Badge
+									>
+								{/each}
+								{#if m.allowedCategoryCodes.length}
+									<Badge variant="secondary" class="font-normal">
+										{m.allowedCategoryCodes.length} categories only
+									</Badge>
+								{/if}
+								{#if !m.requiredClaims.length && !m.excludedAllergens.length && !m.allowedCategoryCodes.length}
+									<span class="text-muted-foreground">Any product</span>
+								{/if}
+							</div>
+						</Table.Cell>
+						<Table.Cell class="py-4">{substitution[m.substitutionPolicy]}</Table.Cell>
+						<Table.Cell class="py-4 text-right tabular">
+							{agent.activeKeys}
+							<span class="text-muted-foreground">active</span>
+						</Table.Cell>
+						<Table.Cell class="py-4 pr-4">
+							<ChevronRightIcon
+								class="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+								aria-hidden="true"
+							/>
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
 	</div>
-	<a href={resolve('agents/new')} class="btn btn-primary"><Icon name="plus" /> New agent</a>
-</div>
-
-<div class="panel overflow-x-auto">
-	<table class="w-full min-w-[56rem] text-left text-sm">
-		<thead class="border-b border-line bg-surface text-xs text-muted">
-			<tr>
-				<th scope="col" class="px-4 py-2.5 font-medium">Agent</th>
-				<th scope="col" class="px-4 py-2.5 font-medium">Spend this period</th>
-				<th scope="col" class="px-4 py-2.5 font-medium">Decides alone up to</th>
-				<th scope="col" class="px-4 py-2.5 font-medium">Requirements</th>
-				<th scope="col" class="px-4 py-2.5 font-medium">Substitutes</th>
-				<th scope="col" class="px-4 py-2.5 font-medium">Keys</th>
-				<th scope="col" class="px-4 py-2.5 font-medium"><span class="sr-only">Open</span></th>
-			</tr>
-		</thead>
-		<tbody class="divide-y divide-line">
-			{#each data.agents as agent (agent.id)}
-				{@const m = agent.mandate}
-				{@const used = agent.periodSpend.committed / m.periodSpendCap}
-				<tr
-					class={[
-						'align-top hover:bg-surface',
-						page.params.agentId === agent.id && 'bg-lapis-wash/50'
-					]}
-				>
-					<td class="px-4 py-3.5">
-						<div class="flex items-center gap-2">
-							<a
-								href={resolve(`agents/${agent.id}`)}
-								class="code font-semibold text-ink hover:text-lapis">{agent.name}</a
-							>
-							{#if agent.status === 'DISABLED'}
-								<OutcomeBadge outcome="REJECT" label="Disabled" size="sm" />
-							{/if}
-						</div>
-						<p class="mt-0.5 max-w-[30ch] text-muted">{agent.purpose}</p>
-						<p class="mt-1 text-xs text-faint">
-							{agent.lastActiveAt ? `Active ${relative(agent.lastActiveAt)}` : 'Not used yet'}
-						</p>
-					</td>
-					<td class="px-4 py-3.5">
-						<p class="tabular text-ink">
-							{moneyWhole(agent.periodSpend.committed)}
-							<span class="text-muted">of {moneyWhole(m.periodSpendCap)}</span>
-						</p>
-						<div
-							class="mt-1.5 h-1.5 w-32 overflow-hidden rounded-full bg-sunken"
-							role="meter"
-							aria-valuenow={Math.round(used * 100)}
-							aria-valuemin={0}
-							aria-valuemax={100}
-							aria-label="Share of the {m.spendPeriod === 'WEEK' ? 'weekly' : 'monthly'} cap used"
-						>
-							<div
-								class={['h-full rounded-full', used > 0.85 ? 'bg-hold' : 'bg-lapis']}
-								style:width="{Math.min(100, used * 100)}%"
-							></div>
-						</div>
-						<p class="mt-1 text-xs text-muted">per {m.spendPeriod === 'WEEK' ? 'week' : 'month'}</p>
-					</td>
-					<td class="px-4 py-3.5">
-						<p class="tabular text-ink">{moneyWhole(m.autoApproveUpTo)}</p>
-						<p class="tabular text-xs text-muted">hard limit {moneyWhole(m.maxOrderTotal)}</p>
-					</td>
-					<td class="px-4 py-3.5">
-						<div class="flex max-w-[22rem] flex-wrap gap-1">
-							{#each m.requiredClaims as c (claimText(c))}
-								<span class="code rounded-sm border border-line px-1.5 py-0.5 text-ink"
-									>{claimText(c)}</span
-								>
-							{/each}
-							{#each m.excludedAllergens as a (a)}
-								<span
-									class="code rounded-sm border border-stop/30 bg-stop-wash px-1.5 py-0.5 text-stop"
-									title="Excluded allergen"
-								>
-									no {a}
-								</span>
-							{/each}
-							{#if m.allowedCategoryCodes.length}
-								<span class="rounded-sm bg-sunken px-1.5 py-0.5 text-xs text-muted">
-									{m.allowedCategoryCodes.length} categories only
-								</span>
-							{/if}
-							{#if !m.requiredClaims.length && !m.excludedAllergens.length && !m.allowedCategoryCodes.length}
-								<span class="text-muted">Any product</span>
-							{/if}
-						</div>
-					</td>
-					<td class="px-4 py-3.5 text-ink">{substitution[m.substitutionPolicy]}</td>
-					<td class="tabular px-4 py-3.5 text-ink">
-						{agent.activeKeys}
-						<span class="text-muted">active</span>
-					</td>
-					<td class="px-4 py-3.5 text-right">
-						<a
-							href={resolve(`agents/${agent.id}`)}
-							class="btn btn-sm"
-							aria-label="Open {agent.name}"
-						>
-							Open <Icon name="chevronRight" size={14} />
-						</a>
-					</td>
-				</tr>
-			{:else}
-				<tr>
-					<td colspan="7" class="px-4 py-10 text-center">
-						<p class="font-semibold text-ink">No agents yet</p>
-						<p class="mt-1 text-sm text-muted">Create one, set its mandate, then give it a key.</p>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
+{/if}
 
 {@render children()}
