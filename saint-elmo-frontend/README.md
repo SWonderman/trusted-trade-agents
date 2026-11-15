@@ -14,12 +14,13 @@ cp .env.example .env
 SESSION_COOKIE_SECURE=false npm run dev
 ```
 
-With the backend for sign-in and the catalog (start it first, see `../saint-elmo-backend/README.md`), set in `.env`:
+With the backend for sign-in, the catalog and the audit trail (start it first, see `../saint-elmo-backend/README.md`), set in `.env`:
 
 ```sh
 API_MODE=mock
 API_MODE_AUTH=http
 API_MODE_CATALOG=http
+API_MODE_AUDIT=http
 BACKEND_URL=http://localhost:8000
 SESSION_COOKIE_SECURE=false
 ```
@@ -52,7 +53,7 @@ Add more shadcn components with `npx shadcn-svelte@1.8.1 add <name>`, then `npm 
 | `/inbox`, `/inbox/[orderId]`                  | Approvals: the policy's reason codes next to the agent's rationale, unit conversions, live offer checks, approve or reject with a note                                   |
 | `/agents`, `/agents/[agentId]`, `/agents/new` | Agents and mandates: spend, requirements, substitution rules; issue an Agent token (shown once), revoke, disable                                                         |
 | `/catalog`, `/catalog/[code]`                 | Read-only catalog, a reference for writing mandates: search by claim, allergen and category; product detail with allergens, nutrition, packaging and curated substitutes |
-| `/audit`                                      | Append-only, hash-chained audit trail, filterable by agent, order, tool call or outcome; `/audit/export.json` downloads it                                               |
+| `/audit`                                      | Append-only audit trail, filterable by agent, order or quote, event type or outcome; `/audit/export.json` downloads it                                                   |
 | `/oversight`                                  | Valio Aimo staff only: cross-customer activity, stock and price overrides, simulate an agent order                                                                       |
 
 ## Connecting to the backend
@@ -63,6 +64,10 @@ Pages never call the backend directly. Server `load` functions and form actions 
 - `http/`: `fetch` to `BACKEND_URL` with the user's JWT as a bearer token. Sign-in is the OAuth 2.0 password grant on `/api/v1/auth/token`, then `/api/v1/auth/me`. The backend's `{ error: { code, message } }` envelope becomes form errors.
 
 `API_MODE` picks the implementation, and `API_MODE_AUTH`, `API_MODE_CATALOG`, `API_MODE_ORDERS`, `API_MODE_AGENTS`, `API_MODE_AUDIT` and `API_MODE_OVERSIGHT` override it per area, so real endpoints can be switched on one at a time as issues #13, #15 and #22 land. Any `http` area needs `API_MODE_AUTH=http`, since the backend only accepts sessions it signed; the server refuses to start otherwise.
+
+Live today: sign-in (`auth`), the catalog (`catalog`) and the audit trail (`audit`). Orders, agents and oversight still answer from the mock.
+
+The live audit trail reads `GET /api/v1/audit-events` (up to 1,000 events, newest first) and, when filtered by an order, `GET /api/v1/orders/{id}/trail`, which also brings the order's quotes and substitute requests; a quote id falls back to the events about that quote. The backend filters by agent and event type, the frontend by policy outcome. Two differences from the mock: the backend records decisions and commitments, not every tool call, and its events carry no hash chain. Each event's recorded `payload` is included in the JSON export. Order ids in the trail are the backend's, so their links into `/inbox` only resolve once orders are live too. The oversight feed stays on the mock: the backend's audit trail is scoped to the caller's own buyer organisation and has no cross-customer read for Valio Aimo staff yet.
 
 Types for routes the backend serves come from its OpenAPI schema: `npm run gen:api` (with the backend running, `BACKEND_URL` defaults to `http://localhost:8000`) regenerates `src/lib/api/backend.d.ts`, and `src/lib/api/types.ts` re-exports them under short names. The rest of `types.ts` mirrors the open issues until those routes exist.
 

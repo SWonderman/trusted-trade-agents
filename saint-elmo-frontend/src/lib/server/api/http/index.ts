@@ -12,6 +12,7 @@ import type {
 	Vocabulary
 } from '#lib/api/types.js';
 import { ApiError, type Caller, type SaintElmoApi } from '../client';
+import { httpAudit } from './audit';
 
 type CallInit = Omit<RequestInit, 'body'> & {
 	caller?: Caller;
@@ -36,9 +37,9 @@ function sessionUser(me: BackendMe): SessionUser {
 }
 
 /**
- * The FastAPI implementation. Sign-in and the catalog call routes that exist today;
- * orders, agents, audit and scenario controls follow issues #15 and #22 and are marked
- * TODO until those land. Switch a namespace over with API_MODE_<NAMESPACE>=http.
+ * The FastAPI implementation. Sign-in, the catalog and the audit trail call routes that
+ * exist today; orders, agents and scenario controls follow issues #15 and #22 and are
+ * marked TODO until those land. Switch a namespace over with API_MODE_<NAMESPACE>=http.
  */
 export function httpApi(baseUrl: string): SaintElmoApi {
 	async function call<T>(path: string, init: CallInit = {}): Promise<T> {
@@ -184,19 +185,7 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 				)
 		},
 
-		// TODO: audit endpoint is not specified in an issue yet.
-		audit: {
-			list: (caller, filter) =>
-				call<AuditEvent[]>('/api/v1/audit', {
-					caller,
-					query: {
-						agentId: filter.agentId,
-						orderId: filter.orderId,
-						type: filter.type,
-						outcome: filter.outcome
-					}
-				})
-		},
+		audit: httpAudit(call),
 
 		// TODO: scenario controls (design §3.3) have no issue yet.
 		oversight: {
