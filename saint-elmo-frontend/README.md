@@ -14,16 +14,26 @@ cp .env.example .env
 SESSION_COOKIE_SECURE=false npm run dev
 ```
 
-With the backend for sign-in, the catalog and the audit trail (start it first, see `../saint-elmo-backend/README.md`), set in `.env`:
+With the backend for sign-in, the catalog, approvals and the audit trail (start it first, see `../saint-elmo-backend/README.md`), set in `.env`:
 
 ```sh
 API_MODE=mock
 API_MODE_AUTH=http
 API_MODE_CATALOG=http
+API_MODE_ORDERS=http
 API_MODE_AUDIT=http
 BACKEND_URL=http://localhost:8000
 SESSION_COOKIE_SECURE=false
 ```
+
+To see an approval end to end:
+
+1. Issue an Agent token for a seeded agent: `just issue-agent-token dairy-restock buyer.admin@aurora-hotels.example`.
+2. Give it to an MCP client (`../saint-elmo-mcp`) and ask for something over the agent's auto-approve limit, e.g. 1,000 L of lactose-free milk for next week. The agent quotes, then places the order; its mandate sends it to a person.
+3. Sign in as `buyer.admin@aurora-hotels.example`. The order appears under **Approvals** within seconds (the console polls), with the policy's reason codes, the lines and their conversions, shortfalls, substitutes, the buyer's request and the agent's rationale.
+4. Approve it, or reject it with a note. Approving re-checks live price, stock and closing time first: the order is placed, rejected if a hard rule now fails (e.g. `CLOSING_TIME_PASSED`), or left waiting with its new reasons and total if something changed that you haven't seen. The page says which.
+
+The backend quotes from the live Valio Aimo API, so it needs `VALIO_AIMO_API_URL` and `VALIO_AIMO_API_KEY` for steps 2 to 4.
 
 Open <http://localhost:5173>. The demo accounts match the backend seed, so they work in both setups; every password is `saint-elmo-demo`.
 
@@ -65,9 +75,11 @@ Pages never call the backend directly. Server `load` functions and form actions 
 
 `API_MODE` picks the implementation, and `API_MODE_AUTH`, `API_MODE_CATALOG`, `API_MODE_ORDERS`, `API_MODE_AGENTS`, `API_MODE_AUDIT` and `API_MODE_OVERSIGHT` override it per area, so real endpoints can be switched on one at a time as issues #13, #15 and #22 land. Any `http` area needs `API_MODE_AUTH=http`, since the backend only accepts sessions it signed; the server refuses to start otherwise.
 
-Live today: sign-in (`auth`), the catalog (`catalog`) and the audit trail (`audit`). Orders, agents and oversight still answer from the mock.
+Live today: sign-in (`auth`), the catalog (`catalog`), approvals (`orders`) and the audit trail (`audit`). Agents and oversight still answer from the mock.
 
-The live audit trail reads `GET /api/v1/audit-events` (up to 1,000 events, newest first) and, when filtered by an order, `GET /api/v1/orders/{id}/trail`, which also brings the order's quotes and substitute requests; a quote id falls back to the events about that quote. The backend filters by agent and event type, the frontend by policy outcome. Two differences from the mock: the backend records decisions and commitments, not every tool call, and its events carry no hash chain. Each event's recorded `payload` is included in the JSON export. Order ids in the trail are the backend's, so their links into `/inbox` only resolve once orders are live too. The oversight feed stays on the mock: the backend's audit trail is scoped to the caller's own buyer organisation and has no cross-customer read for Valio Aimo staff yet.
+Approvals read every order in `PENDING_APPROVAL` (`GET /api/v1/orders?status=`, page by page) and the 100 most recent orders, open one with `GET /api/v1/orders/{id}`, and decide with `POST /api/v1/orders/{id}/approve` or `/reject`. The `Order` type is the backend's `OrderResponse`, and the mock answers in the same shape, UUID ids included; ids show by their first eight characters. Another organisation's order, or an id that isn't a UUID, is a 404. An approval comes back `PLACED`, `REJECTED` by the re-check, or still `PENDING_APPROVAL`; the page stays on the order for the last two and says why. A 409 `ORDER_NOT_PENDING` (decided elsewhere) reloads it, and a 403, or a re-check that can't run (Valio Aimo unavailable, no mandate, a product gone from the catalog), is explained in place. The frontend asks for a note to reject, though the backend accepts none. A substitute's trade-offs come from the order: its line's reasons, and its price and delivery against the original's when the original is on the order too. The catalog adds vendors and declared claims, diets and labels when it has both products. The mandate panel is left out while agents answer from the mock, which doesn't know the backend's agent ids. The mock's re-check mirrors the backend's: a passed closing time rejects, and an active `PRICE_CHANGE` scenario keeps the order waiting at its higher total.
+
+The live audit trail reads `GET /api/v1/audit-events` (up to 1,000 events, newest first) and, when filtered by an order, `GET /api/v1/orders/{id}/trail`, which also brings the order's quotes and substitute requests; a quote id falls back to the events about that quote. The backend filters by agent and event type, the frontend by policy outcome. Two differences from the mock: the backend records decisions and commitments, not every tool call, and its events carry no hash chain. Each event's recorded `payload` is included in the JSON export. Order ids in the trail are the backend's, so their links into `/inbox` resolve when orders are live too. The oversight feed stays on the mock: the backend's audit trail is scoped to the caller's own buyer organisation and has no cross-customer read for Valio Aimo staff yet.
 
 Types for routes the backend serves come from its OpenAPI schema: `npm run gen:api` (with the backend running, `BACKEND_URL` defaults to `http://localhost:8000`) regenerates `src/lib/api/backend.d.ts`, and `src/lib/api/types.ts` re-exports them under short names. The rest of `types.ts` mirrors the open issues until those routes exist.
 

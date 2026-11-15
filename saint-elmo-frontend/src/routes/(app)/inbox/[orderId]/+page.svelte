@@ -5,25 +5,33 @@
 	import ArrowLeftRightIcon from '@lucide/svelte/icons/arrow-left-right';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
+	import CircleAlertIcon from '@lucide/svelte/icons/circle-alert';
 	import RefreshCwIcon from '@lucide/svelte/icons/refresh-cw';
 	import XIcon from '@lucide/svelte/icons/x';
 	import OrderLineDetail from '#lib/components/domain/OrderLineDetail.svelte';
 	import ReasonList from '#lib/components/domain/ReasonList.svelte';
 	import OutcomeBadge from '#lib/components/app/OutcomeBadge.svelte';
+	import * as Alert from '#lib/components/ui/alert/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
 	import * as Dialog from '#lib/components/ui/dialog/index.js';
 	import { Input } from '#lib/components/ui/input/index.js';
 	import { Progress } from '#lib/components/ui/progress/index.js';
 	import { Spinner } from '#lib/components/ui/spinner/index.js';
-	import type { OrderLine } from '#lib/api/types.js';
+	import type { OrderChange, OrderLine } from '#lib/api/types.js';
+	import { substituteTradeOffs } from '#lib/tradeoffs.js';
 	import {
 		date,
 		dateTime,
+		days,
+		daysLate,
+		lineName,
+		lineTotal,
 		money,
 		moneyWhole,
 		number,
 		relative,
+		shortId,
 		statusLabel,
 		statusTone
 	} from '#lib/format.js';
@@ -38,18 +46,50 @@
 
 	/** One short verdict on whether a line can arrive as asked. */
 	function availability(line: OrderLine) {
-		const o = line.offer;
-		const daysLate = Math.round(
-			(new Date(o.availableDate).getTime() - new Date(order.deliverBy).getTime()) / 86_400_000
-		);
-		if (o.availableAmount !== null && o.availableAmount < line.quantity)
-			return { text: `only ${number(o.availableAmount)} in stock`, tone: 'text-stop' };
-		if (daysLate > 0)
-			return { text: `${daysLate} day${daysLate > 1 ? 's' : ''} late`, tone: 'text-hold' };
-		if (o.availableAmount === null)
-			return { text: 'supplier stock', tone: 'text-muted-foreground' };
+		const a = line.availability;
+		if (!a) return { text: 'not deliverable', tone: 'text-stop' };
+		if (a.salesBlocked) return { text: 'sales blocked', tone: 'text-stop' };
+		if (line.quantity?.coveredByAvailability === false && a.availableAmount !== null)
+			return { text: `only ${number(a.availableAmount)} in stock`, tone: 'text-stop' };
+		if (!a.earliestDate) return { text: 'no delivery date', tone: 'text-stop' };
+		const late = daysLate(a.earliestDate, order.deliverBy);
+		if (late > 0) return { text: `${days(late)} late`, tone: 'text-hold' };
+		if (!a.availableAmountKnown) return { text: 'supplier stock', tone: 'text-muted-foreground' };
 		return { text: 'in stock, on time', tone: 'text-ok' };
 	}
+
+	/** How each field of a live change since the quote reads, label and value. */
+	const changeFields: Record<string, { label: string; value: (v: unknown) => string }> = {
+		unitPrice: { label: 'price per unit', value: (v) => money(Number(v)) },
+		availableAmount: { label: 'available', value: (v) => number(Number(v)) },
+		earliestDate: { label: 'earliest delivery', value: (v) => date(String(v)) },
+		closingTime: { label: 'order by', value: (v) => dateTime(String(v)) },
+		salesBlocked: { label: 'sales blocked', value: (v) => (v ? 'yes' : 'no') }
+	};
+	function change(field: OrderChange['field'], v: unknown) {
+		if (v === null || v === undefined) return '—';
+		return changeFields[field]?.value(v) ?? String(v);
+	}
+
+	/** Why the last decision didn't go as asked, shown above the order whatever its status now. */
+	let outcome = $derived.by(() => {
+		if (form?.recheck?.status === 'REJECTED') {
+			return {
+				title: 'The live re-check rejected this order instead of placing it',
+				text: `A hard rule fails on today’s data: ${form.recheck.reasonCodes.join(', ')}. Nothing was ordered.`
+			};
+		}
+		if (form?.recheck?.status === 'PENDING_APPROVAL') {
+			return {
+				title: 'Live data changed, so it still waits for you',
+				text: `The re-check found a new reason or a higher total than you saw, so nothing was ordered. It now comes to ${money(form.recheck.total)} and needs a person for ${form.recheck.reasonCodes.join(', ')}. See what changed, then decide again.`
+			};
+		}
+		if (form?.code === 'ORDER_NOT_PENDING') {
+			return { title: 'Already decided', text: form.error };
+		}
+		return null;
+	});
 
 	let used = $derived(
 		data.mandate && data.periodSpend
@@ -58,7 +98,7 @@
 	);
 </script>
 
-<svelte:head><title>{order.orderId} · Approvals · Saint Elmo</title></svelte:head>
+<svelte:head><title>{shortId(order.orderId)} · Approvals · Saint Elmo</title></svelte:head>
 
 <Dialog.Root
 	open
@@ -70,7 +110,9 @@
 		<!-- Header: what was asked, by whom, for how much -->
 		<header class="border-b px-6 pt-6 pb-5 sm:px-8">
 			<div class="flex flex-wrap items-center gap-x-3 gap-y-1 pr-10 text-sm text-muted-foreground">
-				<span class="code font-medium text-foreground">{order.orderId}</span>
+				<span class="code font-medium text-foreground" title={order.orderId}
+					>{shortId(order.orderId)}</span
+				>
 				<OutcomeBadge outcome={statusTone[order.status]} label={statusLabel[order.status]} />
 				<span><span class="code">{order.agent.name}</span> · {relative(order.createdAt)}</span>
 				<span>deliver by {date(order.deliverBy)}</span>
@@ -79,13 +121,20 @@
 				<Dialog.Title
 					class="max-w-[40ch] font-display-tight text-[1.75rem] text-balance sm:text-[2rem]"
 				>
-					{order.buyerRequest ? `“${order.buyerRequest}”` : `Order ${order.orderId}`}
+					{order.buyerRequest ? `“${order.buyerRequest}”` : `Order ${shortId(order.orderId)}`}
 				</Dialog.Title>
 				<div class="text-right">
 					<p class="text-3xl font-semibold tracking-tight tabular">{money(order.totals.net)}</p>
 					<p class="text-xs text-muted-foreground tabular">
 						excl. VAT · {money(order.totals.gross)} with VAT
 					</p>
+					{#if order.deposits.length}
+						<p class="text-xs text-muted-foreground tabular">
+							plus deposits: {order.deposits
+								.map((d) => `${number(d.quantity)} × ${d.materialCode}`)
+								.join(', ')}
+						</p>
+					{/if}
 				</div>
 			</div>
 			<Dialog.Description class="sr-only">
@@ -98,6 +147,14 @@
 		>
 			<!-- Main: the policy's reasons, then the lines -->
 			<div class="space-y-8 px-6 py-6 sm:px-8">
+				{#if outcome}
+					<Alert.Root variant="destructive" role="status">
+						<CircleAlertIcon />
+						<Alert.Title>{outcome.title}</Alert.Title>
+						<Alert.Description>{outcome.text}</Alert.Description>
+					</Alert.Root>
+				{/if}
+
 				<section aria-labelledby="why-heading">
 					<h3 id="why-heading" class="mb-3 text-sm font-semibold">Why it’s here</h3>
 					<ReasonList reasons={order.policy.reasons} />
@@ -111,13 +168,9 @@
 						<ul class="mt-1 space-y-0.5">
 							{#each order.changes as ch (ch.lineRef + ch.field)}
 								<li class="tabular">
-									Line {ch.lineRef.slice(1)}: {ch.field === 'unitPrice'
-										? 'price per unit'
-										: ch.field}
-									{typeof ch.quoted === 'number' ? money(ch.quoted) : ch.quoted} →
-									<span class="font-semibold"
-										>{typeof ch.now === 'number' ? money(ch.now) : ch.now}</span
-									>
+									Line {ch.lineRef}: {changeFields[ch.field]?.label ?? ch.field}
+									{change(ch.field, ch.quoted)} →
+									<span class="font-semibold">{change(ch.field, ch.now)}</span>
 								</li>
 							{/each}
 						</ul>
@@ -141,7 +194,7 @@
 							<span></span>
 						</div>
 						<ul class="divide-y">
-							{#each order.lines as line (line.ref)}
+							{#each order.lines as line (line.position)}
 								{@const a = availability(line)}
 								<li>
 									<Collapsible.Root>
@@ -149,10 +202,11 @@
 											class="group/line grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-3 text-left text-sm hover:bg-muted/40 md:grid-cols-[minmax(0,1fr)_10rem_8rem_6.5rem_1rem]"
 										>
 											<span class="min-w-0">
-												<span class="line-clamp-2 font-medium text-pretty">{line.product.name}</span
+												<span class="line-clamp-2 font-medium text-pretty"
+													>{lineName(line, data.products[line.productCode])}</span
 												>
 												<span class="flex items-center gap-1.5 text-xs text-muted-foreground">
-													<span class="code">{line.product.code}</span>
+													<span class="code">{line.productCode}</span>
 													{#if line.substitutesFor}
 														<span class="inline-flex items-center gap-1 text-hold">
 															<ArrowLeftRightIcon class="size-3" aria-hidden="true" />substitute
@@ -162,26 +216,35 @@
 											</span>
 											<span class="tabular">
 												<span class="block">
-													{number(line.quantity)}
-													{line.product.salesUnit}
-													<span class="text-muted-foreground">× {money(line.offer.unitPrice)}</span>
+													{line.quantity?.salesUnits != null
+														? number(line.quantity.salesUnits)
+														: '—'}
+													{line.salesUnit}
+													{#if line.price}<span class="text-muted-foreground"
+															>× {money(line.price.perSalesUnit.net)}</span
+														>{/if}
 												</span>
-												{#if line.conversion}
+												{#if line.quantity?.conversion}
 													<span class="block text-xs text-muted-foreground">
-														from {number(line.conversion.requested.amount)}
-														{line.conversion.requested.unit}
+														from {number(line.quantity.requested.value)}
+														{line.quantity.requested.unit}
 													</span>
 												{/if}
 											</span>
 											<span class={['text-xs', a.tone]}>{a.text}</span>
-											<span class="text-right font-medium tabular">{money(line.lineTotal)}</span>
+											<span class="text-right font-medium tabular">{lineTotal(line)}</span>
 											<ChevronDownIcon
 												class="hidden size-4 text-muted-foreground transition-transform group-data-[state=open]/line:rotate-180 md:block"
 												aria-hidden="true"
 											/>
 										</Collapsible.Trigger>
 										<Collapsible.Content class="bg-muted/30 px-3 pb-3">
-											<OrderLineDetail {line} deliverBy={order.deliverBy} />
+											<OrderLineDetail
+												{line}
+												deliverBy={order.deliverBy}
+												product={data.products[line.productCode]}
+												tradeOffs={substituteTradeOffs(line, order.lines, data.products)}
+											/>
 										</Collapsible.Content>
 									</Collapsible.Root>
 								</li>
@@ -260,10 +323,12 @@
 										>
 									</p>
 									<p class="text-xs text-muted-foreground tabular">{dateTime(h.at)}</p>
-									{#if h.note}<p class="mt-0.5 italic">“{h.note}”</p>{/if}
 								</li>
 							{/each}
 						</ol>
+						{#if order.approverNote}
+							<p class="mt-2 text-sm italic">“{order.approverNote}”</p>
+						{/if}
 						<a
 							href="{resolve('audit')}?order={order.orderId}"
 							class="mt-3 inline-block text-xs font-medium underline underline-offset-2"
@@ -283,7 +348,9 @@
 					use:enhance={({ action }) => {
 						busy = action.search.includes('reject') ? 'reject' : 'approve';
 						return async ({ update, result }) => {
-							await update({ reset: false });
+							// Already decided elsewhere: show the order as it stands now.
+							const stale = result.type === 'failure' && result.data?.code === 'ORDER_NOT_PENDING';
+							await update({ reset: false, refreshAll: stale || undefined });
 							// The modal is reused for the next order in the queue, so start with an empty note.
 							if (result.type === 'redirect') note = '';
 							busy = null;
@@ -313,12 +380,12 @@
 						</Button>
 					</div>
 				</form>
-				{#if form?.error}
+				{#if form?.error && !outcome}
 					<p role="alert" class="mt-2 text-sm text-stop">{form.error}</p>
-				{:else}
+				{:else if !outcome}
 					<p class="mt-2 text-xs text-muted-foreground">
-						Approving re-checks live price, stock and closing time first; if a hard rule fails now,
-						the order is rejected instead.
+						Approving re-checks live price, stock and closing time first. If a hard rule fails now,
+						the order is rejected; if something you haven’t seen comes up, it waits for you again.
 					</p>
 				{/if}
 			</footer>

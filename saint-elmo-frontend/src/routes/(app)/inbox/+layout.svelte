@@ -10,7 +10,7 @@
 	import * as Empty from '#lib/components/ui/empty/index.js';
 	import * as Table from '#lib/components/ui/table/index.js';
 	import * as Tabs from '#lib/components/ui/tabs/index.js';
-	import { moneyWhole, relative, statusLabel, statusTone } from '#lib/format.js';
+	import { moneyWhole, relative, shortId, statusLabel, statusTone } from '#lib/format.js';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
@@ -23,11 +23,12 @@
 	let rows = $derived(view === 'waiting' ? waiting : view === 'decided' ? decided : data.orders);
 	let selected = $derived(page.params.orderId ?? null);
 
-	// After a decision the server sends ?done=ORD-0142:PLACED; say so once, then tidy the URL.
+	// After a decision the server sends ?done=<orderId>:PLACED; say so once, then tidy the URL.
 	$effect(() => {
 		const done = page.url.searchParams.get('done');
 		if (!done) return;
-		const [orderId, status] = done.split(':');
+		const [id, status] = done.split(':');
+		const orderId = shortId(id);
 		if (status === 'PLACED') {
 			toast.success(`${orderId} approved and placed`, {
 				description: 'The agent sees it on its next status check.'
@@ -102,14 +103,14 @@
 								href={resolve(`inbox/${o.orderId}`)}
 								data-sveltekit-noscroll
 								class="code font-medium outline-none after:absolute after:inset-0 after:rounded-sm focus-visible:after:ring-2 focus-visible:after:ring-ring"
-								>{o.orderId}</a
+								title={o.orderId}>{shortId(o.orderId)}</a
 							>
 							<p class="mt-0.5 text-xs text-muted-foreground">
 								<span class="code">{o.agentName}</span> · {relative(o.createdAt)}
 							</p>
 						</Table.Cell>
 						<Table.Cell class="max-w-[22rem] py-3.5">
-							<p class="truncate text-sm">{o.buyerRequest ?? '—'}</p>
+							<p class="truncate text-sm">{o.buyerRequest || '—'}</p>
 						</Table.Cell>
 						<Table.Cell class="py-3.5">
 							{#if o.topReason}

@@ -13,6 +13,10 @@ import type {
 	BuyerOrganisation,
 	Mandate,
 	Order,
+	OrderLine,
+	OrderStatus,
+	PolicyOutcome,
+	PolicyReason,
 	ProductRef,
 	ScenarioOverride,
 	SessionUser
@@ -368,25 +372,179 @@ export const KEYS: Record<string, AgentKey[]> = {
 
 // --- Orders -----------------------------------------------------------------
 
-const VAT = 0.135; // food VAT in Finland, applied to keep totals realistic
+const TAX_RATE = 13.5; // food VAT in Finland, percent
+const round2 = (v: number) => Math.round(v * 100) / 100;
+export const withTax = (net: number) => ({
+	net: round2(net),
+	gross: round2(net * (1 + TAX_RATE / 100))
+});
 
-function totals(net: number, deposits = 0) {
-	const vat = Math.round(net * VAT * 100) / 100;
-	return { net, vat, gross: Math.round((net + vat) * 100) / 100, deposits };
+const SEVERITY_RANK = { INFO: 0, NEEDS_HUMAN: 1, REJECT: 2 } as const;
+
+/** The most severe outcome of some reasons, as the backend's policy judges it. */
+export function outcomeOf(reasons: PolicyReason[]): PolicyOutcome {
+	const worst = reasons.reduce<PolicyReason['severity']>(
+		(w, r) => (SEVERITY_RANK[r.severity] > SEVERITY_RANK[w] ? r.severity : w),
+		'INFO'
+	);
+	return worst === 'INFO' ? 'AUTO_APPROVE' : worst;
 }
 
-export function buildOrders(): Order[] {
+/** An order as the mock stores it: the backend's shape, plus its buyer organisation. */
+export type MockOrder = Order & { organisationId: string };
+
+interface LineSpec {
+	product: ProductRef;
+	salesUnits: number;
+	/** What the agent asked for in the buyer's unit, when it wasn't in sales units. */
+	requested?: { value: number; unit: 'L' | 'KG' | 'PCS'; perSalesUnit: number };
+	lotSize?: number;
+	unitPrice: number; // net per sales unit
+	comparisonPrice: number | null; // net per L or KG
+	comparisonUnit?: 'L' | 'KG';
+	logisticModel: 'STOCK' | 'TERMINAL';
+	availableAmount: number | null; // null = TERMINAL, unknown
+	earliestDate: string;
+	priceValidTo: string;
+	fetchedAt: string;
+	substitutesFor?: ProductRef;
+	reasons?: Omit<PolicyReason, 'lineRef'>[];
+}
+
+/** One judged line, in the backend's `JudgedLineOut` shape. */
+function line(position: number, deliverBy: string, spec: LineSpec): OrderLine {
+	const r = spec.requested;
+	const closingTime = closingTimeBefore(spec.earliestDate);
+	const reasons = (spec.reasons ?? []).map((x) => ({ ...x, lineRef: String(position) }));
+	return {
+		productCode: spec.product.code,
+		name: spec.product.name,
+		salesUnit: spec.product.salesUnit,
+		price: {
+			perSalesUnit: withTax(spec.unitPrice),
+			taxRate: TAX_RATE,
+			currency: 'EUR',
+			comparisonPrice:
+				spec.comparisonPrice === null
+					? null
+					: { value: spec.comparisonPrice, unit: spec.comparisonUnit ?? 'L' },
+			customerSpecific: true,
+			validFrom: null,
+			validTo: spec.priceValidTo
+		},
+		availability: {
+			logisticModel: spec.logisticModel,
+			availableAmount: spec.availableAmount,
+			availableAmountKnown: spec.availableAmount !== null,
+			earliestDate: spec.earliestDate,
+			closingTime,
+			salesBlocked: false,
+			meetsDeadline: spec.earliestDate <= deliverBy && new Date(closingTime).getTime() > Date.now()
+		},
+		quantity: {
+			requested: r
+				? { value: r.value, unit: r.unit }
+				: { value: spec.salesUnits, unit: spec.product.salesUnit },
+			conversion: r
+				? {
+						perSalesUnit: { value: r.perSalesUnit, unit: r.unit },
+						basis: r.unit === 'PCS' ? 'PACKAGING_UNITS' : 'PRICE_COMPARISON',
+						crossCheck: 'AGREES'
+					}
+				: null,
+			salesUnits: spec.salesUnits,
+			lotSize: spec.lotSize ?? 1,
+			roundedUp: r ? spec.salesUnits * r.perSalesUnit > r.value : false,
+			delivered: r ? { value: spec.salesUnits * r.perSalesUnit, unit: r.unit } : null,
+			lineTotal: withTax(spec.salesUnits * spec.unitPrice),
+			coveredByAvailability:
+				spec.availableAmount === null ? null : spec.availableAmount >= spec.salesUnits
+		},
+		deliveryReliability: spec.product.deliveryReliability,
+		carbonFootprint: spec.product.carbonFootprint,
+		reasonCodes: [],
+		provenance: {
+			source: 'Demo fixtures',
+			fetchedAt: spec.fetchedAt,
+			validUntil: closingTime,
+			cached: false
+		},
+		position,
+		substitutesFor: spec.substitutesFor?.code ?? null,
+		outcome: outcomeOf(reasons),
+		reasons
+	};
+}
+
+interface OrderSpec {
+	orderId: string;
+	quoteId: string;
+	organisationId: string;
+	agent: { id: string; name: string };
+	status: OrderStatus;
+	buyerRequest: string;
+	rationale: string;
+	deliverBy: string;
+	lines: LineSpec[];
+	/** The order's own reasons, after the lines'. */
+	reasons?: PolicyReason[];
+	mandateVersion: number;
+	changes?: Order['changes'];
+	statusHistory: Order['statusHistory'];
+	createdAt: string;
+}
+
+/** Totals and the policy's summary, derived from the lines like the backend does. */
+export function judged(order: MockOrder, lines: OrderLine[], own: PolicyReason[] = []): MockOrder {
+	const reasons = [...lines.flatMap((l) => l.reasons), ...own];
+	const net = lines.reduce((sum, l) => sum + (l.quantity?.lineTotal?.net ?? 0), 0);
+	const gross = lines.reduce((sum, l) => sum + (l.quantity?.lineTotal?.gross ?? 0), 0);
+	return {
+		...order,
+		lines,
+		totals: { net: round2(net), gross: round2(gross), currency: 'EUR' },
+		policy: { ...order.policy, outcome: outcomeOf(reasons), reasons }
+	};
+}
+
+function order(spec: OrderSpec): MockOrder {
+	const lines = spec.lines.map((l, i) => line(i + 1, spec.deliverBy, l));
+	const base: MockOrder = {
+		orderId: spec.orderId,
+		quoteId: spec.quoteId,
+		organisationId: spec.organisationId,
+		status: spec.status,
+		createdAt: spec.createdAt,
+		agent: spec.agent,
+		deliverBy: spec.deliverBy,
+		lines: [],
+		totals: { net: 0, gross: 0, currency: 'EUR' },
+		deposits: [],
+		policy: { outcome: 'AUTO_APPROVE', reasons: [], mandateVersion: spec.mandateVersion },
+		changes: spec.changes ?? [],
+		buyerRequest: spec.buyerRequest,
+		rationale: spec.rationale,
+		statusHistory: spec.statusHistory,
+		approverNote: null,
+		decidedAt: null,
+		checkAgainAfterSeconds: spec.status === 'PENDING_APPROVAL' ? 30 : null
+	};
+	return judged(base, lines, spec.reasons);
+}
+
+export function buildOrders(): MockOrder[] {
 	const monday = nextWeekday(1);
 	const wednesday = nextWeekday(3);
 	const tuesday = nextWeekday(2);
+	const saturday = nextWeekday(6);
+	const dairy = { id: 'agt-dairy', name: 'dairy-restock' };
 
 	return [
-		{
-			orderId: 'ORD-0142',
-			quoteId: 'Q-0398',
+		order({
+			orderId: 'e2372b01-ed8f-488c-9e2e-35d678b43216',
+			quoteId: 'e9ecccd9-141a-4e0e-835d-e3fceffaacb9',
 			organisationId: 'org-aurora',
-			organisationName: 'Aurora Hotels',
-			agent: { id: 'agt-dairy', name: 'dairy-restock' },
+			agent: dairy,
 			status: 'PENDING_APPROVAL',
 			buyerRequest:
 				'I need 1,000 litres of lactose-free milk by Monday. Find an option that meets our requirements based on price and availability.',
@@ -395,59 +553,37 @@ export function buildOrders(): Order[] {
 			deliverBy: monday,
 			lines: [
 				{
-					ref: 'L1',
 					product: PRODUCTS.eila10,
-					quantity: 50,
-					conversion: {
-						requested: { amount: 1000, unit: 'L' },
-						buyerUnitsPerSalesUnit: 20,
-						salesUnits: 50,
-						lotSize: 1,
-						rounded: false,
-						method: 'COMPARISON_PRICE',
-						crossCheck: 'AGREES'
-					},
-					offer: {
-						unitPrice: 36.8,
-						comparisonPrice: 1.84,
-						comparisonUnit: 'L',
-						logisticModel: 'STOCK',
-						availableAmount: 64,
-						availableDate: monday,
-						closingTime: closingTimeBefore(monday),
-						priceValidTo: daysFromNow(2),
-						fetchedAt: minutesAgo(2)
-					},
-					lineTotal: 1840,
-					substitutesFor: null
+					salesUnits: 50,
+					requested: { value: 1000, unit: 'L', perSalesUnit: 20 },
+					unitPrice: 36.8,
+					comparisonPrice: 1.84,
+					logisticModel: 'STOCK',
+					availableAmount: 64,
+					earliestDate: monday,
+					priceValidTo: daysFromNow(2),
+					fetchedAt: minutesAgo(2)
 				}
 			],
-			totals: totals(1840),
-			policy: {
-				outcome: 'NEEDS_HUMAN',
-				mandateVersion: 4,
-				reasons: [
-					{
-						code: 'OVER_AUTO_APPROVE_LIMIT',
-						severity: 'NEEDS_HUMAN',
-						message:
-							'The order total of €1,840 is over the €1,500 auto-approve limit. The order limit is €2,000.',
-						facts: { orderTotal: 1840, autoApproveUpTo: 1500, maxOrderTotal: 2000 }
-					}
-				]
-			},
-			changes: [],
+			reasons: [
+				{
+					code: 'OVER_AUTO_APPROVE_LIMIT',
+					severity: 'NEEDS_HUMAN',
+					lineRef: null,
+					message:
+						'The order total of €1,840 is over the €1,500 auto-approve limit. The order limit is €2,000.',
+					facts: { orderTotal: 1840, autoApproveUpTo: 1500, maxOrderTotal: 2000 }
+				}
+			],
+			mandateVersion: 4,
 			statusHistory: [{ status: 'PENDING_APPROVAL', at: minutesAgo(9), by: 'agent:dairy-restock' }],
-			createdAt: minutesAgo(9),
-			checkAgainAfterSeconds: 30,
-			approverNote: null
-		},
-		{
-			orderId: 'ORD-0139',
-			quoteId: 'Q-0391',
+			createdAt: minutesAgo(9)
+		}),
+		order({
+			orderId: 'e1406fb1-3bfc-4491-914e-88b6abdd2184',
+			quoteId: '6ab13e08-f159-4b76-9c37-1cddb74d640e',
 			organisationId: 'org-aurora',
-			organisationName: 'Aurora Hotels',
-			agent: { id: 'agt-dairy', name: 'dairy-restock' },
+			agent: dairy,
 			status: 'PENDING_APPROVAL',
 			buyerRequest: '400 L of lactose-free milk for the Wednesday breakfast buffets.',
 			rationale:
@@ -455,96 +591,58 @@ export function buildOrders(): Order[] {
 			deliverBy: wednesday,
 			lines: [
 				{
-					ref: 'L1',
 					product: PRODUCTS.eila10,
-					quantity: 12,
-					conversion: {
-						requested: { amount: 240, unit: 'L' },
-						buyerUnitsPerSalesUnit: 20,
-						salesUnits: 12,
-						lotSize: 1,
-						rounded: false,
-						method: 'COMPARISON_PRICE',
-						crossCheck: 'AGREES'
-					},
-					offer: {
-						unitPrice: 36.8,
-						comparisonPrice: 1.84,
-						comparisonUnit: 'L',
-						logisticModel: 'STOCK',
-						availableAmount: 12,
-						availableDate: wednesday,
-						closingTime: closingTimeBefore(wednesday),
-						priceValidTo: daysFromNow(2),
-						fetchedAt: minutesAgo(31)
-					},
-					lineTotal: 441.6,
-					substitutesFor: null
+					salesUnits: 12,
+					requested: { value: 240, unit: 'L', perSalesUnit: 20 },
+					unitPrice: 36.8,
+					comparisonPrice: 1.84,
+					logisticModel: 'STOCK',
+					availableAmount: 12,
+					earliestDate: wednesday,
+					priceValidTo: daysFromNow(2),
+					fetchedAt: minutesAgo(31)
 				},
 				{
-					ref: 'L2',
 					product: PRODUCTS.lowLactose1l,
-					quantity: 168,
-					conversion: {
-						requested: { amount: 160, unit: 'L' },
-						buyerUnitsPerSalesUnit: 1,
-						salesUnits: 168,
-						lotSize: 12,
-						rounded: true,
-						method: 'COMPARISON_PRICE',
-						crossCheck: 'AGREES'
-					},
-					offer: {
-						unitPrice: 1.42,
-						comparisonPrice: 1.42,
-						comparisonUnit: 'L',
-						logisticModel: 'STOCK',
-						availableAmount: 600,
-						availableDate: wednesday,
-						closingTime: closingTimeBefore(wednesday),
-						priceValidTo: daysFromNow(2),
-						fetchedAt: minutesAgo(31)
-					},
-					lineTotal: 238.56,
-					substitutesFor: PRODUCTS.eila10
+					salesUnits: 168,
+					requested: { value: 160, unit: 'L', perSalesUnit: 1 },
+					lotSize: 12,
+					unitPrice: 1.42,
+					comparisonPrice: 1.42,
+					logisticModel: 'STOCK',
+					availableAmount: 600,
+					earliestDate: wednesday,
+					priceValidTo: daysFromNow(2),
+					fetchedAt: minutesAgo(31),
+					substitutesFor: PRODUCTS.eila10,
+					reasons: [
+						{
+							code: 'MISSING_REQUIRED_CLAIM',
+							severity: 'NEEDS_HUMAN',
+							message:
+								'The substitute is not declared lactose-free. It makes no lactose claim at all, and the mandate requires FREE_FROM_LACTOSE.',
+							facts: { required: 'FREE_FROM LACTOSE', declared: 'none', source: 'Synkka' }
+						},
+						{
+							code: 'ROUNDED_TO_LOT_SIZE',
+							severity: 'INFO',
+							message:
+								'160 cartons were rounded up to 168, because this product is sold in multiples of 12.',
+							facts: { requested: 160, ordered: 168, lotSize: 12 }
+						}
+					]
 				}
 			],
-			totals: totals(680.16),
-			policy: {
-				outcome: 'NEEDS_HUMAN',
-				mandateVersion: 4,
-				reasons: [
-					{
-						code: 'MISSING_REQUIRED_CLAIM',
-						severity: 'NEEDS_HUMAN',
-						lineRef: 'L2',
-						message:
-							'The substitute is not declared lactose-free. It makes no lactose claim at all, and the mandate requires FREE_FROM_LACTOSE.',
-						facts: { required: 'FREE_FROM LACTOSE', declared: 'none', source: 'Synkka' }
-					},
-					{
-						code: 'ROUNDED_TO_LOT_SIZE',
-						severity: 'INFO',
-						lineRef: 'L2',
-						message:
-							'160 cartons were rounded up to 168, because this product is sold in multiples of 12.',
-						facts: { requested: 160, ordered: 168, lotSize: 12 }
-					}
-				]
-			},
-			changes: [],
+			mandateVersion: 4,
 			statusHistory: [
 				{ status: 'PENDING_APPROVAL', at: minutesAgo(31), by: 'agent:dairy-restock' }
 			],
-			createdAt: minutesAgo(31),
-			checkAgainAfterSeconds: 30,
-			approverNote: null
-		},
-		{
-			orderId: 'ORD-0137',
-			quoteId: 'Q-0385',
+			createdAt: minutesAgo(31)
+		}),
+		order({
+			orderId: '7e6f63ce-34c1-4e87-ac0d-e8b6b1cfda37',
+			quoteId: '1a62c2ed-1e2b-4f91-8812-6fd3aa563081',
 			organisationId: 'org-kuusikko',
-			organisationName: 'Kuusikko Hospital Kitchen',
 			agent: { id: 'agt-ward', name: 'ward-kitchen' },
 			status: 'PENDING_APPROVAL',
 			buyerRequest: 'Gluten- and milk-free bread for 140 patients for Tuesday.',
@@ -553,173 +651,117 @@ export function buildOrders(): Order[] {
 			deliverBy: tuesday,
 			lines: [
 				{
-					ref: 'L1',
 					product: PRODUCTS.gfBread,
-					quantity: 70,
-					conversion: null,
-					offer: {
-						unitPrice: 4.35,
-						comparisonPrice: 14.5,
-						comparisonUnit: 'KG',
-						logisticModel: 'TERMINAL',
-						availableAmount: null,
-						availableDate: wednesday,
-						closingTime: closingTimeBefore(wednesday),
-						priceValidTo: daysFromNow(3),
-						fetchedAt: minutesAgo(44)
-					},
-					lineTotal: 304.5,
-					substitutesFor: PRODUCTS.gfBreadOriginal
+					salesUnits: 70,
+					unitPrice: 4.35,
+					comparisonPrice: 14.5,
+					comparisonUnit: 'KG',
+					logisticModel: 'TERMINAL',
+					availableAmount: null,
+					earliestDate: wednesday,
+					priceValidTo: daysFromNow(3),
+					fetchedAt: minutesAgo(44),
+					substitutesFor: PRODUCTS.gfBreadOriginal,
+					reasons: [
+						{
+							code: 'SUBSTITUTE_NEEDS_APPROVAL',
+							severity: 'NEEDS_HUMAN',
+							message: 'This mandate sends every substitute to a person.',
+							facts: { substitutionPolicy: 'ALWAYS_NEEDS_APPROVAL' }
+						},
+						{
+							code: 'LATE_DELIVERY',
+							severity: 'NEEDS_HUMAN',
+							message: 'The earliest delivery is one day after the requested date.',
+							facts: { deliverBy: tuesday, earliest: wednesday, daysLate: 1 }
+						},
+						{
+							code: 'STOCK_UNKNOWN',
+							severity: 'INFO',
+							message:
+								'Shipped from the supplier’s warehouse, so the available quantity cannot be confirmed.',
+							facts: { logisticModel: 'TERMINAL' }
+						}
+					]
 				}
 			],
-			totals: totals(304.5),
-			policy: {
-				outcome: 'NEEDS_HUMAN',
-				mandateVersion: 7,
-				reasons: [
-					{
-						code: 'SUBSTITUTE_NEEDS_APPROVAL',
-						severity: 'NEEDS_HUMAN',
-						lineRef: 'L1',
-						message: 'This mandate sends every substitute to a person.',
-						facts: { substitutionPolicy: 'ALWAYS_NEEDS_APPROVAL' }
-					},
-					{
-						code: 'LATE_DELIVERY',
-						severity: 'NEEDS_HUMAN',
-						lineRef: 'L1',
-						message: 'The earliest delivery is one day after the requested date.',
-						facts: { deliverBy: tuesday, earliest: wednesday, daysLate: 1 }
-					},
-					{
-						code: 'STOCK_UNKNOWN',
-						severity: 'INFO',
-						lineRef: 'L1',
-						message:
-							'Shipped from the supplier’s warehouse, so the available quantity cannot be confirmed.',
-						facts: { logisticModel: 'TERMINAL' }
-					}
-				]
-			},
-			changes: [{ lineRef: 'L1', field: 'unitPrice', quoted: 4.29, now: 4.35 }],
+			mandateVersion: 7,
+			changes: [{ lineRef: '1', field: 'unitPrice', quoted: 4.29, now: 4.35 }],
 			statusHistory: [{ status: 'PENDING_APPROVAL', at: minutesAgo(44), by: 'agent:ward-kitchen' }],
-			createdAt: minutesAgo(44),
-			checkAgainAfterSeconds: 30,
-			approverNote: null
-		},
-		{
-			orderId: 'ORD-0131',
-			quoteId: 'Q-0377',
+			createdAt: minutesAgo(44)
+		}),
+		order({
+			orderId: 'e75e222d-3fc0-43d6-aae6-b0f85629f69d',
+			quoteId: 'ca6f9dd2-9cb6-494e-b159-b2736de440da',
 			organisationId: 'org-aurora',
-			organisationName: 'Aurora Hotels',
-			agent: { id: 'agt-dairy', name: 'dairy-restock' },
+			agent: dairy,
 			status: 'PLACED',
 			buyerRequest: 'Top up lactose-free butter, about 40 kg.',
 			rationale: 'Same product as last week, within limits, in stock for Monday.',
 			deliverBy: monday,
 			lines: [
 				{
-					ref: 'L1',
 					product: PRODUCTS.butterLf,
-					quantity: 8,
-					conversion: {
-						requested: { amount: 40, unit: 'KG' },
-						buyerUnitsPerSalesUnit: 5,
-						salesUnits: 8,
-						lotSize: 1,
-						rounded: false,
-						method: 'UNIT_CONVERSIONS',
-						crossCheck: 'AGREES'
-					},
-					offer: {
-						unitPrice: 51.5,
-						comparisonPrice: 10.3,
-						comparisonUnit: 'KG',
-						logisticModel: 'STOCK',
-						availableAmount: 120,
-						availableDate: monday,
-						closingTime: closingTimeBefore(monday),
-						priceValidTo: daysFromNow(2),
-						fetchedAt: minutesAgo(60 * 5)
-					},
-					lineTotal: 412,
-					substitutesFor: null
+					salesUnits: 8,
+					requested: { value: 40, unit: 'KG', perSalesUnit: 5 },
+					unitPrice: 51.5,
+					comparisonPrice: 10.3,
+					comparisonUnit: 'KG',
+					logisticModel: 'STOCK',
+					availableAmount: 120,
+					earliestDate: monday,
+					priceValidTo: daysFromNow(2),
+					fetchedAt: minutesAgo(60 * 5)
 				}
 			],
-			totals: totals(412),
-			policy: { outcome: 'AUTO_APPROVE', mandateVersion: 4, reasons: [] },
-			changes: [],
+			mandateVersion: 4,
 			statusHistory: [
-				{ status: 'CONFIRMED', at: minutesAgo(60 * 5), by: 'system' },
+				{ status: 'CONFIRMED', at: minutesAgo(60 * 5), by: 'agent:dairy-restock' },
 				{ status: 'PLACED', at: minutesAgo(60 * 5), by: 'system' }
 			],
-			createdAt: minutesAgo(60 * 5),
-			checkAgainAfterSeconds: null,
-			approverNote: null
-		},
-		{
-			orderId: 'ORD-0128',
-			quoteId: 'Q-0370',
+			createdAt: minutesAgo(60 * 5)
+		}),
+		order({
+			orderId: '2bc108e1-888f-4705-bc1e-49cb10126755',
+			quoteId: '80114510-a77f-42f0-8c53-5dcca5f5b336',
 			organisationId: 'org-aurora',
-			organisationName: 'Aurora Hotels',
 			agent: { id: 'agt-event', name: 'event-planner' },
 			status: 'REJECTED',
 			buyerRequest: 'Cream and cheese for the 300-guest wedding on Saturday.',
 			rationale: 'Bundled everything for the wedding into one order.',
-			deliverBy: nextWeekday(6),
+			deliverBy: saturday,
 			lines: [
 				{
-					ref: 'L1',
 					product: PRODUCTS.cream,
-					quantity: 720,
-					conversion: {
-						requested: { amount: 720, unit: 'L' },
-						buyerUnitsPerSalesUnit: 1,
-						salesUnits: 720,
-						lotSize: 6,
-						rounded: false,
-						method: 'COMPARISON_PRICE',
-						crossCheck: 'AGREES'
-					},
-					offer: {
-						unitPrice: 4.75,
-						comparisonPrice: 4.75,
-						comparisonUnit: 'L',
-						logisticModel: 'STOCK',
-						availableAmount: 900,
-						availableDate: nextWeekday(6),
-						closingTime: closingTimeBefore(nextWeekday(6)),
-						priceValidTo: daysFromNow(3),
-						fetchedAt: minutesAgo(60 * 26)
-					},
-					lineTotal: 3420,
-					substitutesFor: null
+					salesUnits: 720,
+					requested: { value: 720, unit: 'L', perSalesUnit: 1 },
+					lotSize: 6,
+					unitPrice: 4.75,
+					comparisonPrice: 4.75,
+					logisticModel: 'STOCK',
+					availableAmount: 900,
+					earliestDate: saturday,
+					priceValidTo: daysFromNow(3),
+					fetchedAt: minutesAgo(60 * 26)
 				}
 			],
-			totals: totals(3420),
-			policy: {
-				outcome: 'REJECT',
-				mandateVersion: 2,
-				reasons: [
-					{
-						code: 'OVER_ORDER_LIMIT',
-						severity: 'REJECT',
-						message: 'The order total of €3,420 is over the €3,000 order limit.',
-						facts: { orderTotal: 3420, maxOrderTotal: 3000 }
-					}
-				]
-			},
-			changes: [],
-			statusHistory: [{ status: 'REJECTED', at: minutesAgo(60 * 26), by: 'system' }],
-			createdAt: minutesAgo(60 * 26),
-			checkAgainAfterSeconds: null,
-			approverNote: null
-		},
-		{
-			orderId: 'ORD-0125',
-			quoteId: 'Q-0366',
+			reasons: [
+				{
+					code: 'OVER_ORDER_LIMIT',
+					severity: 'REJECT',
+					lineRef: null,
+					message: 'The order total of €3,420 is over the €3,000 order limit.',
+					facts: { orderTotal: 3420, maxOrderTotal: 3000 }
+				}
+			],
+			mandateVersion: 2,
+			statusHistory: [{ status: 'REJECTED', at: minutesAgo(60 * 26), by: 'agent:event-planner' }],
+			createdAt: minutesAgo(60 * 26)
+		}),
+		order({
+			orderId: '9df6a8ff-3ec0-4244-9461-022700cce945',
+			quoteId: '4fb14cae-b26e-45aa-84e1-ed66b5b731a6',
 			organisationId: 'org-kuusikko',
-			organisationName: 'Kuusikko Hospital Kitchen',
 			agent: { id: 'agt-ward', name: 'ward-kitchen' },
 			status: 'REJECTED',
 			buyerRequest: 'Breakfast muesli for the cardiology ward.',
@@ -727,46 +769,31 @@ export function buildOrders(): Order[] {
 			deliverBy: tuesday,
 			lines: [
 				{
-					ref: 'L1',
 					product: PRODUCTS.muesli,
-					quantity: 6,
-					conversion: null,
-					offer: {
-						unitPrice: 11.9,
-						comparisonPrice: 4.76,
-						comparisonUnit: 'KG',
-						logisticModel: 'STOCK',
-						availableAmount: 40,
-						availableDate: tuesday,
-						closingTime: closingTimeBefore(tuesday),
-						priceValidTo: daysFromNow(3),
-						fetchedAt: minutesAgo(60 * 30)
-					},
-					lineTotal: 71.4,
-					substitutesFor: null
+					salesUnits: 6,
+					unitPrice: 11.9,
+					comparisonPrice: 4.76,
+					comparisonUnit: 'KG',
+					logisticModel: 'STOCK',
+					availableAmount: 40,
+					earliestDate: tuesday,
+					priceValidTo: daysFromNow(3),
+					fetchedAt: minutesAgo(60 * 30),
+					reasons: [
+						{
+							code: 'ALLERGEN_NOT_DECLARED_FREE',
+							severity: 'REJECT',
+							message:
+								'The manufacturer has not declared this product free from milk or gluten cereals. Missing data counts as not free-from.',
+							facts: { excluded: 'AM, AW', declared: 'none', source: 'missing' }
+						}
+					]
 				}
 			],
-			totals: totals(71.4),
-			policy: {
-				outcome: 'REJECT',
-				mandateVersion: 7,
-				reasons: [
-					{
-						code: 'ALLERGEN_NOT_DECLARED_FREE',
-						severity: 'REJECT',
-						lineRef: 'L1',
-						message:
-							'The manufacturer has not declared this product free from milk or gluten cereals. Missing data counts as not free-from.',
-						facts: { excluded: 'AM, AW', declared: 'none', source: 'missing' }
-					}
-				]
-			},
-			changes: [],
-			statusHistory: [{ status: 'REJECTED', at: minutesAgo(60 * 30), by: 'system' }],
-			createdAt: minutesAgo(60 * 30),
-			checkAgainAfterSeconds: null,
-			approverNote: null
-		}
+			mandateVersion: 7,
+			statusHistory: [{ status: 'REJECTED', at: minutesAgo(60 * 30), by: 'agent:ward-kitchen' }],
+			createdAt: minutesAgo(60 * 30)
+		})
 	];
 }
 

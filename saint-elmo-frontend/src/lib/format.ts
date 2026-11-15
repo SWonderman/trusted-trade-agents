@@ -1,4 +1,11 @@
-import type { OrderStatus, PolicyOutcome, ReasonSeverity } from '#lib/api/types.js';
+import type {
+	OrderLine,
+	OrderStatus,
+	PolicyOutcome,
+	ProductFacts,
+	ReasonSeverity
+} from '#lib/api/types.js';
+import { isUuid } from '#lib/ids.js';
 
 const eur = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' });
 const eurWhole = new Intl.NumberFormat('en-IE', {
@@ -12,6 +19,9 @@ export const money = (v: number) => eur.format(v);
 export const moneyWhole = (v: number) => eurWhole.format(v);
 export const number = (v: number) => num.format(v);
 export const percent = (v: number) => `${Math.round(v * 100)}%`;
+
+/** An order or quote id as people read it: a backend UUID by its first eight characters. */
+export const shortId = (id: string) => (isUuid(id) ? id.slice(0, 8) : id);
 
 export function date(iso: string) {
 	return new Date(iso.length === 10 ? `${iso}T00:00:00Z` : iso).toLocaleDateString('en-GB', {
@@ -40,6 +50,25 @@ export function time(iso: string) {
 		timeZone: 'Europe/Helsinki'
 	});
 }
+
+/** Whole days from the requested delivery date to the earliest one; above 0 is late. */
+export function daysLate(earliest: string, deliverBy: string) {
+	return Math.round(
+		(new Date(`${earliest.slice(0, 10)}T00:00:00Z`).getTime() -
+			new Date(`${deliverBy.slice(0, 10)}T00:00:00Z`).getTime()) /
+			86_400_000
+	);
+}
+
+export const days = (n: number) => `${n} day${n === 1 ? '' : 's'}`;
+
+/** A line's product name: the order's, else the catalog's, else its code. */
+export const lineName = (line: OrderLine, facts?: ProductFacts) =>
+	line.name ?? facts?.name ?? line.productCode;
+
+/** A line's total excluding VAT, or a dash when it has no price or quantity. */
+export const lineTotal = (line: OrderLine) =>
+	line.quantity?.lineTotal ? money(line.quantity.lineTotal.net) : '—';
 
 export function relative(iso: string, now = Date.now()) {
 	const s = Math.round((now - new Date(iso).getTime()) / 1000);

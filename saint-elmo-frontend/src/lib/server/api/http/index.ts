@@ -5,6 +5,7 @@ import type {
 	BackendMe,
 	IssuedKey,
 	Order,
+	OrderList,
 	ProductDetail,
 	ProductSearchResponse,
 	ScenarioOverride,
@@ -12,6 +13,7 @@ import type {
 	Vocabulary
 } from '#lib/api/types.js';
 import { ApiError, type Caller, type SaintElmoApi } from '../client';
+import { isUuid } from '#lib/ids.js';
 import { httpAudit } from './audit';
 
 type CallInit = Omit<RequestInit, 'body'> & {
@@ -25,6 +27,9 @@ type CallInit = Omit<RequestInit, 'body'> & {
 	form?: Record<string, string>;
 };
 
+/** The most orders the backend returns in one page. */
+const ORDERS_PAGE = 100;
+
 /** The backend's session user, in the shape the pages use. */
 function sessionUser(me: BackendMe): SessionUser {
 	return {
@@ -37,9 +42,9 @@ function sessionUser(me: BackendMe): SessionUser {
 }
 
 /**
- * The FastAPI implementation. Sign-in, the catalog and the audit trail call routes that
- * exist today; orders, agents and scenario controls follow issues #15 and #22 and are
- * marked TODO until those land. Switch a namespace over with API_MODE_<NAMESPACE>=http.
+ * The FastAPI implementation. Sign-in, the catalog, orders and the audit trail call
+ * routes that exist today; agents and scenario controls follow issue #22 and are marked
+ * TODO until it lands. Switch a namespace over with API_MODE_<NAMESPACE>=http.
  */
 export function httpApi(baseUrl: string): SaintElmoApi {
 	async function call<T>(path: string, init: CallInit = {}): Promise<T> {
@@ -133,25 +138,39 @@ export function httpApi(baseUrl: string): SaintElmoApi {
 			vocabulary: (caller) => call<Vocabulary>('/api/v1/catalog/vocabulary', { caller })
 		},
 
-		// TODO(#15): confirm paths once the orders and approval API lands.
 		orders: {
 			async list(caller, filter) {
-				const page = await call<{ items: Order[] }>('/api/v1/orders', {
-					caller,
-					query: { status: filter?.status }
-				});
-				return page.items;
+				// Every order in a status, page by page; without one, the most recent page.
+				const items: Order[] = [];
+				let total = Infinity;
+				while (items.length < total) {
+					const page = await call<OrderList>('/api/v1/orders', {
+						caller,
+						query: {
+							status: filter?.status,
+							limit: String(ORDERS_PAGE),
+							offset: String(items.length)
+						}
+					});
+					items.push(...page.items);
+					total = filter?.status ? page.total : 0;
+					if (!page.items.length) break;
+				}
+				return items;
 			},
-			get: (caller, orderId) =>
-				orNull(call<Order>(`/api/v1/orders/${encodeURIComponent(orderId)}`, { caller })),
+			// Order ids are UUIDs; the backend refuses anything else with a 422, not a 404.
+			get: async (caller, orderId) =>
+				isUuid(orderId)
+					? orNull(call<Order>(`/api/v1/orders/${encodeURIComponent(orderId)}`, { caller }))
+					: null,
 			approve: (caller, orderId, note) =>
-				call(`/api/v1/orders/${encodeURIComponent(orderId)}/approve`, {
+				call<Order>(`/api/v1/orders/${encodeURIComponent(orderId)}/approve`, {
 					caller,
 					method: 'POST',
 					json: { note }
 				}),
 			reject: (caller, orderId, note) =>
-				call(`/api/v1/orders/${encodeURIComponent(orderId)}/reject`, {
+				call<Order>(`/api/v1/orders/${encodeURIComponent(orderId)}/reject`, {
 					caller,
 					method: 'POST',
 					json: { note }

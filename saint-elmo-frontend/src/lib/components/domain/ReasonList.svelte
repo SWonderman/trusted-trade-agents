@@ -30,7 +30,9 @@
 					currency: 'EUR',
 					maximumFractionDigits: 0
 				}).format(v)
-			: String(v);
+			: typeof v === 'object' && v !== null
+				? JSON.stringify(v)
+				: String(v);
 </script>
 
 {#if sorted.length === 0}
@@ -47,7 +49,7 @@
 					<p class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
 						<span class="code font-medium">{reason.code}</span>
 						{#if reason.lineRef}
-							<span class="text-xs text-muted-foreground">line {reason.lineRef.slice(1)}</span>
+							<span class="text-xs text-muted-foreground">line {reason.lineRef}</span>
 						{/if}
 						<span class={['ml-auto text-xs', l.cls]}>{outcomeLabel[reason.severity]}</span>
 					</p>
