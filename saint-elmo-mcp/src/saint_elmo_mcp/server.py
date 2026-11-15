@@ -1,7 +1,7 @@
 from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
-from saint_elmo_mcp.tools import catalog, mandate, offers, orders, quotes, substitutes
+from saint_elmo_mcp.tools import audit, catalog, mandate, offers, orders, quotes, substitutes
 
 INSTRUCTIONS = """\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
@@ -34,6 +34,11 @@ The full flow (tools are added as the backend grows, so use the ones you have):
    sooner than checkAgainAfterSeconds until it is PLACED or REJECTED (the
    approverNote says why). list_orders shows your recent orders.
    You can never approve or reject your own orders, and no tool does.
+7. get_order_trail: to explain to the buyer what you did and why an order went
+   the way it did, read that order's audit trail, oldest first. get_audit_log
+   lists your recent events, newest first. The trail records decisions and
+   commitments, not lookups. Quote the summary lines rather than re-deriving
+   them from payloads.
 
 Rules of thumb:
 - Turn relative dates ("by Monday") into ISO dates yourself and check the date
@@ -60,4 +65,5 @@ def build_server(backend: BackendClient) -> MCPServer:
     substitutes.register(mcp, backend)
     quotes.register(mcp, backend)
     orders.register(mcp, backend)
+    audit.register(mcp, backend)
     return mcp

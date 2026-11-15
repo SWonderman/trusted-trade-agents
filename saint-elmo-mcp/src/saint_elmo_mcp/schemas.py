@@ -6,6 +6,7 @@ renamed field fails validation, which is how contract drift shows up in tests
 (ADR 0001).
 """
 
+from datetime import datetime
 from typing import Any, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -794,4 +795,73 @@ class Substitutes(CamelModel):
     candidates: list[SubstituteCandidate] = Field(description="In rank order, at most `limit`.")
     reason_codes: list[SubstitutesReasonCode] = Field(
         description="NO_SUBSTITUTES_FOUND when no candidate qualified: tell the buyer."
+    )
+
+
+# --- Audit trail (GET /api/v1/audit-events, GET /api/v1/orders/{id}/trail, issue #57) ---
+# Event types and actor kinds are Literals copied from the backend's audit enums
+# and schemas, so a new value fails loudly.
+
+AuditEventType = Literal[
+    "QUOTE_CREATED",
+    "SUBSTITUTES_REQUESTED",
+    "ORDER_REQUESTED",
+    "ORDER_RECHECKED",
+    "ORDER_CONFIRMED",
+    "ORDER_PENDING_APPROVAL",
+    "ORDER_APPROVED",
+    "ORDER_PLACED",
+    "ORDER_REJECTED",
+    "ORDER_REJECTED_BY_HUMAN",
+    "AGENT_TOKEN_ISSUED",
+    "AGENT_TOKEN_REVOKED",
+    "AGENT_DISABLED",
+]
+
+
+class AuditActor(CamelModel):
+    kind: Literal["agent", "user", "system"] = Field(
+        description="system for automatic steps, e.g. placing a confirmed or approved order."
+    )
+    id: str | None = Field(description="The agent's or user's id; null for the system.")
+    name: str
+
+
+class AuditEvent(CamelModel):
+    type: AuditEventType
+    at: datetime
+    subject_id: str | None = Field(
+        description="The quote, order or agent the event is about; null for a substitute "
+        "request."
+    )
+    actor: AuditActor = Field(
+        description="Who acted. A re-check is credited to whoever triggered it: you when "
+        "placing, the approver when approving."
+    )
+    summary: str = Field(description="One plain English sentence. Quote it to the buyer.")
+    outcome: PolicyOutcome | None = Field(
+        description="The policy outcome, for events judged against the mandate."
+    )
+    # Plain strings, not a Literal like live responses: events are history, and an
+    # old event must stay readable after a reason code is renamed or retired
+    reason_codes: list[str] | None = Field(
+        description="Reason codes, for events judged against the mandate and for substitute "
+        "requests."
+    )
+    payload: dict[str, Any] | None = Field(
+        default=None,
+        exclude_if=_is_none,
+        description="The event's recorded data, only with include_payload.",
+    )
+
+
+class OrderTrail(CamelModel):
+    order_id: str
+    items: list[AuditEvent] = Field(description="Oldest first, the whole trail.")
+
+
+class AuditLog(CamelModel):
+    items: list[AuditEvent] = Field(description="Newest first.")
+    next_cursor: str | None = Field(
+        description="Pass as `cursor` for the next, older page; null on the last page."
     )
