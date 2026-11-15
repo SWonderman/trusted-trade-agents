@@ -45,6 +45,24 @@ def summarize(
     return _RENDERERS[event_type](payload, actor, agent)
 
 
+def lifted_policy(payload: Payload) -> tuple[str | None, list[str] | None]:
+    """
+    The policy outcome and reason codes an event's payload holds, if any: those of a
+    judgement against the mandate (`policy`), or a substitute request's own `reasonCodes`.
+    """
+    policy = payload.get("policy")
+    if isinstance(policy, dict):
+        reasons = policy.get("reasons")
+        codes = [reason["code"] for reason in reasons] if reasons is not None else None
+        return policy.get("outcome"), codes
+    codes = payload.get("reasonCodes")
+    return None, list(codes) if codes is not None else None
+
+
+def _plural(count: int, noun: str) -> str:
+    return f"{count} {noun}{'s' if count != 1 else ''}"
+
+
 def _number(value: Any) -> str:
     number = float(value)
     return f"{number:,.0f}" if number.is_integer() else f"{number:,}"
@@ -130,7 +148,7 @@ def _substitutes_requested(payload: Payload, actor: str, agent: str | None) -> s
         return f"{head} and got none"
     top = candidates[0].get("productCode")
     count = len(candidates)
-    got = f"{head} and got {count} candidate{'s' if count != 1 else ''}"
+    got = f"{head} and got {_plural(count, 'candidate')}"
     return got + (f", best {top}" if top else "")
 
 
@@ -146,11 +164,7 @@ def _order_rechecked(payload: Payload, actor: str, agent: str | None) -> str:
     if money:
         head += f": {money}"
     changes = payload.get("changes") or []
-    changed = (
-        f"{len(changes)} change{'s' if len(changes) != 1 else ''} since the quote"
-        if changes
-        else None
-    )
+    changed = f"{_plural(len(changes), 'change')} since the quote" if changes else None
     return _joined(head, _verdict(payload.get("policy")), changed, sep=", " if money else ": ")
 
 
@@ -199,7 +213,7 @@ def _agent_disabled(payload: Payload, actor: str, agent: str | None) -> str:
     cut_off = payload.get("cutOffJtis")
     if not cut_off:
         return head
-    return f"{head}, cutting off {len(cut_off)} live token{'s' if len(cut_off) != 1 else ''}"
+    return f"{head}, cutting off {_plural(len(cut_off), 'live token')}"
 
 
 _RENDERERS: dict[AuditEventType, Renderer] = {

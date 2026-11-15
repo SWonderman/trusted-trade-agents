@@ -23,7 +23,12 @@ from saint_elmo_backend.api.exceptions import (
     ValioAimoApiUnavailable,
     to_response_error,
 )
-from saint_elmo_backend.api.v1.auth import Principal, authenticate, require_permission
+from saint_elmo_backend.api.v1.auth import (
+    AuditReader,
+    Principal,
+    authenticate,
+    require_permission,
+)
 from saint_elmo_backend.audit import trail
 from saint_elmo_backend.audit.schemas import AuditEventOut, OrderTrailResponse
 from saint_elmo_backend.core.settings import get_settings
@@ -45,7 +50,6 @@ router = APIRouter(responses=to_response_error(InvalidCredentials, PermissionDen
 OrderingAgent = Annotated[Principal, Depends(authenticate(agent_scope=Scope.ORDER_PLACE))]
 # An agent reads its own orders; a user reads the buyer organisation's
 OrderReader = Annotated[Principal, Depends(authenticate(users=True, agent_scope=Scope.ORDER_READ))]
-TrailReader = Annotated[Principal, Depends(authenticate(users=True, agent_scope=Scope.AUDIT_READ))]
 # Users only: no Agent token can approve, whatever its scopes, and there is no approve scope
 Approver = Annotated[AuthenticatedUser, Depends(require_permission(Permission.ORDER_APPROVE))]
 
@@ -167,7 +171,7 @@ async def get_order(order_id: UUID4, principal: OrderReader, session: ASession) 
     responses=to_response_error(OrderNotFound),
 )
 async def get_order_trail(
-    order_id: UUID4, principal: TrailReader, session: ASession
+    order_id: UUID4, principal: AuditReader, session: ASession
 ) -> OrderTrailResponse:
     try:
         entries = await trail.get_order_trail(

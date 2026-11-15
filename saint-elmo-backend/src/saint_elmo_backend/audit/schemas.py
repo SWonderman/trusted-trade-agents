@@ -5,6 +5,7 @@ from pydantic import UUID4, Field
 
 from saint_elmo_backend.audit.dtos import AuditEntry
 from saint_elmo_backend.audit.enums import AuditEventType
+from saint_elmo_backend.audit.summaries import lifted_policy
 from saint_elmo_backend.core.schema import CamelBaseModel
 from saint_elmo_backend.policy.enums import PolicyOutcome
 
@@ -40,16 +41,15 @@ class AuditEventOut(CamelBaseModel):
         description="The policy outcome, for events that judged against the mandate"
     )
     reason_codes: list[str] | None = Field(
-        description="The policy reason codes, for events that judged against the mandate"
+        description="The reason codes, for events that judged against the mandate and "
+        "for substitute requests"
     )
     payload: dict[str, Any] = Field(description="The event's recorded data, unchanged")
 
     @classmethod
     def from_entry(cls, entry: AuditEntry) -> "AuditEventOut":
         event = entry.event
-        policy = event.payload.get("policy")
-        policy = policy if isinstance(policy, dict) else {}
-        reasons = policy.get("reasons")
+        outcome, reason_codes = lifted_policy(event.payload)
         return cls(
             id=event.public_id,
             at=event.created_at,
@@ -57,8 +57,8 @@ class AuditEventOut(CamelBaseModel):
             subject_id=event.subject_public_id,
             actor=ActorOut(kind=entry.actor.kind, id=entry.actor.public_id, name=entry.actor.name),
             summary=entry.summary,
-            outcome=policy.get("outcome"),
-            reason_codes=[reason["code"] for reason in reasons] if reasons is not None else None,
+            outcome=outcome,
+            reason_codes=reason_codes,
             payload=event.payload,
         )
 

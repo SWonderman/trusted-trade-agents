@@ -250,8 +250,8 @@ back through `trail.py`. Lookups such as searches and offers are not recorded.
   creation to the order's latest event (a stand-in until substitute requests are linked
   to quote lines).
 - **Event shape**: `id`, `at`, `type`, `subjectId`, `actor {kind, id, name}`, `summary`,
-  `outcome` and `reasonCodes` (from the payload's policy, else null) and the raw
-  `payload`. `actor.kind` is `agent`, `user`, or `system` for placing a confirmed or
+  `outcome` and `reasonCodes` (from the payload's policy, or a substitute request's own
+  `reasonCodes`; else null) and the raw `payload`. `actor.kind` is `agent`, `user`, or `system` for placing a confirmed or
   approved order. A buyer admin's action on an agent carries both ids and is credited to
   the admin.
 - **Summary**: one plain English sentence rendered at read time by `audit/summaries.py`,

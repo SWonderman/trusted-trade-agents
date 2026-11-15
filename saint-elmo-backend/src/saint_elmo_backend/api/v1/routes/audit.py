@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Query
 from pydantic import UUID4
 
-from saint_elmo_backend.agents.enums import Scope
 from saint_elmo_backend.api.annotations import ASession
 from saint_elmo_backend.api.exceptions import (
     InvalidCredentials,
@@ -12,17 +11,13 @@ from saint_elmo_backend.api.exceptions import (
     PermissionDenied,
     to_response_error,
 )
-from saint_elmo_backend.api.v1.auth import Principal, authenticate
+from saint_elmo_backend.api.v1.auth import AuditReader
 from saint_elmo_backend.audit import trail
 from saint_elmo_backend.audit.enums import AuditEventType
 from saint_elmo_backend.audit.exceptions import InvalidCursorError
 from saint_elmo_backend.audit.schemas import AuditEventListResponse, AuditEventOut
 
 router = APIRouter(responses=to_response_error(InvalidCredentials, PermissionDenied))
-
-# A user reads the buyer organisation's trail; an agent what it acted in, plus a human's
-# decisions on its own orders
-AuditReader = Annotated[Principal, Depends(authenticate(users=True, agent_scope=Scope.AUDIT_READ))]
 
 
 @router.get(
@@ -43,7 +38,9 @@ async def list_audit_events(
         UUID4 | None,
         Query(alias="agentId", description="Only events of this agent, as actor or subject"),
     ] = None,
-    type: Annotated[AuditEventType | None, Query(description="Only this event type")] = None,
+    event_type: Annotated[
+        AuditEventType | None, Query(alias="type", description="Only this event type")
+    ] = None,
     subject: Annotated[
         UUID4 | None, Query(description="Only events about this quote, order or agent")
     ] = None,
@@ -58,7 +55,7 @@ async def list_audit_events(
             organization_id=principal.organization.id,
             visible_to_agent_id=principal.agent.id if principal.agent else None,
             agent_public_id=agent_id,
-            event_type=type,
+            event_type=event_type,
             subject_public_id=subject,
             since=from_,
             until=to,

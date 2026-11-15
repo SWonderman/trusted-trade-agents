@@ -5,7 +5,7 @@ The plain English sentence each audit event is read back with.
 import pytest
 
 from saint_elmo_backend.audit.enums import AuditEventType
-from saint_elmo_backend.audit.summaries import summarize
+from saint_elmo_backend.audit.summaries import lifted_policy, summarize
 
 # The milk example: 50 cases of Eila 10 l over the 1,500 € auto-approve limit
 MILK_POLICY = {
@@ -73,3 +73,15 @@ def test_every_event_type_has_a_sentence_even_from_an_empty_payload(event_type):
     summary = summarize(event_type, {}, actor="dairy-restock", agent="dairy-restock")
 
     assert summary.strip()
+
+
+def test_the_policy_result_comes_from_a_judgement_or_a_substitute_request():
+    assert lifted_policy(MILK_QUOTE) == (
+        "NEEDS_HUMAN",
+        ["STOCK_UNKNOWN", "OVER_AUTO_APPROVE_LIMIT"],
+    )
+    assert lifted_policy({"reasonCodes": ["NO_SUBSTITUTES_FOUND"]}) == (
+        None,
+        ["NO_SUBSTITUTES_FOUND"],
+    )
+    assert lifted_policy({"status": "PLACED"}) == (None, None)
