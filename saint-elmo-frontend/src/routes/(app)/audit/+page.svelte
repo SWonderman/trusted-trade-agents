@@ -160,12 +160,25 @@
 			</Empty.Content>
 		</Empty.Root>
 	{:else}
-		<div class="min-w-0 rounded-xl border bg-card px-3 py-5 sm:px-6">
-			<AuditTimeline
-				events={data.events}
-				showOrganisation={data.crossCustomer}
-				linkOrders={!data.crossCustomer}
-			/>
+		<!-- On large screens the trail scrolls inside its card, sized to what is left of the screen
+		     under the page header (sticky covers a header that wraps taller).
+		     The padding sits inside the scroller so day headings stick flush to its top edge. -->
+		<div
+			class="min-w-0 rounded-xl border bg-card lg:sticky lg:top-20 lg:max-h-[calc(100dvh-18rem)] lg:overflow-y-auto lg:overscroll-contain"
+			{@attach (el) => {
+				// A new filter starts the trail back at its newest entry
+				void data.events;
+				el.scrollTop = 0;
+			}}
+		>
+			<div class="px-3 py-5 sm:px-6">
+				<AuditTimeline
+					contained
+					events={data.events}
+					showOrganisation={data.crossCustomer}
+					linkOrders={!data.crossCustomer}
+				/>
+			</div>
 		</div>
 	{/if}
 </div>

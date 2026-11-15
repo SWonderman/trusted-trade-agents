@@ -12,8 +12,15 @@
 	let {
 		events,
 		showOrganisation = false,
-		linkOrders = true
-	}: { events: AuditEvent[]; showOrganisation?: boolean; linkOrders?: boolean } = $props();
+		linkOrders = true,
+		contained = false
+	}: {
+		events: AuditEvent[];
+		showOrganisation?: boolean;
+		linkOrders?: boolean;
+		/** Inside a container that scrolls on large screens: day headings stick to its top there. */
+		contained?: boolean;
+	} = $props();
 
 	let days = $derived.by(() => {
 		const groups: { day: string; events: AuditEvent[] }[] = [];
@@ -37,7 +44,10 @@
 	{#each days as group (group.day)}
 		<section aria-label={group.day}>
 			<h3
-				class="sticky top-14 z-[1] -mx-2 mb-3 bg-card/95 px-2 py-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase backdrop-blur"
+				class={[
+					'sticky top-14 z-[1] -mx-2 mb-3 bg-card/95 px-2 py-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase backdrop-blur',
+					contained && 'lg:top-0'
+				]}
 			>
 				{group.day}
 			</h3>
