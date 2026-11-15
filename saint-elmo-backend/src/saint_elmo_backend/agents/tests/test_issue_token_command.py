@@ -56,6 +56,7 @@ async def test_research_only_preset_cannot_place_orders(seeded, session):
 
     credential = await session.scalar(select(AgentCredential))
     assert sorted(credential.scopes) == [
+        "audit:read",
         "catalog:read",
         "mandate:read",
         "offers:read",

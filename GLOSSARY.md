@@ -138,5 +138,13 @@ Where a claim came from, when, how long it holds and how certain it is (e.g. a p
 _Avoid_: Source, metadata
 
 **Audit trail**:
-The append-only record of what every agent and human did and why, readable by both the buyer organisation and Valio Aimo.
+The append-only record of every decision and commitment an agent or human made, and why: quotes, substitute requests, orders, approvals and changes to agents' authority. Lookups such as searches and price checks are not part of it. Readable by the buyer organisation, and shareable with Valio Aimo.
 _Avoid_: Log (on its own), history
+
+**Audit event**:
+One entry in the audit trail: who acted, when, on what, and a plain-language summary of it.
+_Avoid_: Log line, record
+
+**Order trail**:
+The audit events behind one order, in time order: every quote that led to it, the substitutes considered, the re-checks, the human sign-off and the placing.
+_Avoid_: Order history, timeline (in technical text)

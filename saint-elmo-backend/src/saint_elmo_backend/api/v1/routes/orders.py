@@ -24,6 +24,8 @@ from saint_elmo_backend.api.exceptions import (
     to_response_error,
 )
 from saint_elmo_backend.api.v1.auth import Principal, authenticate, require_permission
+from saint_elmo_backend.audit import trail
+from saint_elmo_backend.audit.schemas import AuditEventOut, OrderTrailResponse
 from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.mandates.exceptions import MandateNotFoundError
 from saint_elmo_backend.offers.exceptions import CustomerNumberMissingError, UnknownProductsError
@@ -43,6 +45,7 @@ router = APIRouter(responses=to_response_error(InvalidCredentials, PermissionDen
 OrderingAgent = Annotated[Principal, Depends(authenticate(agent_scope=Scope.ORDER_PLACE))]
 # An agent reads its own orders; a user reads the buyer organisation's
 OrderReader = Annotated[Principal, Depends(authenticate(users=True, agent_scope=Scope.ORDER_READ))]
+TrailReader = Annotated[Principal, Depends(authenticate(users=True, agent_scope=Scope.AUDIT_READ))]
 # Users only: no Agent token can approve, whatever its scopes, and there is no approve scope
 Approver = Annotated[AuthenticatedUser, Depends(require_permission(Permission.ORDER_APPROVE))]
 
@@ -149,6 +152,35 @@ async def get_order(order_id: UUID4, principal: OrderReader, session: ASession) 
     except OrderNotFoundError as exc:
         raise OrderNotFound() from exc
     return OrderResponse.from_order(order)
+
+
+@router.get(
+    "/{order_id}/trail",
+    response_model=OrderTrailResponse,
+    summary="Read an order's audit trail",
+    description="The audit events behind one order, oldest first and whole: those of the "
+    "order, its quote and every earlier quote it revised through `previousQuoteId`, plus "
+    "the agent's substitute requests for products in those quotes, from the first quote "
+    "until the order's latest event. An agent reads only its own orders, and of them only "
+    "what it acted in plus human approvals and rejections and automatic placing.",
+    tags=["Audit trail"],
+    responses=to_response_error(OrderNotFound),
+)
+async def get_order_trail(
+    order_id: UUID4, principal: TrailReader, session: ASession
+) -> OrderTrailResponse:
+    try:
+        entries = await trail.get_order_trail(
+            session,
+            organization_id=principal.organization.id,
+            order_public_id=order_id,
+            visible_to_agent_id=principal.agent.id if principal.agent else None,
+        )
+    except OrderNotFoundError as exc:
+        raise OrderNotFound() from exc
+    return OrderTrailResponse(
+        order_id=order_id, items=[AuditEventOut.from_entry(entry) for entry in entries]
+    )
 
 
 @router.post(
