@@ -1,9 +1,9 @@
 from enum import StrEnum
 from typing import Any
+from uuid import UUID
 
 from fastapi import HTTPException, status
-
-from pydantic import create_model, Field
+from pydantic import BaseModel, Field, create_model
 
 from saint_elmo_backend.core.schema import CamelBaseModel
 
@@ -60,6 +60,7 @@ class ErrorCode(StrEnum):
 
     # Orders
     ORDER_NOT_FOUND = "ORDER_NOT_FOUND"
+    ORDER_NOT_PENDING = "ORDER_NOT_PENDING"
     ORDER_ALREADY_FULFILLED = "ORDER_ALREADY_FULFILLED"
     SHIPPING_ADDRESS_MISSING = "SHIPPING_ADDRESS_MISSING"
 
@@ -81,6 +82,24 @@ class ErrorCode(StrEnum):
     DUPLICATE_CATEGORY = "DUPLICATE_CATEGORY"
     DUPLICATE_SKU = "DUPLICATE_SKU"
     DUPLICATE_IDENTIFIER = "DUPLICATE_IDENTIFIER"
+    UNKNOWN_CODE = "UNKNOWN_CODE"
+
+    # Offers (Valio Aimo API)
+    VALIO_AIMO_UNAVAILABLE = "VALIO_AIMO_UNAVAILABLE"
+    CUSTOMER_NUMBER_MISSING = "CUSTOMER_NUMBER_MISSING"
+
+    # Agents
+    AGENT_NOT_FOUND = "AGENT_NOT_FOUND"
+    AGENT_TOKEN_NOT_FOUND = "AGENT_TOKEN_NOT_FOUND"
+
+    # Mandates
+    MANDATE_NOT_FOUND = "MANDATE_NOT_FOUND"
+    MANDATE_REQUIRED = "MANDATE_REQUIRED"
+
+    # Quotes
+    QUOTE_NOT_FOUND = "QUOTE_NOT_FOUND"
+    QUOTE_EXPIRED = "QUOTE_EXPIRED"
+    QUOTE_ALREADY_ORDERED = "QUOTE_ALREADY_ORDERED"
 
     # Inventory
     LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND"
@@ -94,8 +113,11 @@ class SaintElmoHTTPException(HTTPException):
         error_code: ErrorCode,
         detail: str,
         headers: Headers | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         self.error_code: ErrorCode = error_code
+        # Machine-readable context for the error, e.g. the id of a conflicting resource
+        self.details: dict[str, Any] | None = details
 
         super().__init__(
             status_code=status_code,
@@ -105,9 +127,7 @@ class SaintElmoHTTPException(HTTPException):
 
 
 class SomethingWentWrong(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Something went wrong", headers: Headers | None = None
-    ):
+    def __init__(self, detail: str = "Something went wrong", headers: Headers | None = None):
         super().__init__(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             error_code=ErrorCode.INTERNAL,
@@ -218,9 +238,7 @@ class EmailVerificationNotFound(SaintElmoHTTPException):
 
 
 class EmailVerificationInvalid(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "This confirmation link has expired. Request a new one."
-    ):
+    def __init__(self, detail: str = "This confirmation link has expired. Request a new one."):
         super().__init__(
             status_code=status.HTTP_410_GONE,
             error_code=ErrorCode.EMAIL_VERIFICATION_INVALID,
@@ -247,9 +265,7 @@ class InvitationInvalid(SaintElmoHTTPException):
 
 
 class IncompleteRegistration(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "First name, last name, and password are required"
-    ):
+    def __init__(self, detail: str = "First name, last name, and password are required"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.INCOMPLETE_REGISTRATION,
@@ -258,9 +274,7 @@ class IncompleteRegistration(SaintElmoHTTPException):
 
 
 class InvitationRequiresAuthentication(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Log in as the invited email to accept this invitation"
-    ):
+    def __init__(self, detail: str = "Log in as the invited email to accept this invitation"):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             error_code=ErrorCode.INVITATION_REQUIRES_AUTHENTICATION,
@@ -311,9 +325,7 @@ class OrganizationLimitReached(SaintElmoHTTPException):
 
 
 class NotOrganizationOwner(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Only the organization owner can perform this action"
-    ):
+    def __init__(self, detail: str = "Only the organization owner can perform this action"):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
             error_code=ErrorCode.NOT_ORGANIZATION_OWNER,
@@ -340,9 +352,7 @@ class StorefrontNotSyncable(SaintElmoHTTPException):
 
 
 class MarketplaceMisconfigured(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Storefront marketplace connection is misconfigured"
-    ):
+    def __init__(self, detail: str = "Storefront marketplace connection is misconfigured"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.MARKETPLACE_MISCONFIGURED,
@@ -437,6 +447,15 @@ class OrderNotFound(SaintElmoHTTPException):
         )
 
 
+class InvalidCursor(SaintElmoHTTPException):
+    def __init__(self, detail: str = "The cursor is not one this list returned"):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            error_code=ErrorCode.VALIDATION_ERROR,
+            detail=detail,
+        )
+
+
 class OrderAlreadyFulfilled(SaintElmoHTTPException):
     def __init__(self, detail: str = "Order is already fulfilled"):
         super().__init__(
@@ -483,9 +502,7 @@ class CarrierUnavailable(SaintElmoHTTPException):
 
 
 class NoDefaultCarrier(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "No default carrier configured for this storefront"
-    ):
+    def __init__(self, detail: str = "No default carrier configured for this storefront"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.NO_DEFAULT_CARRIER,
@@ -512,9 +529,7 @@ class CarrierServiceNotFound(SaintElmoHTTPException):
 
 
 class CarrierAssignmentNotFound(SaintElmoHTTPException):
-    def __init__(
-        self, detail: str = "Carrier assignment not found for this storefront"
-    ):
+    def __init__(self, detail: str = "Carrier assignment not found for this storefront"):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             error_code=ErrorCode.CARRIER_ASSIGNMENT_NOT_FOUND,
@@ -603,6 +618,158 @@ class DuplicateIdentifier(SaintElmoHTTPException):
         )
 
 
+class UnknownFilterCodes(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Search filters name codes the catalog does not know"):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            error_code=ErrorCode.UNKNOWN_CODE,
+            detail=detail,
+        )
+
+    @classmethod
+    def for_filters(cls, unknown: dict[str, list[str]]) -> "UnknownFilterCodes":
+        """
+        `unknown` maps request field names to their unknown codes.
+
+        Example:
+        "Unknown codes: requiredDiets=[CARNIVORE], requiredLabels=[ORGANIC]".
+        """
+        listed = ", ".join(f"{field}=[{', '.join(codes)}]" for field, codes in unknown.items())
+        return cls(f"Unknown codes: {listed}")
+
+    @classmethod
+    def for_request(
+        cls, request: type[BaseModel], unknown: dict[str, list[str]]
+    ) -> "UnknownFilterCodes":
+        """
+        `unknown` maps `request`'s Python field names to their unknown codes. They are
+        named by request field (its alias), so the agent can map each code back to its
+        filter.
+        """
+        fields = request.model_fields
+        return cls.for_filters(
+            {fields[name].alias or name: codes for name, codes in unknown.items()}
+        )
+
+
+class UnknownProducts(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Unknown product codes: 999990"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.PRODUCT_NOT_FOUND,
+            detail=detail,
+        )
+
+    @classmethod
+    def for_codes(cls, codes: list[str]) -> "UnknownProducts":
+        return cls(f"Unknown product codes: {', '.join(codes)}")
+
+
+class ValioAimoApiUnavailable(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "The Valio Aimo price and availability API is unavailable; try again later",
+    ):
+        super().__init__(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            error_code=ErrorCode.VALIO_AIMO_UNAVAILABLE,
+            detail=detail,
+        )
+
+
+class CustomerNumberMissing(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "The buyer organisation has no Valio Aimo customer number, so it can't be priced",
+    ):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.CUSTOMER_NUMBER_MISSING,
+            detail=detail,
+        )
+
+
+class MandateNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "This agent has no mandate; ask a buyer admin to set one"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.MANDATE_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class MandateRequired(SaintElmoHTTPException):
+    def __init__(self, detail: str = "The agent has no mandate; set one before issuing a token"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.MANDATE_REQUIRED,
+            detail=detail,
+        )
+
+
+class AgentNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "No agent with this id in your buyer organisation"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.AGENT_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class AgentTokenNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "This agent has no token with this id"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.AGENT_TOKEN_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class QuoteNotFound(SaintElmoHTTPException):
+    def __init__(self, detail: str = "No quote with this id in your buyer organisation"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            error_code=ErrorCode.QUOTE_NOT_FOUND,
+            detail=detail,
+        )
+
+
+class QuoteExpired(SaintElmoHTTPException):
+    def __init__(self, detail: str = "The quote has expired; quote again for fresh prices"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.QUOTE_EXPIRED,
+            detail=detail,
+        )
+
+
+class QuoteAlreadyOrdered(SaintElmoHTTPException):
+    def __init__(
+        self,
+        detail: str = "An order was already placed from this quote; `details.orderId` is that order",
+        details: dict[str, Any] | None = None,
+    ):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.QUOTE_ALREADY_ORDERED,
+            detail=detail,
+            details=details,
+        )
+
+    @classmethod
+    def for_order(cls, order_public_id: UUID) -> "QuoteAlreadyOrdered":
+        return cls(details={"orderId": str(order_public_id)})
+
+
+class OrderNotPending(SaintElmoHTTPException):
+    def __init__(self, detail: str = "Only an order pending approval can be approved or rejected"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            error_code=ErrorCode.ORDER_NOT_PENDING,
+            detail=detail,
+        )
+
+
 class LocationNotFound(SaintElmoHTTPException):
     def __init__(self, detail: str = "Location not found"):
         super().__init__(
@@ -628,8 +795,8 @@ class SaintElmoErrorResponse(CamelBaseModel):
 
 def to_response_error(
     *exceptions: type[SaintElmoHTTPException],
-) -> dict[int, dict[str, Any]]:
-    result: dict[int, dict[str, Any]] = {}
+) -> dict[int | str, dict[str, Any]]:
+    result: dict[int | str, dict[str, Any]] = {}
 
     for exc in exceptions:
         instance: SaintElmoHTTPException = exc()  # type: ignore[call-arg]

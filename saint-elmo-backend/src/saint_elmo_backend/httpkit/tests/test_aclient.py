@@ -1,6 +1,6 @@
-import pytest
-
 from http import HTTPMethod
+
+import pytest
 
 from saint_elmo_backend.httpkit.exceptions import (
     HttpkitConnectionError,
@@ -11,7 +11,6 @@ from saint_elmo_backend.httpkit.exceptions import (
 )
 from saint_elmo_backend.httpkit.tests.conftest import MakeAsyncClient
 from saint_elmo_backend.httpkit.tests.fakes import FakeResponse, Product
-
 
 # Header merging
 
@@ -170,9 +169,7 @@ async def test_retryable_status_codes(make_async_client: MakeAsyncClient, status
 
 
 @pytest.mark.parametrize("status", [400, 401, 404, 422])
-async def test_non_retryable_status_codes(
-    make_async_client: MakeAsyncClient, status: int
-):
+async def test_non_retryable_status_codes(make_async_client: MakeAsyncClient, status: int):
     """
     Certain status codes are non-retryable
     """
@@ -184,9 +181,7 @@ async def test_non_retryable_status_codes(
 
 
 async def test_status_error_carries_context(make_async_client: MakeAsyncClient):
-    client, _ = make_async_client(
-        response=FakeResponse(status=400, body="{'error': 'nope'}")
-    )
+    client, _ = make_async_client(response=FakeResponse(status=400, body="{'error': 'nope'}"))
     with pytest.raises(HttpkitStatusError) as err:
         _ = await client.arequest(url="/products")
 
@@ -224,9 +219,7 @@ async def test_payload_without_response_model_is_decoded_json(
     """
     Without a response_model, a JSON body is decoded and returned as-is.
     """
-    client, _ = make_async_client(
-        response=FakeResponse(status=200, body='{"first_name": "joe"}')
-    )
+    client, _ = make_async_client(response=FakeResponse(status=200, body='{"first_name": "joe"}'))
 
     response = await client.arequest(url="/products")
 
@@ -344,3 +337,15 @@ async def test_response_surfaces_status_code_and_headers(
     assert response.status_code == 200
     assert response.headers == {"X-Trace": "abc"}
     assert response.payload == {"a": 1}
+
+
+async def test_status_error_carries_response_headers(make_async_client: MakeAsyncClient):
+    """
+    A status error keeps the response headers, so callers can honour e.g. Retry-After.
+    """
+    client, _ = make_async_client(response=FakeResponse(status=429, headers={"Retry-After": "2"}))
+
+    with pytest.raises(HttpkitStatusError) as err:
+        _ = await client.arequest(url="/products")
+
+    assert err.value.headers == {"Retry-After": "2"}

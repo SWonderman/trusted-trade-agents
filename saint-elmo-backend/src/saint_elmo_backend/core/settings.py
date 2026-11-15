@@ -1,7 +1,9 @@
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,19 +19,47 @@ class Settings(BaseSettings):
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "DEBUG"
 
     # Database
-    db_url: str  # owner role (app_migrator), used by Alembic
-    app_db_url: str  # non-superuser role the app connects as (app_runtime, RLS applies)
+    db_url: str
 
     db_pool_size: int = 10
     db_max_overflow: int = 20
     db_pool_timeout: int = 30
     db_echo: bool = False
 
+    token_issuer: str = "saint-elmo"
+
+    # User sessions
+    jwt_secret: SecretStr = Field(min_length=32)
+    user_token_audience: str = "saint-elmo:user"
+    access_token_lifetime_minutes: int = 60
+
+    # Agent tokens
+    agent_token_signing_key: SecretStr
+    agent_token_audience: str = "saint-elmo:agent"
+
     # Cryptography (Fernet keys for EncryptedString; first key encrypts, all decrypt)
     credential_keys: list[str] = []
 
     # Static Valio Aimo data set (product JSON + CSVs), loaded by the catalogue seeder
     catalog_data_dir: Path = Path("../data")
+    # Date the static data set was exported; reported as provenance on catalogue responses
+    catalog_snapshot_date: date
+
+    # Valio Aimo API (live price and availability). Optional so the app starts and
+    # catalog-only development works without them; calls then fail as not configured.
+    valio_aimo_api_url: str | None = None
+    valio_aimo_api_key: SecretStr | None = None
+    valio_aimo_max_attempts: int = 3  # in total, including the first
+    valio_aimo_backoff_base_seconds: float = 0.5
+
+    # Offers: how long a fetched availability is reused (prices follow their own validity)
+    offers_availability_cache_seconds: int = 60
+    # Demo only: the live mock's closing times are a frozen snapshot that has passed, which
+    # would mark every offer CLOSING_TIME_PASSED. True treats a passed one as not binding.
+    offers_ignore_closing_time: bool = False
+
+    # Quotes: the longest a quote stays valid; price validity and closing time can cut it shorter
+    quote_ttl_minutes: int = 15
 
 
 @lru_cache

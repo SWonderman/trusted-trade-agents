@@ -17,7 +17,11 @@ class PublicIdMixin:
     public_id: Mapped[annotations.public_id] = mapped_column()
 
 
-class TenantMixin:
-    organization_id: Mapped[int] = mapped_column(
+class OrgOwnedMixin:
+    """
+    Owned by one buyer organization. A plain foreign key, no row-level security for simplicity.
+    """
+
+    org_id: Mapped[int] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"), index=True, nullable=False
     )

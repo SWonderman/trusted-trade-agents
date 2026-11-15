@@ -7,7 +7,6 @@ file records the list's URN and GDD version; to update a list, replace its file.
 """
 
 import xml.etree.ElementTree as ET
-
 from dataclasses import dataclass
 from pathlib import Path
 

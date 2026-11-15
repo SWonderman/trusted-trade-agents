@@ -1,21 +1,35 @@
 from contextlib import asynccontextmanager
+from datetime import timedelta
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from saint_elmo_backend.core.logger import setup_logger
-
-from saint_elmo_backend.db.engine import dispose_engine
-
-from saint_elmo_backend.api.middleware import RequestContextMiddleware
 from saint_elmo_backend.api.error_handlers import register_error_handlers
+from saint_elmo_backend.api.middleware import RequestContextMiddleware
 from saint_elmo_backend.api.v1.router import router as api_v1_router
+from saint_elmo_backend.api.well_known import router as well_known_router
+from saint_elmo_backend.core.logger import setup_logger
+from saint_elmo_backend.core.settings import get_settings
+from saint_elmo_backend.db.engine import dispose_engine
+from saint_elmo_backend.offers.cache import OfferCache
+from saint_elmo_backend.valio_aimo.client import create_valio_aimo_client
+
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):
+async def lifespan(app: FastAPI):
+    # One Valio Aimo client (one connection pool) for the app's lifetime; routes get it
+    # through the `get_valio_aimo_client` dependency
+    settings = get_settings()
+    valio_aimo_client = create_valio_aimo_client(settings)
+    app.state.valio_aimo_client = valio_aimo_client
+    # Shared by all requests, so a repeated offer within a price's validity costs no call
+    app.state.offer_cache = OfferCache(
+        availability_ttl=timedelta(seconds=settings.offers_availability_cache_seconds)
+    )
     try:
         yield
     finally:
+        await valio_aimo_client.aclose()
         await dispose_engine()
 
 
@@ -48,6 +62,7 @@ def create_app() -> FastAPI:
     register_error_handlers(app)
 
     app.include_router(api_v1_router)
+    app.include_router(well_known_router)
 
     return app
 

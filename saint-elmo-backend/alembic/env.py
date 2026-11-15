@@ -6,7 +6,6 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-
 from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.db.registry import Base
 from saint_elmo_backend.db.types import EncryptedString
@@ -20,7 +19,6 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Migrations run as the owner role (DB_URL), not the RLS-restricted app role.
 # The URL is passed to the engine directly rather than through config.set_main_option,
 # which would choke on `%` in URL-encoded passwords (configparser interpolation).
 db_url = get_settings().db_url

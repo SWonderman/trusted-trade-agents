@@ -1,6 +1,6 @@
-import pytest
-
 from http import HTTPMethod
+
+import pytest
 
 from saint_elmo_backend.httpkit.exceptions import (
     HttpkitConnectionError,
@@ -11,7 +11,6 @@ from saint_elmo_backend.httpkit.exceptions import (
 )
 from saint_elmo_backend.httpkit.tests.conftest import MakeClient
 from saint_elmo_backend.httpkit.tests.fakes import FakeResponse, Product
-
 
 # Header merging
 
@@ -200,9 +199,7 @@ def test_payload_is_validated_into_response_model(make_client: MakeClient):
     """
     With a response_model, a valid JSON body is validated into a model instance.
     """
-    client, _ = make_client(
-        response=FakeResponse(status=200, body='{"id": 1, "name": "Widget"}')
-    )
+    client, _ = make_client(response=FakeResponse(status=200, body='{"id": 1, "name": "Widget"}'))
 
     response = client.request(url="/products", response_model=Product)
 
@@ -214,9 +211,7 @@ def test_payload_without_response_model_is_decoded_json(make_client: MakeClient)
     """
     Without a response_model, a JSON body is decoded and returned as-is.
     """
-    client, _ = make_client(
-        response=FakeResponse(status=200, body='{"first_name": "joe"}')
-    )
+    client, _ = make_client(response=FakeResponse(status=200, body='{"first_name": "joe"}'))
 
     response = client.request(url="/products")
 
@@ -322,9 +317,7 @@ def test_response_surfaces_status_code_and_headers(make_client: MakeClient):
     The status code and headers from the raw response are surfaced on the Response.
     """
     client, _ = make_client(
-        response=FakeResponse(
-            status=200, body='{"a": 1}', headers={"X-Trace": "abc"}
-        )
+        response=FakeResponse(status=200, body='{"a": 1}', headers={"X-Trace": "abc"})
     )
 
     response = client.request(url="/products")

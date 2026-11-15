@@ -1,0 +1,275 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn-svelte/tailwind.css';
+
+/* Self-hosted type: nothing is fetched from a font CDN. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/eb-garamond/wght.css';
+@import '@fontsource-variable/eb-garamond/wght-italic.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * One token system for the console (shadcn-svelte) and the marketing page.
+ *
+ * The palette comes from the Grünewald panel the brand is cut from: lapis
+ * (Erasmus's cope and the night sky), gold leaf (halo and crozier), vermilion
+ * (the cardinal's red) and vellum. The console uses them sparingly on warm
+ * neutral surfaces; the marketing page uses them at full strength.
+ */
+:root {
+	--radius: 0.625rem;
+
+	/* Neutrals: warm, a touch of vellum */
+	--background: oklch(0.985 0.003 85);
+	--foreground: oklch(0.2 0.025 265);
+	--card: oklch(1 0 0);
+	--card-foreground: var(--foreground);
+	--popover: oklch(1 0 0);
+	--popover-foreground: var(--foreground);
+	--muted: oklch(0.962 0.005 85);
+	--muted-foreground: oklch(0.5 0.018 265);
+	--secondary: oklch(0.955 0.006 85);
+	--secondary-foreground: var(--foreground);
+	--accent: oklch(0.952 0.012 265);
+	--accent-foreground: oklch(0.32 0.11 265);
+	--border: oklch(0.915 0.006 85);
+	--input: oklch(0.885 0.008 85);
+
+	/* Lapis: primary action, links, focus */
+	--primary: oklch(0.4 0.135 265);
+	--primary-foreground: oklch(0.985 0.003 85);
+	--ring: oklch(0.55 0.14 265);
+
+	/* Vermilion: destructive and hard rejections */
+	--destructive: oklch(0.54 0.17 32);
+
+	/* Policy outcomes */
+	--ok: oklch(0.52 0.11 158);
+	--hold: oklch(0.6 0.13 68);
+	--stop: var(--destructive);
+
+	/* Brand */
+	--gold: oklch(0.73 0.11 82);
+	--gold-deep: oklch(0.58 0.1 75);
+	--lapis: oklch(0.33 0.12 265);
+	--lapis-deep: oklch(0.22 0.08 268);
+	--lapis-night: oklch(0.16 0.05 270);
+	--vellum: oklch(0.93 0.03 85);
+	--vermilion: oklch(0.52 0.16 32);
+	--corona: oklch(0.78 0.11 268);
+
+	--chart-1: oklch(0.4 0.135 265);
+	--chart-2: oklch(0.73 0.11 82);
+	--chart-3: oklch(0.52 0.11 158);
+	--chart-4: oklch(0.6 0.13 68);
+	--chart-5: oklch(0.54 0.17 32);
+
+	--sidebar: oklch(0.975 0.004 85);
+	--sidebar-foreground: var(--foreground);
+	--sidebar-primary: var(--primary);
+	--sidebar-primary-foreground: var(--primary-foreground);
+	--sidebar-accent: oklch(0.945 0.008 85);
+	--sidebar-accent-foreground: var(--foreground);
+	--sidebar-border: var(--border);
+	--sidebar-ring: var(--ring);
+}
+
+.dark {
+	--background: oklch(0.165 0.018 268);
+	--foreground: oklch(0.94 0.01 85);
+	--card: oklch(0.195 0.02 268);
+	--card-foreground: var(--foreground);
+	--popover: oklch(0.21 0.022 268);
+	--popover-foreground: var(--foreground);
+	--muted: oklch(0.235 0.02 268);
+	--muted-foreground: oklch(0.7 0.018 265);
+	--secondary: oklch(0.25 0.022 268);
+	--secondary-foreground: var(--foreground);
+	--accent: oklch(0.27 0.045 266);
+	--accent-foreground: oklch(0.88 0.06 266);
+	--border: oklch(1 0 0 / 9%);
+	--input: oklch(1 0 0 / 14%);
+
+	--primary: oklch(0.74 0.11 266);
+	--primary-foreground: oklch(0.18 0.03 268);
+	--ring: oklch(0.66 0.12 266);
+
+	--destructive: oklch(0.68 0.17 30);
+	--ok: oklch(0.74 0.12 158);
+	--hold: oklch(0.8 0.13 75);
+
+	--gold: oklch(0.8 0.11 85);
+
+	--sidebar: oklch(0.15 0.017 268);
+	--sidebar-foreground: var(--foreground);
+	--sidebar-primary: var(--primary);
+	--sidebar-primary-foreground: var(--primary-foreground);
+	--sidebar-accent: oklch(0.23 0.022 268);
+	--sidebar-accent-foreground: var(--foreground);
+	--sidebar-border: oklch(1 0 0 / 7%);
+	--sidebar-ring: var(--ring);
+}
+
+/*
+ * The signed-in console, in the landing page's language: ivory paper, warm ink,
+ * near-black lapis for actions and a gold wash for what is selected. Applied as a
+ * class on <html> (see hooks.server.ts and the (app) layout), so drawers, menus and
+ * tooltips rendered at the end of <body> pick it up too. Sign-in keeps the base look.
+ */
+:root.console {
+	--background: oklch(0.982 0.009 85);
+	--foreground: oklch(0.24 0.03 60);
+	--card: oklch(0.996 0.004 85);
+	--popover: oklch(0.996 0.004 85);
+	--muted: oklch(0.955 0.012 85);
+	--muted-foreground: oklch(0.47 0.025 60);
+	--secondary: oklch(0.95 0.014 85);
+	--secondary-foreground: var(--foreground);
+	--accent: oklch(0.94 0.035 85);
+	--accent-foreground: oklch(0.3 0.04 60);
+	--border: oklch(0.905 0.014 85);
+	--input: oklch(0.87 0.016 85);
+
+	--primary: oklch(0.2 0.045 270);
+	--primary-foreground: oklch(0.97 0.018 85);
+	--ring: oklch(0.72 0.1 82);
+
+	--sidebar: oklch(0.965 0.016 85);
+	--sidebar-foreground: var(--foreground);
+	--sidebar-primary: var(--primary);
+	--sidebar-primary-foreground: var(--primary-foreground);
+	--sidebar-accent: oklch(0.925 0.035 85);
+	--sidebar-accent-foreground: var(--foreground);
+	--sidebar-border: oklch(0.9 0.016 85);
+	--sidebar-ring: var(--ring);
+}
+:root.console.dark {
+	--background: oklch(0.165 0.02 270);
+	--foreground: oklch(0.94 0.015 85);
+	--card: oklch(0.195 0.022 270);
+	--popover: oklch(0.21 0.024 270);
+	--muted: oklch(0.235 0.022 270);
+	--muted-foreground: oklch(0.72 0.02 85);
+	--secondary: oklch(0.25 0.024 270);
+	--accent: oklch(0.3 0.04 80);
+	--accent-foreground: oklch(0.92 0.06 85);
+	--border: oklch(1 0 0 / 9%);
+	--input: oklch(1 0 0 / 14%);
+
+	--primary: oklch(0.86 0.08 86);
+	--primary-foreground: oklch(0.2 0.03 270);
+	--ring: oklch(0.8 0.1 85);
+
+	--sidebar: oklch(0.15 0.02 270);
+	--sidebar-accent: oklch(0.26 0.04 80);
+	--sidebar-border: oklch(1 0 0 / 7%);
+}
+
+@theme inline {
+	--font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+	--font-display: 'EB Garamond Variable', 'EB Garamond', 'Iowan Old Style', Georgia, serif;
+	--font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	--color-ok: var(--ok);
+	--color-hold: var(--hold);
+	--color-stop: var(--stop);
+
+	--color-gold: var(--gold);
+	--color-gold-deep: var(--gold-deep);
+	--color-lapis: var(--lapis);
+	--color-lapis-deep: var(--lapis-deep);
+	--color-lapis-night: var(--lapis-night);
+	--color-vellum: var(--vellum);
+	--color-vermilion: var(--vermilion);
+	--color-corona: var(--corona);
+
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	html {
+		@apply font-sans;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	body {
+		@apply min-h-dvh bg-background text-foreground;
+		font-feature-settings: 'cv11', 'ss01';
+	}
+
+	/* Except inside an element the visitor asked to animate, e.g. by pressing Play. */
+	@media (prefers-reduced-motion: reduce) {
+		:not([data-motion='allowed'], [data-motion='allowed'] *),
+		:not([data-motion='allowed'], [data-motion='allowed'] *)::before,
+		:not([data-motion='allowed'], [data-motion='allowed'] *)::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+@utility tabular {
+	font-variant-numeric: tabular-nums;
+}
+
+/* Product codes, reason codes, ids: monospace, slightly smaller than the text around them. */
+@utility code {
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+	letter-spacing: -0.01em;
+}
+
+/* Display headings: Garamond, set tight, the modern twist on a Renaissance face. */
+@utility font-display-tight {
+	font-family: var(--font-display);
+	font-weight: 500;
+	letter-spacing: -0.02em;
+	line-height: 1.05;
+}

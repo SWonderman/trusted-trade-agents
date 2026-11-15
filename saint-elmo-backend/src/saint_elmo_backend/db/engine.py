@@ -9,16 +9,13 @@ from sqlalchemy.ext.asyncio import (
 
 from saint_elmo_backend.core.settings import get_settings
 
-# Importing registers the RLS after_begin listener on the Session class.
-import saint_elmo_backend.db.tenancy  # noqa: F401
-
 
 @lru_cache
 def get_engine() -> AsyncEngine:
     settings = get_settings()
 
     return create_async_engine(
-        settings.app_db_url,
+        settings.db_url,
         pool_size=settings.db_pool_size,
         max_overflow=settings.db_max_overflow,
         pool_timeout=settings.db_pool_timeout,

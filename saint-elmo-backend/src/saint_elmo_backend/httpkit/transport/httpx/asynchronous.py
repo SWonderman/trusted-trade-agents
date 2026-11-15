@@ -1,5 +1,5 @@
-from typing import Self
 from types import TracebackType
+from typing import Self
 
 import httpx
 
@@ -10,7 +10,6 @@ from saint_elmo_backend.httpkit.exceptions import (
     HttpkitTransportError,
 )
 from saint_elmo_backend.httpkit.response import ResponseWrapper
-
 from saint_elmo_backend.httpkit.transport.httpx.config import HttpxClientConfig
 from saint_elmo_backend.httpkit.transport.httpx.response import HttpxResponse
 
@@ -48,9 +47,7 @@ class HttpxAsyncTransport:
                 )
             )
         except httpx.TimeoutException as e:
-            raise HttpkitTimeoutError(
-                message=str(e), method=request.method, url=request.url
-            ) from e
+            raise HttpkitTimeoutError(message=str(e), method=request.method, url=request.url) from e
         except httpx.NetworkError as e:
             raise HttpkitConnectionError(
                 message=str(e), method=request.method, url=request.url

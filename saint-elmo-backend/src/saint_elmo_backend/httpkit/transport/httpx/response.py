@@ -1,8 +1,7 @@
 from typing import override
 
-from pydantic import JsonValue
-
 import httpx
+from pydantic import JsonValue
 
 from saint_elmo_backend.httpkit.response import ResponseWrapper
 

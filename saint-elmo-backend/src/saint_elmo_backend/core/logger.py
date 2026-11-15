@@ -8,7 +8,6 @@ from saint_elmo_backend.core.settings import get_settings
 
 
 class InterceptHandler(logging.Handler):
-
     @override
     def emit(self, record: logging.LogRecord) -> None:
         try:
@@ -21,9 +20,7 @@ class InterceptHandler(logging.Handler):
             frame = frame.f_back
             depth += 1
 
-        logger.opt(depth=depth, exception=record.exc_info).log(
-            level, record.getMessage()
-        )
+        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
 
 _INTERCEPTED_LOGGERS = (

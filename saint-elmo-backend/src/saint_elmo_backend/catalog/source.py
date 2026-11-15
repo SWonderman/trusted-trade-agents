@@ -5,7 +5,6 @@ and the two CSVs), plus the rules that normalize it into the catalogue model.
 
 import csv
 import re
-
 from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal

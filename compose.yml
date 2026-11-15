@@ -1,0 +1,97 @@
+# The whole of Saint Elmo in one command: `docker compose up --build`.
+#
+#   db        Postgres, with its own volume (not the one saint-elmo-backend/compose.yml
+#             uses for development and tests), reachable only inside this stack
+#   migrate   runs once: migrations, then the GS1 code lists, the catalogue and the demo
+#             buyers (skipping what is already there). The first run takes a few minutes
+#   backend   FastAPI on http://localhost:8000
+#   mcp       the MCP server agents connect to, on http://localhost:8001/mcp
+#   frontend  the console on http://localhost:3000
+#
+# Secrets and the Valio Aimo API settings come from saint-elmo-backend/.env (copy
+# .env.example and fill it in). Every published port is loopback only and can be moved
+# with BACKEND_PORT, MCP_PORT and FRONTEND_PORT, e.g. `MCP_PORT=9001 docker compose up`.
+# Claude Code and other MCP clients run on the host, outside this stack.
+
+name: saint-elmo
+
+x-backend: &backend
+  build: ./saint-elmo-backend
+  image: saint-elmo-backend
+  env_file:
+    - path: ./saint-elmo-backend/.env
+      required: true
+  environment:
+    # The same credentials as the db service, but the db's host inside this stack
+    DB_URL: postgresql+asyncpg://${POSTGRES_USER:-app_migrator}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-saint_elmo}
+    CATALOG_DATA_DIR: /data
+    # Demo only: the live mock answers with closing times that have already passed, which
+    # would reject every offer. Set it to false to see that behaviour
+    OFFERS_IGNORE_CLOSING_TIME: ${OFFERS_IGNORE_CLOSING_TIME:-true}
+
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app_migrator}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-saint_elmo}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    <<: *backend
+    command: ["sh", "-c", "alembic upgrade head && python -m saint_elmo_backend.db.seeders.runner"]
+    volumes:
+      - ./data:/data:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    <<: *backend
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  mcp:
+    build: ./saint-elmo-mcp
+    image: saint-elmo-mcp
+    environment:
+      BACKEND_BASE_URL: http://backend:8000
+    ports:
+      - "127.0.0.1:${MCP_PORT:-8001}:8001"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  frontend:
+    build: ./saint-elmo-frontend
+    image: saint-elmo-frontend
+    environment:
+      API_MODE: http
+      # The backend has no oversight feed or scenario controls yet
+      API_MODE_OVERSIGHT: mock
+      BACKEND_URL: http://backend:8000
+      # Shown in the console's connect snippet: the address MCP clients on the host use
+      MCP_URL: http://localhost:${MCP_PORT:-8001}/mcp
+      # adapter-node checks form submissions against it
+      ORIGIN: http://localhost:${FRONTEND_PORT:-3000}
+      SESSION_COOKIE_SECURE: "false"
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

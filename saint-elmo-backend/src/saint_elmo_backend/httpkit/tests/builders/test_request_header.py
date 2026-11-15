@@ -39,9 +39,7 @@ def test_add_accept_custom_value() -> None:
 
 
 def test_add_authorization() -> None:
-    result = (
-        RequestHeaderBuilder().add_authorization(authorization="Bearer token").build()
-    )
+    result = RequestHeaderBuilder().add_authorization(authorization="Bearer token").build()
     expected = {"Authorization": "Bearer token"}
 
     assert result == expected
