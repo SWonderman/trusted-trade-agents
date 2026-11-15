@@ -12,6 +12,7 @@ from datetime import timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+import saint_elmo_backend.db.registry  # noqa: F401
 from saint_elmo_backend.accounts import crud as account_crud
 from saint_elmo_backend.accounts.enums import Permission
 from saint_elmo_backend.accounts.permissions import role_has_permission

@@ -3,6 +3,7 @@ import asyncio
 from loguru import logger
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+import saint_elmo_backend.db.registry  # noqa: F401
 from saint_elmo_backend.core.settings import get_settings
 from saint_elmo_backend.db.seeders.catalog import seed_catalog
 from saint_elmo_backend.db.seeders.code_lists import seed_code_lists
