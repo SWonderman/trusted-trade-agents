@@ -177,8 +177,10 @@ async def test_unknown_allergen_strictness_is_rejected_without_backend_call(conn
     assert backend.requests == []
 
 
-async def test_missing_key_is_an_error_and_backend_is_not_called(connect, backend):
-    async with connect() as client:
+# An empty header is what demo/buyer-agent/.mcp.json sends with SAINT_ELMO_AGENT_KEY unset
+@pytest.mark.parametrize("headers", [None, {"X-Agent-Key": ""}])
+async def test_missing_key_is_an_error_and_backend_is_not_called(connect, backend, headers):
+    async with connect(headers) as client:
         result = await client.call_tool("search_products", {"query": "milk"})
 
     assert result.is_error

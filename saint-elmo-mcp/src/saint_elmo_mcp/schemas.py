@@ -377,6 +377,15 @@ OfferReasonCode = Literal[
     "CONVERSION_UNCERTAIN",
 ]
 
+# The reason codes that make an offer, quote or order line a shortfall, which
+# find_substitutes answers (#16)
+SHORTFALL_CODES: tuple[OfferReasonCode, ...] = (
+    "PARTIAL_AVAILABILITY",
+    "LATE_DELIVERY",
+    "NOT_DELIVERABLE",
+    "SALES_BLOCKED",
+)
+
 
 class Offer(CamelModel):
     product_code: str

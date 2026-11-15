@@ -150,7 +150,7 @@
 				</div>
 
 				{#if issued}
-					<TokenReveal secret={issued.secret} label={issued.key.label} />
+					<TokenReveal secret={issued.secret} label={issued.key.label} mcpUrl={data.mcpUrl} />
 				{/if}
 
 				{#if showIssue && !issued}

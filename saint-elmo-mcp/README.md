@@ -28,21 +28,26 @@ There is no approve or reject tool: approving is user-only, and an agent can nev
 
 ```sh
 cp .env.example .env     # once; points at the backend on :8000
-uv run saint-elmo-mcp    # serves http://127.0.0.1:8001/mcp
+uv run saint-elmo-mcp    # serves http://127.0.0.1:8001/mcp (or `just mcp` from the repo root)
 ```
 
 ## Connect an agent
 
 Every request must carry an agent token (issued by a buyer admin, see ADR 0003), either as `X-Agent-Key: <token>` or as `Authorization: Bearer <token>`. The MCP server only checks that one is present and forwards it. The backend decides whether it's valid.
 
-Claude Code:
+Claude Code, in one step:
+
+- **The demo folder.** With the backend and `just mcp` running, `export SAINT_ELMO_AGENT_KEY=<token>` and start `claude` in [`demo/buyer-agent/`](../demo/buyer-agent/README.md). Its `.mcp.json` already declares the server; approve it on first launch. `SAINT_ELMO_MCP_URL` points it at another MCP server.
+- **The console.** Issuing a token (Agents → an agent → Tokens) shows both commands with the token filled in: a `claude mcp add` that works from any folder, and the demo folder one. The URL comes from the frontend's `MCP_URL`.
+
+Manually, or as the model for any other MCP client that can send custom headers on streamable HTTP:
 
 ```sh
 claude mcp add --transport http saint-elmo http://localhost:8001/mcp \
   --header "X-Agent-Key: <agent token>"
 ```
 
-Any other MCP client that can send custom headers on streamable HTTP works the same way.
+Claude Desktop and claude.ai aren't covered yet: their remote connectors authenticate with OAuth, not custom headers. They wait for the OAuth 2.1 path in [ADR 0003](../docs/adr/0003-agent-tokens-reference-server-mandate.md).
 
 ## Errors
 

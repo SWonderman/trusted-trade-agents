@@ -16,6 +16,7 @@ from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
 from saint_elmo_mcp.backend import BackendClient
+from saint_elmo_mcp.schemas import SHORTFALL_CODES
 from saint_elmo_mcp.server import build_server
 
 # Host must carry a port: the SDK's DNS-rebinding protection rejects bare "localhost"
@@ -82,6 +83,16 @@ def text(result) -> str:
 
 async def tool_named(client: Client, name: str):
     return next(t for t in (await client.list_tools()).tools if t.name == name)
+
+
+def assert_sends_shortfalls_to_find_substitutes(description: str | None) -> None:
+    """A quote or order line can first fall short there, since live availability is re-checked."""
+    assert description is not None
+    prose = " ".join(description.split())
+    assert "find_substitutes" in prose
+    for code in SHORTFALL_CODES:
+        assert code in prose, code
+    assert "`substitutesFor` set to the original code" in prose
 
 
 def search_response(*items: dict[str, Any], total: int | None = None) -> dict[str, Any]:

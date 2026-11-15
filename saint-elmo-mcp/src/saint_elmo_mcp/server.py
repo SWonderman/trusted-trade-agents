@@ -2,8 +2,9 @@ from mcp.server.mcpserver import MCPServer
 
 from saint_elmo_mcp.backend import BackendClient
 from saint_elmo_mcp.tools import audit, catalog, mandate, offers, orders, quotes, substitutes
+from saint_elmo_mcp.tools.substitutes import SHORTFALL
 
-INSTRUCTIONS = """\
+INSTRUCTIONS = f"""\
 Saint Elmo lets you, a purchasing agent for a professional kitchen, find and
 order products from Valio Aimo within the mandate your organisation set for you.
 
@@ -16,9 +17,11 @@ The full flow (tools are added as the backend grows, so use the ones you have):
 3. get_offers: live price and availability for a shortlist on a delivery date,
    with buyer quantities (e.g. 1000 L) converted to sales units and priced.
    Check meetsDeadline, reasonCodes and crossCheck; offers are binding on nothing.
-4. find_substitutes: on a shortfall (PARTIAL_AVAILABILITY, LATE_DELIVERY,
-   NOT_DELIVERABLE, SALES_BLOCKED), get ranked BEST / BETTER / GOOD
-   substitutes with their trade-offs and a policyPreview. Your mandate's
+4. find_substitutes: on a shortfall ({SHORTFALL}),
+   get ranked BEST / BETTER / GOOD substitutes with their trade-offs and a
+   policyPreview. A shortfall can first show up on a create_quote or
+   place_order line, since live availability is re-checked then: call
+   find_substitutes for that line too. Your mandate's
    requirements still apply. Quote the chosen one with substitutesFor set to
    the original code and explain the trade-off in rationale. No candidates
    (NO_SUBSTITUTES_FOUND) is an answer: tell the buyer.

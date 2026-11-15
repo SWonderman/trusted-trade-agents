@@ -1,8 +1,11 @@
 import json
+import re
 
 import pytest
 from conftest import error, text, tool_named
 from test_get_offers import DELIVER_BY, MILK_OFFER
+
+from saint_elmo_mcp.schemas import SHORTFALL_CODES
 
 # The original falls short: not all of the 1000 L asked for is in stock (#16)
 SHORT_ORIGINAL_OFFER = {
@@ -137,6 +140,18 @@ async def test_find_substitutes_is_listed_with_input_and_output_schemas(connect)
         "get_vocabulary",
     ):
         assert phrase in tool.description, phrase
+
+
+async def test_server_instructions_send_quote_and_order_shortfalls_to_find_substitutes(connect):
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        instructions = client.instructions
+
+    assert instructions is not None
+    steps = re.split(r"\n\d+\. ", instructions)
+    step = " ".join(next(s for s in steps if s.startswith("find_substitutes:")).split())
+    for code in SHORTFALL_CODES:
+        assert code in step, code
+    assert "create_quote or place_order line" in step
 
 
 async def test_ranked_candidates_come_back_with_trade_offs_and_policy_preview(

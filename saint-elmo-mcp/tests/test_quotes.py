@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from conftest import error, text, tool_named
+from conftest import assert_sends_shortfalls_to_find_substitutes, error, text, tool_named
 from test_get_offers import DELIVER_BY, MILK_OFFER
 
 QUOTE_ID = "3f2b8c1e-5d4a-4b6e-9a7c-1e2d3f4a5b6c"
@@ -358,3 +358,10 @@ async def test_missing_key_is_an_error_and_backend_is_not_called(connect, backen
     assert result.is_error
     assert "MISSING_AGENT_KEY" in text(result)
     assert backend.requests == []
+
+
+async def test_create_quote_sends_a_shortfall_on_a_line_to_find_substitutes(connect):
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        tool = await tool_named(client, "create_quote")
+
+    assert_sends_shortfalls_to_find_substitutes(tool.description)

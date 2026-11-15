@@ -23,13 +23,14 @@ API_MODE_CATALOG=http
 API_MODE_ORDERS=http
 API_MODE_AUDIT=http
 BACKEND_URL=http://localhost:8000
+MCP_URL=http://localhost:8001/mcp   # shown in the connect snippet after issuing a token
 SESSION_COOKIE_SECURE=false
 ```
 
 To see an approval end to end:
 
 1. Issue an Agent token for a seeded agent: `just issue-agent-token dairy-restock buyer.admin@aurora-hotels.example`.
-2. Give it to an MCP client (`../saint-elmo-mcp`) and ask for something over the agent's auto-approve limit, e.g. 1,000 L of lactose-free milk for next week. The agent quotes, then places the order; its mandate sends it to a person.
+2. Give it to an MCP client (`just mcp`, then `export SAINT_ELMO_AGENT_KEY=<agent token>` and `claude` in `../demo/buyer-agent`) and ask for something over the agent's auto-approve limit, e.g. 1,000 L of lactose-free milk for next week. The agent quotes, then places the order; its mandate sends it to a person.
 3. Sign in as `buyer.admin@aurora-hotels.example`. The order appears under **Approvals** within seconds (the console polls), with the policy's reason codes, the lines and their conversions, shortfalls, substitutes, the buyer's request and the agent's rationale.
 4. Approve it, or reject it with a note. Approving re-checks live price, stock and closing time first: the order is placed, rejected if a hard rule now fails (e.g. `CLOSING_TIME_PASSED`), or left waiting with its new reasons and total if something changed that you haven't seen. The page says which.
 

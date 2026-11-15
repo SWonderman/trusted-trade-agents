@@ -1,4 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
+import { MCP_URL } from '$app/env/private';
 import { api } from '#lib/server/api/index.js';
 import { attempt, text } from '#lib/server/actions.js';
 import { requireCaller } from '#lib/server/session.js';
@@ -13,7 +14,8 @@ export const load: PageServerLoad = async ({ locals, url, params, depends }) => 
 	return {
 		agent,
 		keys: await api.agents.listKeys(caller, params.agentId),
-		created: url.searchParams.has('created')
+		created: url.searchParams.has('created'),
+		mcpUrl: MCP_URL
 	};
 };
 

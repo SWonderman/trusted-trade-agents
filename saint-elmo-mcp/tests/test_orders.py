@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from conftest import error, text, tool_named
+from conftest import assert_sends_shortfalls_to_find_substitutes, error, text, tool_named
 from test_get_offers import DELIVER_BY
 from test_quotes import BUYER_REQUEST, MILK_QUOTE, QUOTE_ID, RATIONALE
 
@@ -346,3 +346,11 @@ async def test_server_instructions_describe_place_then_poll_and_that_agents_cann
     for phrase in ("place_order", "get_order_status", "checkAgainAfterSeconds", "list_orders"):
         assert phrase in instructions, phrase
     assert "never approve" in instructions
+
+
+async def test_place_order_sends_a_shortfall_on_a_line_to_find_substitutes(connect):
+    # Live availability is re-checked when the order is placed, so a shortfall can first show up here
+    async with connect({"X-Agent-Key": "k1"}) as client:
+        tool = await tool_named(client, "place_order")
+
+    assert_sends_shortfalls_to_find_substitutes(tool.description)

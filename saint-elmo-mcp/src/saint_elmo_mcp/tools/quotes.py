@@ -10,13 +10,14 @@ from pydantic import Field
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response, request_body
 from saint_elmo_mcp.schemas import Quote, QuoteLineIn
+from saint_elmo_mcp.tools.substitutes import SHORTFALL_ON_A_LINE
 
 # Mirror the backend's bounds (quotes/schemas.py MAX_LINES, MAX_TEXT_LENGTH);
 # change them together
 MAX_LINES = 50
 MAX_TEXT_LENGTH = 2000
 
-CREATE_QUOTE_DESCRIPTION = """\
+CREATE_QUOTE_DESCRIPTION = f"""\
 Turn the basket you chose (after get_offers) into a quote: each line converted
 to sales units, priced from live offers on `deliverBy`, and judged against your
 mandate. A quote binds nothing; place_order commits it. Each call creates a new
@@ -32,7 +33,7 @@ quote.
 - `policy.outcome` REJECT or NEEDS_HUMAN is an answer, not an error. Read
   `policy.reasons` (and each line's `reasons`), then revise and quote again with
   `previousQuoteId`, or explain the outcome to the buyer.
-- The quote expires at `expiresAt`; place_order it before then.
+{SHORTFALL_ON_A_LINE}- The quote expires at `expiresAt`; place_order it before then.
 - `PRODUCT_NOT_FOUND` lists every unknown code; fix them (search_products).
 - `QUOTE_NOT_FOUND`: `previousQuoteId` isn't a quote of your organisation.
 - `CUSTOMER_NUMBER_MISSING`: your buyer organisation isn't set up with a Valio

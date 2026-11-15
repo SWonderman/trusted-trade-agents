@@ -9,7 +9,7 @@ from pydantic import Field, StringConstraints, WithJsonSchema
 
 from saint_elmo_mcp.auth import agent_key
 from saint_elmo_mcp.backend import BackendClient, parse_response, request_body
-from saint_elmo_mcp.schemas import Claim, Substitutes
+from saint_elmo_mcp.schemas import SHORTFALL_CODES, Claim, Substitutes
 
 # Mirror the backend's bounds (substitutes/schemas.py); change them together
 MAX_LIMIT = 10
@@ -17,10 +17,22 @@ DEFAULT_LIMIT = 3
 
 CODES_HINT = "Valid codes: see get_vocabulary."
 
-FIND_SUBSTITUTES_DESCRIPTION = """\
+SHORTFALL = ", ".join(SHORTFALL_CODES)
+
+# Live availability is re-checked on every quote and order, so a shortfall can
+# first show up there; create_quote and place_order both end with this advice
+SHORTFALL_ON_A_LINE = f"""\
+- A line failing on availability or deadline
+  ({", ".join(f"`{code}`" for code in SHORTFALL_CODES)}):
+  live availability is re-checked on each quote and order. Call
+  find_substitutes for its product, then quote the chosen one with
+  `substitutesFor` set to the original code.
+"""
+
+FIND_SUBSTITUTES_DESCRIPTION = f"""\
 Get ranked substitutes, labelled BEST / BETTER / GOOD, for a product that
-can't meet the need. Call this when an offer or quote line has a shortfall
-(PARTIAL_AVAILABILITY, LATE_DELIVERY, NOT_DELIVERABLE, SALES_BLOCKED).
+can't meet the need. Call this when an offer, quote or order line has a
+shortfall ({SHORTFALL}).
 
 - Your mandate's requirements always apply. The filters here can only tighten
   them, never loosen them.
